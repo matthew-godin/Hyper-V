@@ -37,10 +37,11 @@ namespace HyperV
             Components.Add(InputMgr);
             GameCamera = new SubjectiveCamera(this, Vector3.Zero, Vector3.Zero, Vector3.Up, UPDATE_INTERVAL_STANDARD);
             Components.Add(GameCamera);
-            Components.Add(new NightSkyBackground(this, "CielBlue", UPDATE_INTERVAL_STANDARD));
+            Components.Add(new ArrièrePlan(this, "CielBlue"));
             Components.Add(new Displayer3D(this));
             Components.Add(new FPSDisplay(this, "Arial", Color.Red, FPS_COMPUTE_INTERVAL));
-            Components.Add(new Niveau(this));
+            //Components.Add(new Niveau(this));
+            Components.Add(new Jeu(this));
 
             Services.AddService(typeof(Random), new Random());
             Services.AddService(typeof(RessourcesManager<SpriteFont>), new RessourcesManager<SpriteFont>(this, "Fonts"));

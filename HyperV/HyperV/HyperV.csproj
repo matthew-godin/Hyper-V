@@ -76,7 +76,6 @@
     <Compile Include="Composants de base\RessourceDeBase.cs" />
     <Compile Include="Composants de base\RessourcesManager.cs" />
     <Compile Include="Composants de base\TextCentré.cs" />
-    <Compile Include="CubeTexturé.cs" />
     <Compile Include="HyperVGame.cs" />
     <Compile Include="Niveau.cs" />
     <Compile Include="Player.cs" />

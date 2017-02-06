@@ -48,11 +48,6 @@ namespace HyperV
             Vector3 positionCamera = Vector3.One;
         }
 
-        private void GénérerCubesFlottants(List<Vector2> listePoints)
-        {
-            Game.Components.Add(new TexturedCube(Game, 1f, new Vector3(1,1,1), new Vector3(10, 10, 10), "CielBlue", Vector3.One, STANDARD_UPDATE_INTERVAL));
-        }
-
         private void ReadLevelFile(string fileName)
         {
             StreamReader file = new StreamReader(FILE_PATH + fileName);

@@ -36,12 +36,14 @@ namespace HyperV
             Components.Add(new FPSDisplay(this, "Arial", Color.Red, FPS_COMPUTE_INTERVAL));
             Components.Add(new Jeu(this));
             Components.Add(new Player(this, UPDATE_INTERVAL_STANDARD));
+            Components.Add(new Niveau(this, "Models_Rockwall", "Texture_Rockwall", Vector3.Zero));
 
             Services.AddService(typeof(Random), new Random());
             Services.AddService(typeof(RessourcesManager<SpriteFont>), new RessourcesManager<SpriteFont>(this, "Fonts"));
             Services.AddService(typeof(RessourcesManager<SoundEffect>), new RessourcesManager<SoundEffect>(this, "Sounds"));
             Services.AddService(typeof(RessourcesManager<Song>), new RessourcesManager<Song>(this, "Songs"));
             Services.AddService(typeof(RessourcesManager<Texture2D>), new RessourcesManager<Texture2D>(this, "Textures"));
+            Services.AddService(typeof(RessourcesManager<Model>), new RessourcesManager<Model>(this, "Models"));
             Services.AddService(typeof(InputManager), InputMgr);
             Services.AddService(typeof(SubjectiveCamera), GameCamera);
             Services.AddService(typeof(SpriteBatch), new SpriteBatch(GraphicsDevice));

@@ -13,8 +13,9 @@ using System.IO;
 
 namespace HyperV
 {
-    public class HyperVGame : Microsoft.Xna.Framework.GameComponent
+    public class HyperVGame : Microsoft.Xna.Framework.DrawableGameComponent
     {
+        Skybox Skybox { get; set; }
         const string FILE_PATH = "../../";
         const float STANDARD_UPDATE_INTERVAL = 1f / 60f;
         Rectangle DisplayZone { get; set; }
@@ -37,7 +38,7 @@ namespace HyperV
             RessourcesManager<SoundEffect> gestionnaireDeSons = Game.Services.GetService(typeof(RessourcesManager<SoundEffect>)) as RessourcesManager<SoundEffect>;
             modelList = new List<string[]>();            
         }
-
+        
         public override void Update(GameTime gameTime)
         {
 
@@ -57,6 +58,6 @@ namespace HyperV
                 modelList.Add(lineRead.Split(';'));  //1.model name, 2.nom texture model, 3.position x, 4.position y, 5.position z, 6.scale
 
             }
-        } 
+        }        
     }
 }

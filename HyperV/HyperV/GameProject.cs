@@ -20,7 +20,7 @@ namespace HyperV
         const float UPDATE_INTERVAL_STANDARD = 1f / 60f;
         GraphicsDeviceManager GraphicsMgr { get; set; }
 
-        SubjectiveCamera GameCamera { get; set; }                
+        PlayerCamera GameCamera { get; set; }                
         InputManager InputMgr { get; set; }
 
         //GraphicsDeviceManager GraphicsMgr { get; set; }
@@ -49,7 +49,7 @@ namespace HyperV
             TextureMgr = new RessourcesManager<Texture2D>(this, "Textures");
             ModelMgr = new RessourcesManager<Model>(this, "Models");
             //GameCamera = new StableCamera(this, Vector3.Zero, objectPosition, Vector3.Up);
-            GameCamera = new SubjectiveCamera(this, Vector3.Zero, objectPosition, Vector3.Up, UPDATE_INTERVAL_STANDARD);
+            GameCamera = new PlayerCamera(this, Vector3.Zero, objectPosition, Vector3.Up, UPDATE_INTERVAL_STANDARD);
             InputMgr = new InputManager(this);
             Components.Add(InputMgr);
             Components.Add(new NightSkyBackground(this, "NightSky", UPDATE_INTERVAL_STANDARD));
@@ -58,8 +58,9 @@ namespace HyperV
             Components.Add(new BaseObject(this, "ship", OBJECT_SCALE, objectRotation, objectPosition));
             //Components.Add(new TexturePlane(this, 1f, Vector3.Zero, new Vector3(4, 4, -5), new Vector2(20, 20), new Vector2(40, 40), "Grass", UPDATE_INTERVAL_STANDARD));
             Services.AddService(typeof(RessourcesManager<Texture2D>), TextureMgr);
-            //Components.Add(new Grass(this, 1f, Vector3.Zero, new Vector3(0, 0, 0), new Vector2(256, 256), "Grass", UPDATE_INTERVAL_STANDARD));
-            Components.Add(new Maze(this, 1f, Vector3.Zero, new Vector3(0, 0, 0), new Vector3(256, 30, 256), "Grass", UPDATE_INTERVAL_STANDARD, "Maze"));
+            Grass grass = new Grass(this, 1f, Vector3.Zero, new Vector3(0, 0, 0), new Vector2(256, 256), "Grass", UPDATE_INTERVAL_STANDARD);
+            Components.Add(grass);
+            Services.AddService(typeof(Grass), grass);
             Components.Add(new FPSDisplay(this, "Arial", Color.Tomato, FPS_COMPUTE_INTERVAL));
             Services.AddService(typeof(RessourcesManager<SpriteFont>), FontMgr);
             Services.AddService(typeof(RessourcesManager<Model>), ModelMgr);

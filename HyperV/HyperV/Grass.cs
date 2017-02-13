@@ -48,7 +48,31 @@ namespace HyperV
         Vector2[,] TexturePts { get; set; }
         string NomTileTexture { get; set; }
 
-        public Grass(Game game, float initialScale, Vector3 initialRotation, Vector3 initialPosition, Vector2 span, string nomTileTexture, float updateInterval) : base(game, initialScale, initialRotation, initialPosition)
+
+        public Vector3 GetPositionWithHeight(Vector3 position, int height)
+        {
+            Vector3 positionWithHeight;
+            if(IsWithin(position.Z, VerticesPts[0,0].Z, VerticesPts[VerticesPts.GetLength(0)-1, VerticesPts.GetLength(1)-1].Z) &&
+                IsWithin(position.X, VerticesPts[0, 0].X, VerticesPts[VerticesPts.GetLength(0) - 1, VerticesPts.GetLength(1) - 1].X))
+            {
+                positionWithHeight = new Vector3(position.X, VerticesPts[0, 0].Y + height, position.Z);
+            }
+            else
+            {
+                positionWithHeight = position;
+            }
+            return positionWithHeight;
+        }
+
+        private bool IsWithin(float value, float thresholdA, float thresholdB)
+        {
+            return (value >= thresholdA && value <= thresholdB || value <= thresholdA && value >= thresholdB);
+        }
+
+        public Grass(Game game, float initialScale, Vector3 initialRotation,
+                     Vector3 initialPosition, Vector2 span, string nomTileTexture,
+                     float updateInterval) 
+            : base(game, initialScale, initialRotation, initialPosition)
         {
             NomTileTexture = nomTileTexture;
             UpdateInterval = updateInterval;

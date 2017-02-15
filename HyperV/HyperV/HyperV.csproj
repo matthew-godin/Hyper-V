@@ -60,7 +60,6 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Camera\Camera.cs" />
     <Compile Include="Camera\CameraSubjective.cs" />
     <Compile Include="Skybox.cs" />
     <Compile Include="HyperVGame.cs" />

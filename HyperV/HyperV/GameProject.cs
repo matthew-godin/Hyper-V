@@ -36,7 +36,7 @@ namespace HyperV
             Components.Add(new FPSDisplay(this, "Arial", Color.Red, FPS_COMPUTE_INTERVAL));
             Components.Add(new Jeu(this));
             Components.Add(new Player(this, UPDATE_INTERVAL_STANDARD));
-            Components.Add(new Niveau(this, "ship", new Vector3(0, -10, 0)));
+            Components.Add(new Niveau(this, "Models_Rockwall", new Vector3(0, -10, 0)));
             Components.Add(new Skybox(this, "Texture_Skybox"));
 
             Services.AddService(typeof(Random), new Random());

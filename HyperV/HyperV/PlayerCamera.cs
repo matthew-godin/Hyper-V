@@ -79,10 +79,10 @@ namespace HyperV
             TimeElapsedSinceUpdate += elapsedTime;
             if (TimeElapsedSinceUpdate >= UpdateInterval)
             {
-                MouseFunctions();
+                //MouseFunctions();
                 KeyboardFunctions();
 
-                ManageHeight();
+                //ManageHeight();
                 CréerPointDeView();
 
                 Game.Window.Title = Position.ToString();

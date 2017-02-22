@@ -17,18 +17,19 @@ namespace HyperV
         Texture2D Texture2D { get; set; }
 
         Vector3 Position { get; set; } //the position of the model in the world
-        float RotationModele { get; set; }
+        float Rotation { get; set; }
         PlayerCamera Camera { get; set; }
-        float AspectRatio { get; set; }
-        float Grosseur { get; set; }
+        float Scale { get; set; }
 
         public ModelCreator(Game game) : base(game) { }
 
-        public ModelCreator(Game game, string model3D, Vector3 position)
+        public ModelCreator(Game game, string model3D, Vector3 position, float scale, float rotation)
             : base(game)
         {
             Model3DName = model3D;
             Position = position;
+            Scale = scale;
+            Rotation = rotation;
         }
 
         protected override void LoadContent()
@@ -39,15 +40,7 @@ namespace HyperV
             
             Model3D = ModelManager.Find(Model3DName);
         }
-
-        public override void Initialize()
-        {
-            base.Initialize();
-            RotationModele = 0.0f;
-            AspectRatio = 1.0f;
-            Grosseur = 1f;
-        }
-        
+                
         public override void Draw(GameTime gameTime)
         {
             Matrix[] transforms = new Matrix[Model3D.Bones.Count];
@@ -58,7 +51,7 @@ namespace HyperV
                 foreach (BasicEffect effect in mesh.Effects)
                 {
                     effect.EnableDefaultLighting();
-                    effect.World = transforms[mesh.ParentBone.Index] * Matrix.CreateScale(new Vector3(0.05f, 0.05f, 0.05f)) * Matrix.CreateRotationY(RotationModele) * Matrix.CreateTranslation(Position);
+                    effect.World = transforms[mesh.ParentBone.Index] * Matrix.CreateScale(Scale) * Matrix.CreateRotationY(Rotation) * Matrix.CreateTranslation(Position);
                     effect.View = Camera.View;
                     effect.Projection = Camera.Projection;
                 }

@@ -17,7 +17,6 @@ namespace HyperV
         Camera GameCamera { get; set; }
         Song GameSong { get; set; }
         InputManager InputMgr { get; set; }
-        List<string> modelList { get; set; } //liste de tous les models a placer dans un niveau (qui sont dans le file texte)
 
         public HyperVGame(Game game)
             : base(game)
@@ -31,7 +30,6 @@ namespace HyperV
             RessourcesManager<Song> gestionnaireDeMusiques = Game.Services.GetService(typeof(RessourcesManager<Song>)) as RessourcesManager<Song>;
             InputMgr = Game.Services.GetService(typeof(InputManager)) as InputManager;
             RessourcesManager<SoundEffect> gestionnaireDeSons = Game.Services.GetService(typeof(RessourcesManager<SoundEffect>)) as RessourcesManager<SoundEffect>;
-            modelList = new List<string>();
             ReadLevelFile("Hub.txt");         
         }
         
@@ -45,12 +43,14 @@ namespace HyperV
             StreamReader file = new StreamReader(FILE_PATH + fileName);
             while (!file.EndOfStream)
             {
+                List<string> modelList = new List<string>();
                 string[] lineRead = file.ReadLine().Split(';');
                 foreach(string s in lineRead)
                 {
                     modelList.Add(s);  //0.model name, 1.position x, 2.position y, 3.position z, 4.scale, 5.rotation
                 }
-                ModelCreator model = new ModelCreator(Game, modelList[0], new Vector3(float.Parse(modelList[1]), float.Parse(modelList[2]), float.Parse(modelList[3])));
+                ModelCreator model = new ModelCreator(Game, modelList[0], new Vector3(float.Parse(modelList[1]), float.Parse(modelList[2]), float.Parse(modelList[3])),
+                                                            float.Parse(modelList[4]), float.Parse(modelList[5]));
                 Game.Components.Add(model);
             }
         }        

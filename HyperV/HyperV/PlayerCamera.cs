@@ -79,7 +79,7 @@ namespace HyperV
             TimeElapsedSinceUpdate += elapsedTime;
             if (TimeElapsedSinceUpdate >= UpdateInterval)
             {
-                //MouseFunctions();
+                MouseFunctions();
                 KeyboardFunctions();
 
                 //ManageHeight();

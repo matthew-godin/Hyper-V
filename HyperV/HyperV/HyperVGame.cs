@@ -50,7 +50,7 @@ namespace HyperV
                 {
                     modelList.Add(s);  //0.model name, 1.position x, 2.position y, 3.position z, 4.scale, 5.rotation
                 }
-                Niveau model = new Niveau(Game, modelList[0], new Vector3(float.Parse(modelList[1]), float.Parse(modelList[2]), float.Parse(modelList[3])));
+                ModelCreator model = new ModelCreator(Game, modelList[0], new Vector3(float.Parse(modelList[1]), float.Parse(modelList[2]), float.Parse(modelList[3])));
                 Game.Components.Add(model);
             }
         }        

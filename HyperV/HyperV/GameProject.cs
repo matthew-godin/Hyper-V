@@ -28,17 +28,21 @@ namespace HyperV
 
         protected override void Initialize()
         {
+            //"2D"
+            Components.Add(new FPSDisplay(this, "Arial", Color.Red, FPS_COMPUTE_INTERVAL));
             InputMgr = new InputManager(this);
             Components.Add(InputMgr);
+            Components.Add(new Skybox(this, "Texture_Skybox"));
+
+            //"3D"
+            Components.Add(new Displayer3D(this));
             GameCamera = new PlayerCamera(this, Vector3.Zero, Vector3.One, Vector3.Up, UPDATE_INTERVAL_STANDARD);
             Components.Add(GameCamera);
-            Components.Add(new Displayer3D(this));
-            Components.Add(new FPSDisplay(this, "Arial", Color.Red, FPS_COMPUTE_INTERVAL));
             Components.Add(new Jeu(this));
-            Components.Add(new Skybox(this, "Texture_Skybox"));
 
             Services.AddService(typeof(Random), new Random());
 
+            //RessourcesManager
             Services.AddService(typeof(RessourcesManager<SpriteFont>), new RessourcesManager<SpriteFont>(this, "Fonts"));
             Services.AddService(typeof(RessourcesManager<SoundEffect>), new RessourcesManager<SoundEffect>(this, "Sounds"));
             Services.AddService(typeof(RessourcesManager<Song>), new RessourcesManager<Song>(this, "Songs"));
@@ -47,6 +51,7 @@ namespace HyperV
             Services.AddService(typeof(RessourcesManager<Model>), new RessourcesManager<Model>(this, "Models"));
             Services.AddService(typeof(RessourcesManager<Effect>), new RessourcesManager<Effect>(this, "Effects"));
 
+            //autre services
             Services.AddService(typeof(InputManager), InputMgr);
             Services.AddService(typeof(PlayerCamera), GameCamera);
             Services.AddService(typeof(SpriteBatch), new SpriteBatch(GraphicsDevice));

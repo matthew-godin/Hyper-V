@@ -20,8 +20,8 @@ namespace HyperV
         const float UPDATE_INTERVAL_STANDARD = 1f / 60f;
         GraphicsDeviceManager GraphicsMgr { get; set; }
 
-        Camera GameCamera { get; set; }  
-        Maze Maze { get; set; }              
+        Camera GameCamera { get; set; }
+        Maze Maze { get; set; }
         InputManager InputMgr { get; set; }
 
         //GraphicsDeviceManager GraphicsMgr { get; set; }
@@ -58,7 +58,7 @@ namespace HyperV
             //GameCamera = new SubjectiveCamera(this, new Vector3(0, 0, 0), objectPosition, Vector3.Up, UPDATE_INTERVAL_STANDARD);
             InputMgr = new InputManager(this);
             Components.Add(InputMgr);
-            Components.Add(new NightSkyBackground(this, "NightSky", UPDATE_INTERVAL_STANDARD));
+            //Components.Add(new NightSkyBackground(this, "NightSky", UPDATE_INTERVAL_STANDARD));
             Components.Add(new Displayer3D(this));
             Components.Add(new BaseObject(this, "ship", OBJECT_SCALE, objectRotation, objectPosition));
             //Components.Add(new TexturePlane(this, 1f, Vector3.Zero, new Vector3(4, 4, -5), new Vector2(20, 20), new Vector2(40, 40), "Grass", UPDATE_INTERVAL_STANDARD));
@@ -76,7 +76,7 @@ namespace HyperV
             Components.Add(GameCamera);
             Services.AddService(typeof(RessourcesManager<Model>), ModelMgr);
             //Components.Add(new Skybox(this, "Texture_Skybox"));
-                    
+
             Components.Add(new FPSDisplay(this, "Arial", Color.Tomato, FPS_COMPUTE_INTERVAL));
             Services.AddService(typeof(RessourcesManager<SpriteFont>), FontMgr);
             Services.AddService(typeof(InputManager), InputMgr);
@@ -106,4 +106,6 @@ namespace HyperV
         }
     }
 }
+
+
 

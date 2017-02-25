@@ -207,9 +207,6 @@ namespace HyperV
         //#endregion
 
 
-
-
-
         const float STANDARD_UPDATE_INTERVAL = 1f / 60f;
         const float ACCELERATION = 0.001f;
         const float INITIAL_ROTATION_SPEED = 5f;

@@ -53,7 +53,7 @@ namespace HyperV
             //GameCamera = new SubjectiveCamera(this, new Vector3(0, 0, 0), objectPosition, Vector3.Up, UPDATE_INTERVAL_STANDARD);
             InputMgr = new InputManager(this);
             Components.Add(InputMgr);
-            //Components.Add(new NightSkyBackground(this, "NightSky", UPDATE_INTERVAL_STANDARD));
+            Components.Add(new NightSkyBackground(this, "NightSky", UPDATE_INTERVAL_STANDARD));
             Components.Add(new Displayer3D(this));
             Components.Add(new BaseObject(this, "ship", OBJECT_SCALE, objectRotation, objectPosition));
             //Components.Add(new TexturePlane(this, 1f, Vector3.Zero, new Vector3(4, 4, -5), new Vector2(20, 20), new Vector2(40, 40), "Grass", UPDATE_INTERVAL_STANDARD));
@@ -92,7 +92,7 @@ namespace HyperV
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Orchid);
+            GraphicsDevice.Clear(Color.Black);
             base.Draw(gameTime);
         }
     }

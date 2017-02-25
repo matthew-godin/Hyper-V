@@ -20,7 +20,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using XNAProject;
-
+using System.IO;
 
 namespace HyperV
 {
@@ -59,6 +59,7 @@ namespace HyperV
         int NumTexels { get; set; }
         Color[] TextureData { get; set; }
         Vector3 Range { get; set; }
+        bool[,] Collisions { get; set; }
 
         public Maze(Game game, float initialScale, Vector3 initialRotation, Vector3 initialPosition, Vector3 range, string tileTextureName, float updateInterval, string mazeImageName) : base(game, initialScale, initialRotation, initialPosition)
         {
@@ -79,6 +80,8 @@ namespace HyperV
             InitializeMazeData();
             Origin = new Vector3(/*-Range.X / 2, 0, -Range.Z / 2*/0, 0, 0);
             VerticesPositions = new Vector3[MazeMap.Width * 2 * 3, MazeMap.Height * 2 * 3];
+            Collisions = new bool[MazeMap.Width, MazeMap.Height];
+            CreateCollisions();
             CreateVerticesPositions();
             CreateTexturePositions();
             Position = InitialPosition;
@@ -102,18 +105,35 @@ namespace HyperV
             WallTexturePositions[1, 1] = new Vector2(1, 1);
         }
 
+        void CreateCollisions()
+        {
+            StreamWriter s = new StreamWriter("../../test.txt");
+            for (int i = 0; i < Collisions.GetLength(0); ++i)
+            {
+                for (int j = 0; j < Collisions.GetLength(1); ++j)
+                {
+                    Collisions[i, j] = TextureData[j * MazeMap.Height + i].B == 0;
+                    s.Write(Collisions[i, j] + " ");
+                }
+                s.WriteLine();
+            }
+            s.Close();
+        }
+
         void CreateVerticesPositions()
         {
             //Delta = new Vector2(Range.X / NumRows, Range.Z / NumColumns);
+            bool collision;
             Delta = new Vector2(1.66666f, 1.66666f);
-            for (int i = 0; i < VerticesPositions.GetLength(0) - 6; i += 6)
+            for (int i = 0; i < VerticesPositions.GetLength(0); i += 6)
             {
-                for (int j = 0; j < VerticesPositions.GetLength(1) - 6; j += 6)
+                for (int j = 0; j < VerticesPositions.GetLength(1); j += 6)
                 {
-                    VerticesPositions[i, j] = Origin + new Vector3(Delta.X * i - 5, TextureData[i / 6 * MazeMap.Height + j / 6].B == 0 ? 10 : 0, Delta.Y * j - 5);
-                    VerticesPositions[i + 1, j] = Origin + new Vector3(Delta.X * i + 5, TextureData[i / 6 * MazeMap.Height + j / 6].B == 0 ? 10 : 0, Delta.Y * j - 5);
-                    VerticesPositions[i, j + 1] = Origin + new Vector3(Delta.X * i - 5, TextureData[i / 6 * MazeMap.Height + j / 6].B == 0 ? 10 : 0, Delta.Y * j + 5);
-                    VerticesPositions[i + 1, j + 1] = Origin + new Vector3(Delta.X * i + 5, TextureData[i / 6 * MazeMap.Height + j / 6].B == 0 ? 10 : 0, Delta.Y * j + 5);
+                    collision = TextureData[j / 6 * MazeMap.Height + i / 6].B == 0;
+                    VerticesPositions[i, j] = Origin + new Vector3(Delta.X * i - 5, collision ? 10 : 0, Delta.Y * j - 5);
+                    VerticesPositions[i + 1, j] = Origin + new Vector3(Delta.X * i + 5, collision ? 10 : 0, Delta.Y * j - 5);
+                    VerticesPositions[i, j + 1] = Origin + new Vector3(Delta.X * i - 5, collision ? 10 : 0, Delta.Y * j + 5);
+                    VerticesPositions[i + 1, j + 1] = Origin + new Vector3(Delta.X * i + 5, collision ? 10 : 0, Delta.Y * j + 5);
 
                     VerticesPositions[i + 2, j] = Origin + new Vector3(Delta.X * i + 5, VerticesPositions[i, j].Y, Delta.Y * j - 5);
                     VerticesPositions[i + 3, j] = Origin + new Vector3(Delta.X * i + 5, VerticesPositions[i + 1, j].Y - 10, Delta.Y * j - 5);
@@ -159,12 +179,12 @@ namespace HyperV
             {
                 for (int i = 0; i < NumRows * 6; i += 6)
                 {
-                    Vertices[++cpt] = new VertexPositionTexture(VerticesPositions[i, j], TileTexturePositions[1, 1]);
-                    Vertices[++cpt] = new VertexPositionTexture(VerticesPositions[i + 1 == maxI ? i : i + 1, j], TileTexturePositions[1, 0]);
-                    Vertices[++cpt] = new VertexPositionTexture(VerticesPositions[i, j + 1 == maxJ ? j : j + 1], TileTexturePositions[0, 1]);
+                    Vertices[++cpt] = new VertexPositionTexture(VerticesPositions[i, j], TileTexturePositions[0, 0]);
                     Vertices[++cpt] = new VertexPositionTexture(VerticesPositions[i + 1 == maxI ? i : i + 1, j], TileTexturePositions[0, 1]);
-                    Vertices[++cpt] = new VertexPositionTexture(VerticesPositions[i + 1 == maxI ? i : i + 1, j + 1 == maxJ ? j : j + 1], TileTexturePositions[1, 0]);
-                    Vertices[++cpt] = new VertexPositionTexture(VerticesPositions[i, j + 1 == maxJ ? j : j + 1], TileTexturePositions[0, 0]);
+                    Vertices[++cpt] = new VertexPositionTexture(VerticesPositions[i, j + 1 == maxJ ? j : j + 1], TileTexturePositions[1, 0]);
+                    Vertices[++cpt] = new VertexPositionTexture(VerticesPositions[i + 1 == maxI ? i : i + 1, j], TileTexturePositions[0, 1]);
+                    Vertices[++cpt] = new VertexPositionTexture(VerticesPositions[i + 1 == maxI ? i : i + 1, j + 1 == maxJ ? j : j + 1], TileTexturePositions[1, 1]);
+                    Vertices[++cpt] = new VertexPositionTexture(VerticesPositions[i, j + 1 == maxJ ? j : j + 1], TileTexturePositions[1, 0]);
 
                     Vertices[++cpt] = new VertexPositionTexture(VerticesPositions[i + 2 == maxI ? i : i + 2, j], WallTexturePositions[0, 0]);
                     Vertices[++cpt] = new VertexPositionTexture(VerticesPositions[i + 3 == maxI ? i : i + 3, j], WallTexturePositions[0, 1]);
@@ -220,6 +240,31 @@ namespace HyperV
                 GraphicsDevice.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleList, Vertices, 0, NbTriangles);
             }
             //GraphicsDevice.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleList, Vertices, 0, NbTriangles);
+        }
+
+        public Vector3 GetPositionWithHeight(Vector3 position, int height)
+        {
+            Vector3 positionWithHeight;
+            if (IsWithin(position.Z, VerticesPositions[0, 0].Z, VerticesPositions[VerticesPositions.GetLength(0) - 1, VerticesPositions.GetLength(1) - 1].Z) && IsWithin(position.X, VerticesPositions[0, 0].X, VerticesPositions[VerticesPositions.GetLength(0) - 1, VerticesPositions.GetLength(1) - 1].X))
+            {
+                positionWithHeight = new Vector3(position.X, VerticesPositions[0, 0].Y + height, position.Z);
+            }
+            else
+            {
+                positionWithHeight = position;
+            }
+            return positionWithHeight;
+        }
+
+        bool IsWithin(float value, float thresholdA, float thresholdB)
+        {
+            return (value >= thresholdA && value <= thresholdB || value <= thresholdA && value >= thresholdB);
+        }
+
+        public bool CheckForCollisions(Vector3 position)
+        {
+            Game.Window.Title = position.ToString();
+            return Collisions[(int)((position.X + 5) / 10f), (int)((position.Z + 5) / 10f)]; //|| Collisions[(int)((position.X + 3) / 10f), (int)((position.Z + 5) / 10f)] || Collisions[(int)((position.X + 5) / 10f), (int)((position.Z + 3) / 10f)] || Collisions[(int)((position.X + 7) / 10f), (int)((position.Z + 5) / 10f)] || Collisions[(int)((position.X + 5) / 10f), (int)((position.Z + 7) / 10f)] || Collisions[(int)((position.X + 3) / 10f), (int)((position.Z + 3) / 10f)] || Collisions[(int)((position.X + 7) / 10f), (int)((position.Z + 7) / 10f)];
         }
     }
 }

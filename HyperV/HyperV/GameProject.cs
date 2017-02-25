@@ -39,7 +39,12 @@ namespace HyperV
             GraphicsMgr.SynchronizeWithGreenicalRetrace = false;
             IsFixedTimeStep = false;
             IsMouseVisible = false;
+            GraphicsMgr.PreferredBackBufferHeight = 1080;
+            GraphicsMgr.PreferredBackBufferWidth = 1920;
+
         }
+
+        Grass Grass0 { get; set; }
 
         protected override void Initialize()
         {
@@ -58,12 +63,13 @@ namespace HyperV
             Components.Add(new BaseObject(this, "ship", OBJECT_SCALE, objectRotation, objectPosition));
             //Components.Add(new TexturePlane(this, 1f, Vector3.Zero, new Vector3(4, 4, -5), new Vector2(20, 20), new Vector2(40, 40), "Grass", UPDATE_INTERVAL_STANDARD));
             Services.AddService(typeof(RessourcesManager<Texture2D>), TextureMgr);
-            Grass grass = new Grass(this, 1f, Vector3.Zero, new Vector3(0, 0, 0), new Vector2(256, 256), "Grass", UPDATE_INTERVAL_STANDARD);
+            //Grass grass = new Grass(this, 1f, Vector3.Zero, new Vector3(0, 0, 0), new Vector2(256, 256), "Grass", UPDATE_INTERVAL_STANDARD);
             //Components.Add(grass);
             Maze = new Maze(this, 1f, Vector3.Zero, new Vector3(0, 0, 0), new Vector3(256, 5, 256), "Grass", UPDATE_INTERVAL_STANDARD, "Maze");
             Components.Add(Maze);
+
             Services.AddService(typeof(Maze), Maze);
-            Services.AddService(typeof(Grass), grass);
+            //Services.AddService(typeof(Grass), grass);
             GameCamera = new PlayerCamera(this, new Vector3(0, 4, 60), new Vector3(20, 0, 0), Vector3.Up, UPDATE_INTERVAL_STANDARD);
             Components.Add(GameCamera);
             Components.Add(new FPSDisplay(this, "Arial", Color.Tomato, FPS_COMPUTE_INTERVAL));
@@ -79,7 +85,7 @@ namespace HyperV
         {
             ManageKeyboard();
             Window.Title = GameCamera.Position.ToString();
-            base.Update(gameTime);            
+            base.Update(gameTime);
         }
 
         private void ManageKeyboard()

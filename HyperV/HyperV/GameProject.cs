@@ -53,14 +53,14 @@ namespace HyperV
             //GameCamera = new SubjectiveCamera(this, new Vector3(0, 0, 0), objectPosition, Vector3.Up, UPDATE_INTERVAL_STANDARD);
             InputMgr = new InputManager(this);
             Components.Add(InputMgr);
-            //Components.Add(new NightSkyBackground(this, "NightSky", UPDATE_INTERVAL_STANDARD));
+            Components.Add(new NightSkyBackground(this, "NightSky", UPDATE_INTERVAL_STANDARD));
             Components.Add(new Displayer3D(this));
             Components.Add(new BaseObject(this, "ship", OBJECT_SCALE, objectRotation, objectPosition));
             //Components.Add(new TexturePlane(this, 1f, Vector3.Zero, new Vector3(4, 4, -5), new Vector2(20, 20), new Vector2(40, 40), "Grass", UPDATE_INTERVAL_STANDARD));
             Services.AddService(typeof(RessourcesManager<Texture2D>), TextureMgr);
             Grass grass = new Grass(this, 1f, Vector3.Zero, new Vector3(0, 0, 0), new Vector2(256, 256), "Grass", UPDATE_INTERVAL_STANDARD);
             //Components.Add(grass);
-            Maze = new Maze(this, 1f, Vector3.Zero, new Vector3(0, 0, 0), new Vector3(256, 5, 256), "Grass", UPDATE_INTERVAL_STANDARD, "test5");
+            Maze = new Maze(this, 1f, Vector3.Zero, new Vector3(0, 0, 0), new Vector3(256, 5, 256), "Grass", UPDATE_INTERVAL_STANDARD, "Maze");
             Components.Add(Maze);
             Services.AddService(typeof(Maze), Maze);
             Services.AddService(typeof(Grass), grass);
@@ -92,7 +92,7 @@ namespace HyperV
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Orchid);
+            GraphicsDevice.Clear(Color.Black);
             base.Draw(gameTime);
         }
     }

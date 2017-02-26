@@ -79,8 +79,6 @@ namespace HyperV
             //Components.Add(GameCamera);
             Services.AddService(typeof(RessourcesManager<Model>), ModelMgr);
             ////Components.Add(new Skybox(this, "Texture_Skybox"));
-
-            
             
             Components.Add(new FPSDisplay(this, "Arial", Color.Tomato, FPS_COMPUTE_INTERVAL));
             Services.AddService(typeof(RessourcesManager<SpriteFont>), FontMgr);

@@ -78,6 +78,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="PlayerCamera.cs" />
+    <Compile Include="Ceiling.cs" />
     <Compile Include="ModelCreator.cs" />
     <Compile Include="CutscenePlayer.cs" />
     <Compile Include="Grass.cs" />
@@ -88,8 +89,10 @@
     <Compile Include="GameProject.cs" />
     <Compile Include="SkipCutsceneLabel.cs" />
     <Compile Include="Skybox.cs" />
+    <Compile Include="Walls.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Data.txt" />
     <Content Include="Game.ico" />
     <Content Include="GameThumbnail.png">
       <XnaPlatformSpecific>true</XnaPlatformSpecific>

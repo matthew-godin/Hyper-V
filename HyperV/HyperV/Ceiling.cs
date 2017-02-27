@@ -1,12 +1,12 @@
 /*
-Grass.cs
---------
+Ceiling.cs
+----------
 
 By Matthew Godin
 
-Role : Used to create a flat grass surface
+Role : Used to create a flat ceiling surface
 
-Created : 2/13/17
+Created : 2/27/17
 */
 using System;
 using System.Collections.Generic;
@@ -26,7 +26,7 @@ namespace HyperV
     /// <summary>
     /// This is a game component that implements IUpdateable.
     /// </summary>
-    public class Grass : BasicPrimitive
+    public class Ceiling : BasicPrimitive
     {
         Vector3 Position { get; set; }
         float UpdateInterval { get; set; }
@@ -52,7 +52,7 @@ namespace HyperV
         public Vector3 GetPositionWithHeight(Vector3 position, int height)
         {
             Vector3 positionWithHeight;
-            if(IsWithin(position.Z, VerticesPts[0,0].Z, VerticesPts[VerticesPts.GetLength(0)-1, VerticesPts.GetLength(1)-1].Z) &&
+            if (IsWithin(position.Z, VerticesPts[0, 0].Z, VerticesPts[VerticesPts.GetLength(0) - 1, VerticesPts.GetLength(1) - 1].Z) &&
                 IsWithin(position.X, VerticesPts[0, 0].X, VerticesPts[VerticesPts.GetLength(0) - 1, VerticesPts.GetLength(1) - 1].X))
             {
                 positionWithHeight = new Vector3(position.X, VerticesPts[0, 0].Y + height, position.Z);
@@ -69,9 +69,9 @@ namespace HyperV
             return (value >= thresholdA && value <= thresholdB || value <= thresholdA && value >= thresholdB);
         }
 
-        public Grass(Game game, float initialScale, Vector3 initialRotation,
+        public Ceiling(Game game, float initialScale, Vector3 initialRotation,
                      Vector3 initialPosition, Vector2 span, string nomTileTexture,
-                     float updateInterval) 
+                     float updateInterval)
             : base(game, initialScale, initialRotation, initialPosition)
         {
             NomTileTexture = nomTileTexture;
@@ -93,8 +93,8 @@ namespace HyperV
         private void CreatePointArray()
         {
             VerticesPts[0, 0] = new Vector3(Origin.X, Origin.Y, Origin.Z);
-            VerticesPts[1, 0] = new Vector3(Origin.X - Delta.X, Origin.Y, Origin.Z);
-            VerticesPts[0, 1] = new Vector3(Origin.X, Origin.Y, Origin.Z + Delta.Y);
+            VerticesPts[0, 1] = new Vector3(Origin.X - Delta.X, Origin.Y, Origin.Z);
+            VerticesPts[1, 0] = new Vector3(Origin.X, Origin.Y, Origin.Z + Delta.Y);
             VerticesPts[1, 1] = new Vector3(Origin.X - Delta.X, Origin.Y, Origin.Z + Delta.Y);
         }
 

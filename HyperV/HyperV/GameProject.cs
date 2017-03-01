@@ -49,6 +49,8 @@ namespace HyperV
         RessourcesManager<Video> VideoManager { get; set; }
         CutscenePlayer CutscenePlayer { get; set; }
         Walls Walls { get; set; }
+        Character Robot { get; set; }
+        List<Character> Characters { get; set; }
 
         protected override void Initialize()
         {
@@ -65,7 +67,11 @@ namespace HyperV
             Components.Add(new NightSkyBackground(this, "NightSky", UPDATE_INTERVAL_STANDARD));
             Components.Add(new Displayer3D(this));
             //Components.Add(new BaseObject(this, "Robot", OBJECT_SCALE, objectRotation, objectPosition));
-            Components.Add(new Character(this, "Robot", OBJECT_SCALE, objectRotation, objectPosition, "../../../CharacterScripts/Robot.txt", "FaceImages/Robot", "ScriptRectangle"));
+            Characters = new List<Character>();
+            Robot = new Character(this, "Robot", OBJECT_SCALE, objectRotation, objectPosition, "../../../CharacterScripts/Robot.txt", "FaceImages/Robot", "ScriptRectangle");
+            Components.Add(Robot);
+            Characters.Add(Robot);
+            Services.AddService(typeof(List<Character>), Characters);
             //Components.Add(new TexturePlane(this, 1f, Vector3.Zero, new Vector3(4, 4, -5), new Vector2(20, 20), new Vector2(40, 40), "Grass", UPDATE_INTERVAL_STANDARD));
             Services.AddService(typeof(RessourcesManager<Texture2D>), TextureMgr);
             Grass grass = new Grass(this, 1f, Vector3.Zero, new Vector3(20, -20, 50), new Vector2(20, 20), "Grass", UPDATE_INTERVAL_STANDARD);

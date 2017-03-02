@@ -95,13 +95,12 @@ namespace HyperV
 
         void Level1()
         {
-            //Components.Add(new NightSkyBackground(this, "NightSky", UPDATE_INTERVAL_STANDARD));
+            Components.Add(new NightSkyBackground(this, "NightSky", UPDATE_INTERVAL_STANDARD));
             Components.Add(new Displayer3D(this));
             Camera = new PlayerCamera(this, new Vector3(0, -16, 60), new Vector3(20, 0, 0), Vector3.Up, UPDATE_INTERVAL_STANDARD);
             Services.AddService(typeof(Camera), Camera);
             Robot = new Character(this, "Robot", 0.02f, new Vector3(0, MathHelper.PiOver2, 0), new Vector3(-50, -20, 60), "../../../CharacterScripts/Robot.txt", "FaceImages/Robot", "ScriptRectangle");
             Characters.Add(Robot);
-            Components.Add(Robot);
             Grass grass = new Grass(this, 1f, Vector3.Zero, new Vector3(20, -20, 50), new Vector2(20, 20), "Grass", UPDATE_INTERVAL_STANDARD);
             Components.Add(grass);
             Services.AddService(typeof(Grass), grass);
@@ -123,6 +122,10 @@ namespace HyperV
                     Components.Add(new Ceiling(this, 1f, Vector3.Zero, new Vector3(60 - i * 20, 0, 10 + j * 20), new Vector2(20, 20), "Grass", UPDATE_INTERVAL_STANDARD));
                 }
             }
+            Components.Add(Robot);
+            Robot.AddLabel();
+            Components.Remove(CutscenePlayer.Loading);
+            //Components.Add(new FPSDisplay(this, "Arial", Color.Tomato, FPS_COMPUTE_INTERVAL));
         }
 
         void Level0()
@@ -237,6 +240,11 @@ namespace HyperV
         {
             if (InputManager.IsPressed(Keys.Escape))
             {
+                string path = "F:/programming/HyperV/WPFINTERFACE/Launching Interface/bin/Debug/Launching Interface.exe";
+                ProcessStartInfo p = new ProcessStartInfo();
+                p.FileName = path;
+                p.WorkingDirectory = System.IO.Path.GetDirectoryName(path);
+                Process.Start(p);
                 Exit();
             }
         }

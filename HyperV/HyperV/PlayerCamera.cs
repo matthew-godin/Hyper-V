@@ -221,8 +221,8 @@ namespace HyperV
 
         Vector3 Direction { get; set; }
         Vector3 Lateral { get; set; }
-        //Maze Maze { get; set; }
-        Grass Grass { get; set; }
+        Maze Maze { get; set; }
+        //Grass Grass { get; set; }
         Walls Walls { get; set; }
         float TranslationSpeed { get; set; }
         float SpeedRotation { get; set; }
@@ -252,9 +252,9 @@ namespace HyperV
             TimeElapsedSinceUpdate = 0;
             base.Initialize();
             InputMgr = Game.Services.GetService(typeof(InputManager)) as InputManager;
-            //Maze = Game.Services.GetService(typeof(Maze)) as Maze;
-            Grass = Game.Services.GetService(typeof(Grass)) as Grass;
-            Walls = Game.Services.GetService(typeof(Walls)) as Walls;
+            Maze = Game.Services.GetService(typeof(Maze)) as Maze;
+            //Grass = Game.Services.GetService(typeof(Grass)) as Grass;
+            //Walls = Game.Services.GetService(typeof(Walls)) as Walls;
             Characters = Game.Services.GetService(typeof(List<Character>)) as List<Character>;
             CurrentMousePosition = new Point(Game.Window.ClientBounds.Width / 2, Game.Window.ClientBounds.Height / 2);
             PreviousMousePosition = new Point(CurrentMousePosition.X, CurrentMousePosition.Y);
@@ -364,18 +364,18 @@ namespace HyperV
             Lateral = Vector3.Cross(Direction, VerticalOrientation);
             Position += displacementDirection * Direction;
             Position -= lateralDisplacement * Lateral;
-            //if (Maze.CheckForCollisions(Position))
-            //{
-            //    Position -= displacementDirection * Direction;
-            //    Position += lateralDisplacement * Lateral;
-            //}
-            Vector3 newDirection = new Vector3(0, 0, 0);
-            if (Walls.CheckForCollisions(Position, ref newDirection, Direction) || CheckForCharacterCollision())
+            if (Maze.CheckForCollisions(Position))
             {
                 Position -= displacementDirection * Direction;
-                //Position += displacementDirection * newDirection;
                 Position += lateralDisplacement * Lateral;
             }
+            //Vector3 newDirection = new Vector3(0, 0, 0);
+            //if (Walls.CheckForCollisions(Position, ref newDirection, Direction) || CheckForCharacterCollision())
+            //{
+            //    Position -= displacementDirection * Direction;
+            //    //Position += displacementDirection * newDirection;
+            //    Position += lateralDisplacement * Lateral;
+            //}
         }
 
         const float MAX_DISTANCE = 4.5f;
@@ -434,7 +434,7 @@ namespace HyperV
 
         private void ManageHeight()
         {
-            Position = Grass.GetPositionWithHeight(Position, CHARACTER_HEIGHT);
+            Position = Maze.GetPositionWithHeight(Position, CHARACTER_HEIGHT);//Grass.GetPositionWithHeight(Position, CHARACTER_HEIGHT);
         }
 
         private int ManageKey(Keys touche)

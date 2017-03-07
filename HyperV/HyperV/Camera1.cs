@@ -18,7 +18,7 @@ namespace HyperV
         const float RAYON_COLLISION = 1f;
         const int CHARACTER_HEIGHT = -6;
 
-        Vector3 Direction { get; set; }
+        public Vector3 Direction { get; private set; }
         Vector3 Lateral { get; set; }
         Grass Grass { get; set; }
         Walls Walls { get; set; }

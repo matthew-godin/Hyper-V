@@ -41,9 +41,12 @@ namespace HyperV
         Rectangle ScriptRectanglePosition { get; set; }
         string ScriptRectangleName { get; set; }
         Vector2 TextPosition { get; set; }
+        Camera1 Camera { get; set; }
+        Character Character { get; set; }
 
-        public CharacterScript(Game game, string faceImageName, string textFile, string scriptRectangleName) : base(game)
+        public CharacterScript(Game game, Character character, string faceImageName, string textFile, string scriptRectangleName) : base(game)
         {
+            Character = character;
             FaceImageName = faceImageName;
             TextFile = textFile;
             ScriptRectangleName = scriptRectangleName;
@@ -72,6 +75,7 @@ namespace HyperV
             ScriptRectangle = TextureManager.Find(ScriptRectangleName);
             InputManager = Game.Services.GetService(typeof(InputManager)) as InputManager;
             FontManager = Game.Services.GetService(typeof(RessourcesManager<SpriteFont>)) as RessourcesManager<SpriteFont>;
+            Camera = Game.Services.GetService(typeof(Camera)) as Camera1;
             Font = FontManager.Find("Arial");
             ReadScript();
         }
@@ -93,11 +97,28 @@ namespace HyperV
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         public override void Update(GameTime gameTime)
         {
-            if (InputManager.IsKeyboardActivated && InputManager.IsNewKey(Keys.Space))
+            float? collision = Character.Collision(new Ray(Camera.Position, Camera.Direction));
+            if (InputManager.IsKeyboardActivated && InputManager.IsNewKey(Keys.Space) && collision <= 5 && collision != null)
             {
                 Visible = !Visible;
             }
         }
+
+        //void ManageGrabbing()
+        //{
+        //    Ray visor = new Ray(Position, Direction);
+
+        //    foreach (GrabbableSphere grabbableSphere in Game.Components.Where(component => component is GrabbableSphere))
+        //    {
+        //        Game.Window.Title = grabbableSphere.IsColliding(visor).ToString();
+        //        if (grabbableSphere.IsColliding(visor) <= 45 &&
+        //            grabbableSphere.IsColliding(visor) != null &&
+        //            (InputMgr.IsNewLeftClick() || InputMgr.IsOldLeftClick()))
+        //        {
+        //            grabbableSphere.IsGrabbed = true;
+        //        }
+        //    }
+        //}
 
         public override void Draw(GameTime gameTime)
         {

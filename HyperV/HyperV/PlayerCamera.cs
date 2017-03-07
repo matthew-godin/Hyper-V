@@ -240,7 +240,7 @@ namespace HyperV
            : base(game)
         {
             UpdateInterval = updateInterval;
-            CreateViewingFrustum(OBJECTIVE_OPENNESS, NEAR_PLANE_DISTANCE, FAR_PLANE_DISTANCE);
+            CreateViewingFrustum(OBJECTIVE_OPENNESS, NEAR_PLANE_DISTANCE, 100); // 500 FAR_PLANE_DISTANCE
             CreateLookAt(cameraPosition, target, orientation);
             Height = cameraPosition.Y;
         }

@@ -30,9 +30,9 @@ namespace HyperV
             RessourcesManager<Song> gestionnaireDeMusiques = Game.Services.GetService(typeof(RessourcesManager<Song>)) as RessourcesManager<Song>;
             InputMgr = Game.Services.GetService(typeof(InputManager)) as InputManager;
             RessourcesManager<SoundEffect> gestionnaireDeSons = Game.Services.GetService(typeof(RessourcesManager<SoundEffect>)) as RessourcesManager<SoundEffect>;
-            ReadLevelFile("Hub.txt");         
+            ReadLevelFile("Hub.txt");
         }
-        
+
         public override void Update(GameTime gameTime)
         {
 
@@ -45,7 +45,7 @@ namespace HyperV
             {
                 List<string> modelList = new List<string>();
                 string[] lineRead = file.ReadLine().Split(';');
-                foreach(string s in lineRead)
+                foreach (string s in lineRead)
                 {
                     modelList.Add(s);  //0.model name, 1.position x, 2.position y, 3.position z, 4.scale, 5.rotation
                 }
@@ -53,6 +53,6 @@ namespace HyperV
                                                             float.Parse(modelList[4]), float.Parse(modelList[5]));
                 Game.Components.Add(model);
             }
-        }        
+        }
     }
 }

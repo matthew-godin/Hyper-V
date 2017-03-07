@@ -37,10 +37,10 @@ namespace HyperV
             Camera = Game.Services.GetService(typeof(PlayerCamera)) as PlayerCamera;
             ModelManager = Game.Services.GetService(typeof(RessourcesManager<Model>)) as RessourcesManager<Model>;
             TextureManager = Game.Services.GetService(typeof(RessourcesManager<Texture2D>)) as RessourcesManager<Texture2D>;
-            
+
             Model3D = ModelManager.Find(Model3DName);
         }
-                
+
         public override void Draw(GameTime gameTime)
         {
             Matrix[] transforms = new Matrix[Model3D.Bones.Count];

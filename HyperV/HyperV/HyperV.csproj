@@ -89,6 +89,7 @@
     <Compile Include="HyperVGame.cs" />
     <Compile Include="Maze.cs" />
     <Compile Include="Portal.cs" />
+    <Compile Include="PressSpaceLabel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="GameProject.cs" />

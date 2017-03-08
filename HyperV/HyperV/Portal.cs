@@ -51,6 +51,7 @@ namespace HyperV
         Vector2[,] TexturePts { get; set; }
         string NomTileTexture { get; set; }
         float Radius { get; set; }
+        Vector3 CenterPosition { get; set; }
 
         private bool IsWithin(float value, float thresholdA, float thresholdB)
         {
@@ -62,8 +63,8 @@ namespace HyperV
             NomTileTexture = nomTileTexture;
             UpdateInterval = updateInterval;
             Delta = new Vector2(span.X, span.Y);
-            Origin = new Vector3(-Delta.X / 2, 0, -Delta.Y / 2); //to center the primitive to point (0,0,0)
-            Radius = 1;
+            Origin = new Vector3(0, -Delta.Y / 2, -Delta.X / 2); //to center the primitive to point (0,0,0)
+            Radius = 30;
         }
 
         public override void Initialize()
@@ -73,6 +74,7 @@ namespace HyperV
             CreatePointArray();
             CreateVertexArray();
             Position = InitialPosition;
+            CenterPosition = Position + Origin;
             base.Initialize();
         }
 
@@ -172,6 +174,6 @@ namespace HyperV
             return BoundingSphere.Intersects(ray);
         }
 
-        public BoundingSphere BoundingSphere { get { return new BoundingSphere(Position, Radius); } }
+        public BoundingSphere BoundingSphere { get { return new BoundingSphere(CenterPosition, Radius); } }
     }
 }

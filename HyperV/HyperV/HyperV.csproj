@@ -87,6 +87,7 @@
     <Compile Include="CharacterScript.cs" />
     <Compile Include="ModelCreator.cs" />
     <Compile Include="CutscenePlayer.cs" />
+    <Compile Include="GamePadManager.cs" />
     <Compile Include="Grass.cs" />
     <Compile Include="HyperVGame.cs" />
     <Compile Include="Maze.cs" />
@@ -97,6 +98,7 @@
     <Compile Include="GameProject.cs" />
     <Compile Include="SkipCutsceneLabel.cs" />
     <Compile Include="Skybox.cs" />
+    <Compile Include="GrabbableSphere.cs" />
     <Compile Include="Walls.cs" />
   </ItemGroup>
   <ItemGroup>

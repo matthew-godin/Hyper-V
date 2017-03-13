@@ -301,6 +301,8 @@ namespace HyperV
             Height = Height;//CHARACTER_HEIGHT;
         }
 
+        Boss Boss { get; set; }
+
         private void LoadContent()
         {
             InputMgr = Game.Services.GetService(typeof(InputManager)) as InputManager;
@@ -308,6 +310,7 @@ namespace HyperV
             //Grass = Game.Services.GetService(typeof(Grass)) as Grass;
             Maze = Game.Services.GetService(typeof(Maze)) as Maze;
             Characters = Game.Services.GetService(typeof(List<Character>)) as List<Character>;
+            Boss = Game.Services.GetService(typeof(Boss)) as Boss;
         }
 
 
@@ -417,7 +420,7 @@ namespace HyperV
             Position -= displacementLateral * Lateral;
 
             //Added from first Camera2
-            if (Maze.CheckForCollisions(Position))
+            if (Maze.CheckForCollisions(Position) || CheckForBossCollision())
             {
                 Position -= displacementDirection * Direction;
                 Position += displacementLateral * Lateral;
@@ -425,7 +428,12 @@ namespace HyperV
         }
 
         //Added from first Camera
-        const float MAX_DISTANCE = 4.5f;
+        const float MAX_DISTANCE = 4.5f, MAX_DISTANCE_BOSS = 80f;
+
+        bool CheckForBossCollision()
+        {
+            return Vector3.Distance(Boss.GetPosition(), Position) < MAX_DISTANCE_BOSS;
+        }
 
         bool CheckForCharacterCollision()
         {

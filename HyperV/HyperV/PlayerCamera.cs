@@ -742,12 +742,30 @@ namespace HyperV
 
         float Height { get; set; }
 
-        public PlayerCamera(Game game, Vector3 cameraPosition, Vector3 target, Vector3 orientation, float updateInterval) : base(game)
+        public PlayerCamera(Game game, Vector3 cameraPosition, Vector3 target, Vector3 orientation, float updateInterval, float renderDistance) : base(game)
         {
+            FarPlaneDistance = renderDistance;
             UpdateInterval = updateInterval;
-            CreateViewingFrustum(OBJECTIVE_OPENNESS, NEAR_PLANE_DISTANCE, FAR_PLANE_DISTANCE);
+            CreateViewingFrustum(OBJECTIVE_OPENNESS, NEAR_PLANE_DISTANCE, /*FAR_PLANE_DISTANCE*/FarPlaneDistance);
             CreateLookAt(cameraPosition, target, orientation);
             Height = cameraPosition.Y;
+        }
+
+        public float GetRenderDistance()
+        {
+            return FarPlaneDistance;
+        }
+
+        public void SetRenderDistance(float renderDistance)
+        {
+            FarPlaneDistance = renderDistance;
+            CreateViewingFrustum(OBJECTIVE_OPENNESS, NEAR_PLANE_DISTANCE, /*FAR_PLANE_DISTANCE*/FarPlaneDistance);
+            //CreateLookAt(Position, Target, Orientation);
+        }
+
+        public void InitializeDirection(Vector3 direction)
+        {
+            Direction = direction;
         }
 
         public override void Initialize()

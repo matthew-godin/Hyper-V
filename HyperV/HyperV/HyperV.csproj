@@ -89,6 +89,7 @@
     <Compile Include="GamePadManager.cs" />
     <Compile Include="GearWheel.cs" />
     <Compile Include="Grass.cs" />
+    <Compile Include="HeightMap.cs" />
     <Compile Include="HyperVGame.cs" />
     <Compile Include="Maze.cs" />
     <Compile Include="Mill.cs" />

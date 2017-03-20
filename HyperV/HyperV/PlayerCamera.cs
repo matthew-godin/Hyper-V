@@ -740,7 +740,7 @@ namespace HyperV
 
         Ray Visor { get; set; }
 
-        float Height { get; set; }
+        protected float Height { get; set; }
 
         public PlayerCamera(Game game, Vector3 cameraPosition, Vector3 target, Vector3 orientation, float updateInterval, float renderDistance) : base(game)
         {
@@ -780,7 +780,7 @@ namespace HyperV
             Run = false;
             Jump = false;
             Grab = false;
-
+            ContinueJump= false;
             IsMouseCameraActivated = true;
 
 
@@ -851,6 +851,7 @@ namespace HyperV
             base.Update(gameTime);
 
         }
+
 
         //Mouse
         #region
@@ -991,9 +992,13 @@ namespace HyperV
                        GamePadMgr.IsNewButton(Buttons.RightStick);
         }
 
-        private void ManageHeight()
+        protected virtual void ManageHeight()
         {
             //Position = Grass.GetPositionWithHeight(Position, (int)Height);
+            if (!ContinueJump)
+            {
+                Height = Height;
+            }
             Position = new Vector3(Position.X, Height, Position.Z);
         }
 
@@ -1026,6 +1031,7 @@ namespace HyperV
         {
             if (Jump)
             {
+                InitializeComplexObjectsJump();
                 ContinueJump = true;
             }
 
@@ -1044,7 +1050,7 @@ namespace HyperV
 
         bool ContinueJump { get; set; }
         float t { get; set; }
-        float Height { get; set; }
+        protected float Height { get; set; }
 
         Vector3 ControlPositionPts { get; set; }
         Vector3 ControlPositionPtsPlusUn { get; set; }

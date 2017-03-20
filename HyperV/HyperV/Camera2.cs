@@ -641,11 +641,12 @@ namespace HyperV
     public class Camera2 : PlayerCamera
     {
         //Added from first Camera1
-        float Height { get; set; }
+        //float Height { get; set; }
 
         Maze Maze { get; set; }
         List<Character> Characters { get; set; }
         Boss Boss { get; set; }
+        HeightMap HeightMap { get; set; }
 
         public Camera2(Game game, Vector3 positionCamera, Vector3 target, Vector3 orientation, float updateInterval, float renderDistance)
             : base(game, positionCamera, target, orientation, updateInterval, renderDistance)
@@ -657,13 +658,21 @@ namespace HyperV
             Maze = Game.Services.GetService(typeof(Maze)) as Maze;
             Characters = Game.Services.GetService(typeof(List<Character>)) as List<Character>;
             Boss = Game.Services.GetService(typeof(Boss)) as Boss;
+            HeightMap = Game.Services.GetService(typeof(HeightMap)) as HeightMap;
+        }
+
+        protected override void ManageHeight()
+        {
+            //Height = HeightMap.GetHeight(Position);
+            Height = HeightMap.GetHeight(Position);
+            base.ManageHeight();
         }
 
         protected override void ManageDisplacement(float direction, float lateral)
         {
             base.ManageDisplacement(direction, lateral);
 
-            if (Maze.CheckForCollisions(Position) || CheckForBossCollision())
+            if (Maze.CheckForCollisions(Position) /*|| CheckForBossCollision()*/)
             {
                 Position -= direction * TranslationSpeed * Direction;
                 Position += lateral * TranslationSpeed * Lateral;

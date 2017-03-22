@@ -1011,7 +1011,7 @@ namespace HyperV
         {
             Visor = new Ray(Position, Direction);
 
-            foreach (GrabbableSphere grabbableSphere in Game.Components.Where(component => component is GrabbableSphere))
+            foreach (GrabbableModel grabbableSphere in Game.Components.Where(component => component is GrabbableModel))
             {
                 Grab = grabbableSphere.IsColliding(Visor) <= MINIMAL_DISTANCE_POUR_RAMASSAGE &&
                            grabbableSphere.IsColliding(Visor) != null &&

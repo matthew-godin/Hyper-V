@@ -86,11 +86,13 @@
     <Compile Include="CharacterScript.cs" />
     <Compile Include="ModelCreator.cs" />
     <Compile Include="CutscenePlayer.cs" />
+    <Compile Include="Fireball.cs" />
     <Compile Include="GamePadManager.cs" />
     <Compile Include="GearWheel.cs" />
     <Compile Include="Grass.cs" />
     <Compile Include="HeightMap.cs" />
     <Compile Include="HyperVGame.cs" />
+    <Compile Include="LifeBar.cs" />
     <Compile Include="Maze.cs" />
     <Compile Include="Mill.cs" />
     <Compile Include="GrabbableModel.cs" />

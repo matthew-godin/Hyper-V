@@ -742,6 +742,8 @@ namespace HyperV
 
         protected float Height { get; set; }
 
+        LifeBar[] LifeBars { get; set; }
+
         public PlayerCamera(Game game, Vector3 cameraPosition, Vector3 target, Vector3 orientation, float updateInterval, float renderDistance) : base(game)
         {
             FarPlaneDistance = renderDistance;
@@ -801,6 +803,8 @@ namespace HyperV
         {
             InputMgr = Game.Services.GetService(typeof(InputManager)) as InputManager;
             GamePadMgr = Game.Services.GetService(typeof(GamePadManager)) as GamePadManager;
+
+            LifeBars = Game.Services.GetService(typeof(LifeBar[])) as LifeBar[];
         }
 
         protected override void CreateLookAt()
@@ -845,11 +849,23 @@ namespace HyperV
                 ManageRun();
                 ManageJump();
 
+                ManageLifeBars();
                 //Game.Window.Title = GamePadMgr.PositionsGâchettes.X.ToString();
                 TimeElapsedSinceUpdate = 0;
             }
             base.Update(gameTime);
+        }
 
+        void ManageLifeBars()
+        {
+            if (Run && !LifeBars[1].Tired)
+            {
+                LifeBars[1].Attack(1);
+            }
+            else
+            {
+                LifeBars[1].Attack(-1);
+            }
         }
 
 
@@ -1013,12 +1029,11 @@ namespace HyperV
 
             foreach (GrabbableModel grabbableSphere in Game.Components.Where(component => component is GrabbableModel))
             {
-                Grab = grabbableSphere.IsColliding(Visor) <= MINIMAL_DISTANCE_POUR_RAMASSAGE &&
-                           grabbableSphere.IsColliding(Visor) != null &&
-                           Grab;
+                grabbableSphere.Grab = grabbableSphere.IsColliding(Visor) <= MINIMAL_DISTANCE_POUR_RAMASSAGE &&
+                           grabbableSphere.IsColliding(Visor) != null && Grab;
 
                 //Game.Window.Title = grabbableSphere.IsColliding(Visor).ToString();
-                if (Grab)
+                if (grabbableSphere.Grab)
                 {
                     grabbableSphere.IsGrabbed = true;
                 }
@@ -1087,9 +1102,11 @@ namespace HyperV
         }
         #endregion
 
+        const float TIRED_SPEED = 0.1f;
+
         private void ManageRun()
         {
-            TranslationSpeed = Run ? (GamePadMgr.PositionsGâchettes.X > 0 ? GamePadMgr.PositionsGâchettes.X : 1) * MAXIMAL_RUN_FACTOR * TRANSLATION_INITIAL_SPEED : TRANSLATION_INITIAL_SPEED;
+            TranslationSpeed = LifeBars[1].Tired ? TIRED_SPEED : Run ? (GamePadMgr.PositionsGâchettes.X > 0 ? GamePadMgr.PositionsGâchettes.X : 1) * MAXIMAL_RUN_FACTOR * TRANSLATION_INITIAL_SPEED : TRANSLATION_INITIAL_SPEED;
         }
     }
 }

@@ -16,6 +16,8 @@ namespace HyperV
     //MUST UPDATE DLL TO WORK
     public class GrabbableModel : BaseObject
     {
+        public bool Grab { get; set; }
+
         public bool IsGrabbed { get; set; }
 
         private float Radius { get; set; }

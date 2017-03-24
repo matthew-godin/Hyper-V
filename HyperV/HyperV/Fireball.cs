@@ -8,7 +8,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
-using AtelierXNA;
+using XNAProject;
 
 
 namespace HyperV
@@ -16,9 +16,9 @@ namespace HyperV
     /// <summary>
     /// This is a game component that implements IUpdateable.
     /// </summary>
-    public class GearWheel : ObjetDeBase
+    public class Fireball : TexturedTile
     {
-        public GearWheel(Game game, string modelName, float scale, Vector3 rotation, Vector3 position) : base(game, modelName, scale, rotation, position)
+        public Fireball(Game game, float scale, Vector3 rotation, Vector3 position, Vector2 range, string textureName, float interval) : base(game, scale, rotation, position, range, textureName, interval)
         {
             // TODO: Construct any child components here
         }
@@ -32,20 +32,6 @@ namespace HyperV
             // TODO: Add your initialization code here
 
             base.Initialize();
-        }
-
-        public void UpdateRotation(float rotation)
-        {
-            Rotation += new Vector3(rotation, 0, 0);
-            UpdateWorld();
-        }
-
-        void UpdateWorld()
-        {
-            Monde = Matrix.Identity;
-            Monde *= Matrix.CreateScale(Échelle);
-            Monde *= Matrix.CreateFromYawPitchRoll(Rotation.Y, Rotation.X, Rotation.Z);
-            Monde *= Matrix.CreateTranslation(Position);
         }
 
         /// <summary>

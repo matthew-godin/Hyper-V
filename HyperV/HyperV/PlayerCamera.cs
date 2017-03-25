@@ -877,8 +877,7 @@ namespace HyperV
             {
                 PreviousMousePosition = CurrentMousePosition;
                 CurrentMousePosition = InputMgr.GetPositionMouse();
-                DisplacementMouse = new Vector2(CurrentMousePosition.X - PreviousMousePosition.X,
-                                                CurrentMousePosition.Y - PreviousMousePosition.Y);
+                DisplacementMouse = new Vector2(CurrentMousePosition.X - PreviousMousePosition.X, CurrentMousePosition.Y - PreviousMousePosition.Y);
 
                 ManageMouseRotation();
 

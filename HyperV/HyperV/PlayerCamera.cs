@@ -743,6 +743,7 @@ namespace HyperV
         protected float Height { get; set; }
 
         LifeBar[] LifeBars { get; set; }
+        Vector2 Origin { get; set; }
 
         public PlayerCamera(Game game, Vector3 cameraPosition, Vector3 target, Vector3 orientation, float updateInterval, float renderDistance) : base(game)
         {
@@ -751,6 +752,7 @@ namespace HyperV
             CreateViewingFrustum(OBJECTIVE_OPENNESS, NEAR_PLANE_DISTANCE, /*FAR_PLANE_DISTANCE*/FarPlaneDistance);
             CreateLookAt(cameraPosition, target, orientation);
             Height = cameraPosition.Y;
+            Origin = new Vector2(Game.Window.ClientBounds.Width, Game.Window.ClientBounds.Height) / 2;
         }
 
         public float GetRenderDistance()
@@ -812,6 +814,7 @@ namespace HyperV
             Vector3.Normalize(Direction);
             Vector3.Normalize(VerticalOrientation);
             Vector3.Normalize(Lateral);
+            //Position -= new Vector3(Origin.X, 0, Origin.Y);
 
             View = Matrix.CreateLookAt(Position, Position + Direction, VerticalOrientation);
         }
@@ -831,7 +834,8 @@ namespace HyperV
 
         public override void Update(GameTime gameTime)
         {
-
+            PopulateCommands();
+            ManageGrabbing();
             float timeElapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
             TimeElapsedSinceUpdate += timeElapsed;
             if (TimeElapsedSinceUpdate >= UpdateInterval)
@@ -843,9 +847,9 @@ namespace HyperV
                 ManageHeight();
                 CreateLookAt();
 
-                PopulateCommands();
+                //PopulateCommands();
 
-                ManageGrabbing();
+                //ManageGrabbing();
                 ManageRun();
                 ManageJump();
 
@@ -1003,7 +1007,7 @@ namespace HyperV
 
             Grab = InputMgr.IsNewLeftClick() ||
                        InputMgr.IsOldLeftClick() ||
-                       InputMgr.IsPressed(Keys.E) && EstDisplacementEtAutresKeyboardActivated ||
+                       InputMgr.IsNewKey(Keys.E) && EstDisplacementEtAutresKeyboardActivated ||
                        GamePadMgr.IsNewButton(Buttons.RightStick);
         }
 
@@ -1032,12 +1036,37 @@ namespace HyperV
                            grabbableSphere.IsColliding(Visor) != null && Grab;
 
                 //Game.Window.Title = grabbableSphere.IsColliding(Visor).ToString();
-                if (grabbableSphere.Grab)
+                if (grabbableSphere.Grab && !grabbableSphere.Placed)
                 {
-                    grabbableSphere.IsGrabbed = true;
+                    if (!GrabbableModel.Taken)
+                    {
+                        grabbableSphere.IsGrabbed = true;
+                        GrabbableModel.Taken = true;
+                        break;
+                    }
+                    else if (grabbableSphere.IsGrabbed)
+                    {
+                        grabbableSphere.IsGrabbed = false;
+                        GrabbableModel.Taken = false;
+                        break;
+                    }
                 }
             }
         }
+
+        //private bool Taken()
+        //{
+        //    bool result = false;
+        //    foreach (GrabbableModel grabbableSphere in Game.Components.Where(component => component is GrabbableModel))
+        //    {
+        //        if (grabbableSphere.IsGrabbed && !grabbableSphere.Placed)
+        //        {
+        //            result = true;
+        //            break;
+        //        }
+        //    }
+        //    return result;
+        //}
 
         //Jump
         #region

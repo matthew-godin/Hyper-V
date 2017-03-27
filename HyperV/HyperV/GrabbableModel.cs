@@ -16,9 +16,17 @@ namespace HyperV
     //MUST UPDATE DLL TO WORK
     public class GrabbableModel : BaseObject
     {
+        public static bool Taken { get; set; }
+
+        static GrabbableModel()
+        {
+            Taken = false;
+        }
+
         public bool Grab { get; set; }
 
         public bool IsGrabbed { get; set; }
+        public bool Placed { get; set; }
 
         private float Radius { get; set; }
 
@@ -47,7 +55,8 @@ namespace HyperV
         {
             base.Initialize();
             IsGrabbed = false;
-            Radius = 10;
+            Placed = false;
+            Radius = 4;
             //InitialWorld = base.GetWorld();
         }
 
@@ -65,8 +74,7 @@ namespace HyperV
                             + 2.5f * Vector3.Normalize(PlayerCamera.Lateral)
                             - 1.5f * Vector3.Normalize(Vector3.Cross(PlayerCamera.Lateral, PlayerCamera.Direction));
                 ComputeWorld();
-
-                Game.Window.Title = Position.ToString();
+                //Game.Window.Title = Position.ToString();
             }
             base.Update(gameTime);
         }

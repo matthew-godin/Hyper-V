@@ -809,6 +809,13 @@ namespace HyperV
             LifeBars = Game.Services.GetService(typeof(LifeBar[])) as LifeBar[];
         }
 
+        public bool Dead { get; private set; }
+
+        public void Attack(int val)
+        {
+            LifeBars[0].Attack(val);
+        }
+
         protected override void CreateLookAt()
         {
             Vector3.Normalize(Direction);
@@ -864,11 +871,11 @@ namespace HyperV
         {
             if (Run && !LifeBars[1].Tired && (InputMgr.IsPressed(Keys.W) || InputMgr.IsPressed(Keys.A) || InputMgr.IsPressed(Keys.S) || InputMgr.IsPressed(Keys.D)))
             {
-                LifeBars[1].Attack(1);
+                LifeBars[1].Attack();
             }
             else
             {
-                LifeBars[1].Attack(-1);
+                LifeBars[1].AttackNegative();
             }
         }
 

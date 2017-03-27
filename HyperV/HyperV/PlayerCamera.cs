@@ -834,7 +834,7 @@ namespace HyperV
 
         public override void Update(GameTime gameTime)
         {
-            PopulateCommands();
+            AffectCommandsForGrab();
             ManageGrabbing();
             float timeElapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
             TimeElapsedSinceUpdate += timeElapsed;
@@ -847,7 +847,7 @@ namespace HyperV
                 ManageHeight();
                 CreateLookAt();
 
-                //PopulateCommands();
+                PopulateCommands(); // Grab moved to AffectCommandsForGrab()
 
                 //ManageGrabbing();
                 ManageRun();
@@ -862,7 +862,7 @@ namespace HyperV
 
         void ManageLifeBars()
         {
-            if (Run && !LifeBars[1].Tired)
+            if (Run && !LifeBars[1].Tired && (InputMgr.IsPressed(Keys.W) || InputMgr.IsPressed(Keys.A) || InputMgr.IsPressed(Keys.S) || InputMgr.IsPressed(Keys.D)))
             {
                 LifeBars[1].Attack(1);
             }
@@ -1005,6 +1005,14 @@ namespace HyperV
             Jump = (InputMgr.IsPressed(Keys.R/*Keys.Space*/) && EstDisplacementEtAutresKeyboardActivated) ||
                      GamePadMgr.IsPressed(Buttons.A);
 
+            //Grab = InputMgr.IsNewLeftClick() ||
+            //           InputMgr.IsOldLeftClick() ||
+            //           InputMgr.IsNewKey(Keys.E) && EstDisplacementEtAutresKeyboardActivated ||
+            //           GamePadMgr.IsNewButton(Buttons.RightStick);
+        }
+
+        private void AffectCommandsForGrab()
+        {
             Grab = InputMgr.IsNewLeftClick() ||
                        InputMgr.IsOldLeftClick() ||
                        InputMgr.IsNewKey(Keys.E) && EstDisplacementEtAutresKeyboardActivated ||

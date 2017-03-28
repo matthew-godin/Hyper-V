@@ -661,12 +661,12 @@ namespace HyperV
             HeightMap = Game.Services.GetService(typeof(HeightMap)) as HeightMap;
         }
 
-        //protected override void ManageHeight()
-        //{
-        //    //Height = HeightMap.GetHeight(Position);
-        //    Height = HeightMap.GetHeight(Position);
-        //    base.ManageHeight();
-        //}
+        protected override void ManageHeight()
+        {
+            //Height = HeightMap.GetHeight(Position);
+            Height = HeightMap.GetHeight(Position);
+            base.ManageHeight();
+        }
 
         protected override void ManageDisplacement(float direction, float lateral)
         {

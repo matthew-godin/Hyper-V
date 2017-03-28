@@ -56,10 +56,10 @@ namespace HyperV
             GraphicsMgr.SynchronizeWithGreenicalRetrace = false;
             IsFixedTimeStep = false;
             IsMouseVisible = false;
-            //GraphicsMgr.PreferredBackBufferHeight = 800;
-            //GraphicsMgr.PreferredBackBufferWidth = 1500;
-            GraphicsMgr.PreferredBackBufferHeight = 500;
-            GraphicsMgr.PreferredBackBufferWidth = 1000;
+            GraphicsMgr.PreferredBackBufferHeight = 800;
+            GraphicsMgr.PreferredBackBufferWidth = 1500;
+            //GraphicsMgr.PreferredBackBufferHeight = 500;
+            //GraphicsMgr.PreferredBackBufferWidth = 1000;
         }
 
         Grass Grass0 { get; set; }
@@ -88,8 +88,8 @@ namespace HyperV
 
         void LoadSettings()
         {
-            //StreamReader reader = new StreamReader("F:/programming/HyperV/WPFINTERFACE/Launching Interface/Saves/Settings.txt");
-            StreamReader reader = new StreamReader("C:/Users/Matthew/Source/Repos/WPFINTERFACE/Launching Interface/Saves/Settings.txt");
+            StreamReader reader = new StreamReader("F:/programming/HyperV/WPFINTERFACE/Launching Interface/Saves/Settings.txt");
+            //StreamReader reader = new StreamReader("C:/Users/Matthew/Source/Repos/WPFINTERFACE/Launching Interface/Saves/Settings.txt");
             string line = reader.ReadLine();
             string[] parts = line.Split(new string[] { ": " }, StringSplitOptions.None);
             MediaPlayer.Volume = int.Parse(parts[1]) / 100.0f;
@@ -125,12 +125,12 @@ namespace HyperV
 
         void LoadSave()
         {
-            //StreamReader reader = new StreamReader("F:/programming/HyperV/WPFINTERFACE/Launching Interface/Saves/save.txt");
-            StreamReader reader = new StreamReader("C:/Users/Matthew/Source/Repos/WPFINTERFACE/Launching Interface/Saves/save.txt");
+            StreamReader reader = new StreamReader("F:/programming/HyperV/WPFINTERFACE/Launching Interface/Saves/save.txt");
+            //StreamReader reader = new StreamReader("C:/Users/Matthew/Source/Repos/WPFINTERFACE/Launching Interface/Saves/save.txt");
             SaveNumber = int.Parse(reader.ReadLine());
             reader.Close();
-            //reader = new StreamReader("F:/programming/HyperV/WPFINTERFACE/Launching Interface/Saves/save" + SaveNumber.ToString() + ".txt");
-            reader = new StreamReader("C:/Users/Matthew/Source/Repos/WPFINTERFACE/Launching Interface/Saves/save" + SaveNumber.ToString() + ".txt");
+            reader = new StreamReader("F:/programming/HyperV/WPFINTERFACE/Launching Interface/Saves/save" + SaveNumber.ToString() + ".txt");
+            //reader = new StreamReader("C:/Users/Matthew/Source/Repos/WPFINTERFACE/Launching Interface/Saves/save" + SaveNumber.ToString() + ".txt");
             string line = reader.ReadLine();
             string[] parts = line.Split(new char[] { ' ' });
             Level = int.Parse(parts[1]);
@@ -184,8 +184,8 @@ namespace HyperV
 
         void Save()
         {
-            //StreamWriter writer = new StreamWriter("F:/programming/HyperV/WPFINTERFACE/Launching Interface/Saves/pendingsave.txt");
-            StreamWriter writer = new StreamWriter("C:/Users/Matthew/Source/Repos/WPFINTERFACE/Launching Interface/Saves/pendingsave.txt");
+            StreamWriter writer = new StreamWriter("F:/programming/HyperV/WPFINTERFACE/Launching Interface/Saves/pendingsave.txt");
+            //StreamWriter writer = new StreamWriter("C:/Users/Matthew/Source/Repos/WPFINTERFACE/Launching Interface/Saves/pendingsave.txt");
 
             writer.WriteLine("Level: " + Level.ToString());
             if (Camera != null)
@@ -207,6 +207,7 @@ namespace HyperV
         HeightMap HeightMap { get; set; }
         LifeBar[] LifeBars { get; set; }
         Displayer3D Display3D { get; set; }
+        Water Water { get; set; }
 
         void Level2(bool usePosition)
         {
@@ -235,9 +236,11 @@ namespace HyperV
             Components.Add(Mill);
             Mill.AddLabel();
             Services.AddService(typeof(Mill), Mill);
-            HeightMap = new HeightMap(this, 1, Vector3.Zero, Vector3.Zero, new Vector3(10000, 100, 10000), "HeightMap", "Ceiling");
-            //Components.Add(HeightMap);
+            HeightMap = new HeightMap(this, 1, Vector3.Zero, Vector3.Zero, new Vector3(10000, 1000, 10000), "HeightMap", "Ceiling");
+            Components.Add(HeightMap);
             Services.AddService(typeof(HeightMap), HeightMap);
+            Water = new Water(this, 1f, Vector3.Zero, new Vector3(10000, 300, 200), new Vector2(10000, 10000), FpsInterval);
+            Components.Add(Water);
             Boss.AddFireball();
             Boss.AddLabel();
             Components.Add(LifeBars[0]);
@@ -647,8 +650,8 @@ namespace HyperV
             {
                 Save();
                 TakeAScreenshot();
-                //string path = "F:/programming/HyperV/WPFINTERFACE/Launching Interface/bin/Debug/Launching Interface.exe";
-                string path = "C:/Users/Matthew/Source/Repos/WPFINTERFACE/Launching Interface/bin/Debug/Launching Interface.exe";
+                string path = "F:/programming/HyperV/WPFINTERFACE/Launching Interface/bin/Debug/Launching Interface.exe";
+                //string path = "C:/Users/Matthew/Source/Repos/WPFINTERFACE/Launching Interface/bin/Debug/Launching Interface.exe";
                 ProcessStartInfo p = new ProcessStartInfo();
                 p.FileName = path;
                 p.WorkingDirectory = System.IO.Path.GetDirectoryName(path);
@@ -675,8 +678,8 @@ namespace HyperV
             {
                 try
                 {
-                    //stream = File.OpenWrite("F:/programming/HyperV/WPFINTERFACE/Launching Interface/Saves/pendingscreenshot.png");
-                    stream = File.OpenWrite("C:/Users/Matthew/Source/Repos/WPFINTERFACE/Launching Interface/Saves/pendingscreenshot.png");
+                    stream = File.OpenWrite("F:/programming/HyperV/WPFINTERFACE/Launching Interface/Saves/pendingscreenshot.png");
+                    //stream = File.OpenWrite("C:/Users/Matthew/Source/Repos/WPFINTERFACE/Launching Interface/Saves/pendingscreenshot.png");
                 }
                 catch (IOException e)
                 {

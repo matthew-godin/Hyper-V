@@ -77,11 +77,14 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AmmunitionCatapult.cs" />
     <Compile Include="Boss.cs" />
     <Compile Include="BossLabel.cs" />
     <Compile Include="Camera1.cs" />
     <Compile Include="Camera2.cs" />
+    <Compile Include="Camera3.cs" />
     <Compile Include="PlayerCamera.cs" />
+    <Compile Include="Catapult.cs" />
     <Compile Include="Ceiling.cs" />
     <Compile Include="Character.cs" />
     <Compile Include="CharacterScript.cs" />
@@ -116,6 +119,8 @@
     </Content>
     <Content Include="Hub.txt" />
     <Content Include="Libraries\BasicComponents.dll" />
+    <Content Include="Monde3_Modeles.txt" />
+    <Content Include="Monde3_Murs.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\HyperVContent\HyperVContent.contentproj">

@@ -28,7 +28,7 @@ namespace HyperV
     /// </summary>
     public class Water : BasicPrimitive
     {
-        Vector3 Position { get; set; }
+        public Vector3 Position { get; private set; }
         float UpdateInterval { get; set; }
         protected InputManager InputMgr { get; private set; }
         float TimeElapsedSinceUpdate { get; set; }
@@ -45,6 +45,7 @@ namespace HyperV
 
         //Vector2[,] TexturePts { get; set; }
         Displayer3D Display3D { get; set; }
+        Color Color { get; set; }
 
         public Vector3 GetPositionWithHeight(Vector3 position, int height)
         {
@@ -74,6 +75,7 @@ namespace HyperV
             UpdateInterval = updateInterval;
             Delta = new Vector2(span.X, span.Y);
             Origin = new Vector3(-Delta.X / 2, 0, -Delta.Y / 2); //to center the primitive to point (0,0,0)
+            Color = new Color(20, 50, 250, 50);
         }
 
         public override void Initialize()
@@ -133,8 +135,8 @@ namespace HyperV
             {
                 for (int i = 0; i < 2; ++i)
                 {
-                    Vertices[++VertexIndex] = new VertexPositionColor(VerticesPts[i, j], Color.Blue);
-                    Vertices[++VertexIndex] = new VertexPositionColor(VerticesPts[i, j + 1], Color.Blue);
+                    Vertices[++VertexIndex] = new VertexPositionColor(VerticesPts[i, j], Color);
+                    Vertices[++VertexIndex] = new VertexPositionColor(VerticesPts[i, j + 1], Color);
                     //Vertices[++VertexIndex] = new VertexPositionTexture(VerticesPts[i, j], TexturePts[i, j]);
                     //Vertices[++VertexIndex] = new VertexPositionTexture(VerticesPts[i, j + 1], TexturePts[i, j + 1]);
                 }

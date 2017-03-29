@@ -723,7 +723,7 @@ namespace HyperV
         float SpeedRotation { get; set; }
         Point PreviousMousePosition { get; set; }
         Point CurrentMousePosition { get; set; }
-        Vector2 DisplacementMouse { get; set; }
+        public Vector2 DisplacementMouse { get; set; }
 
         float UpdateInterval { get; set; }
         float TimeElapsedSinceUpdate { get; set; }
@@ -742,7 +742,7 @@ namespace HyperV
 
         protected float Height { get; set; }
 
-        LifeBar[] LifeBars { get; set; }
+        protected LifeBar[] LifeBars { get; set; }
         Vector2 Origin { get; set; }
 
         public PlayerCamera(Game game, Vector3 cameraPosition, Vector3 target, Vector3 orientation, float updateInterval, float renderDistance) : base(game)
@@ -869,13 +869,16 @@ namespace HyperV
 
         void ManageLifeBars()
         {
-            if (Run && !LifeBars[1].Tired && (InputMgr.IsPressed(Keys.W) || InputMgr.IsPressed(Keys.A) || InputMgr.IsPressed(Keys.S) || InputMgr.IsPressed(Keys.D)))
+            if (!LifeBars[1].Water)
             {
-                LifeBars[1].Attack();
-            }
-            else
-            {
-                LifeBars[1].AttackNegative();
+                if (Run && !LifeBars[1].Tired && (InputMgr.IsPressed(Keys.W) || InputMgr.IsPressed(Keys.A) || InputMgr.IsPressed(Keys.S) || InputMgr.IsPressed(Keys.D)))
+                {
+                    LifeBars[1].Attack();
+                }
+                else
+                {
+                    LifeBars[1].AttackNegative();
+                }
             }
         }
 

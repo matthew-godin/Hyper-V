@@ -1,0 +1,2 @@
+﻿Model name;X;Y;Z;scale;angle Rotation
+Models_CastleWall;25;-70;20;1;0

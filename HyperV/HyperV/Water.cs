@@ -46,6 +46,7 @@ namespace HyperV
         //Vector2[,] TexturePts { get; set; }
         Displayer3D Display3D { get; set; }
         Color Color { get; set; }
+        public float AdjustedHeight { get; private set; }
 
         public Vector3 GetPositionWithHeight(Vector3 position, int height)
         {
@@ -86,6 +87,7 @@ namespace HyperV
             CreateVertexArray();
             Position = InitialPosition;
             Display3D = Game.Services.GetService(typeof(Displayer3D)) as Displayer3D;
+            AdjustedHeight = Position.Y + 7;
             base.Initialize();
         }
 

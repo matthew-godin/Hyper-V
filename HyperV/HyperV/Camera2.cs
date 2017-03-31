@@ -660,14 +660,18 @@ namespace HyperV
             Characters = Game.Services.GetService(typeof(List<Character>)) as List<Character>;
             Boss = Game.Services.GetService(typeof(Boss)) as Boss;
             HeightMap = Game.Services.GetService(typeof(HeightMap)) as HeightMap;
+            ManageHeight();
             Water = Game.Services.GetService(typeof(Water)) as Water;
         }
 
         protected override void ManageHeight()
         {
             //Height = HeightMap.GetHeight(Position);
-            Height = HeightMap.GetHeight(Position);
-            base.ManageHeight();
+            if (!LifeBars[1].Water)
+            {
+                Height = HeightMap.GetHeight(Position); //HERE
+                base.ManageHeight();
+            }
         }
 
         protected override void ManageDisplacement(float direction, float lateral)
@@ -679,13 +683,56 @@ namespace HyperV
                 Position -= direction * TranslationSpeed * Direction;
                 Position += lateral * TranslationSpeed * Lateral;
             }
-            if (!LifeBars[1].Water && Position.Y < Water.Position.Y)
+            if (LifeBars[1].Water)
+            {
+                Position -= direction * TranslationSpeed * Direction;
+                Position += lateral * TranslationSpeed * Lateral;
+                Position += direction * TRANSLATION_INITIAL_SPEED * Direction;
+                Position -= lateral * TRANSLATION_INITIAL_SPEED * Lateral;
+            }
+            if (!LifeBars[1].Water && Position.Y <= Water.AdjustedHeight)
             {
                 LifeBars[1].TurnWaterOn();
             }
-            else if (LifeBars[1].Water && Position.Y >= Water.Position.Y)
+            else if (LifeBars[1].Water && Position.Y > Water.AdjustedHeight)
             {
                 LifeBars[1].TurnWaterOff();
+            }
+            if (LifeBars[1].Drowned)
+            {
+                LifeBars[0].Attack(1);
+            }
+        }
+
+        protected override void ManageJump()
+        {
+            if (LifeBars[1].Water)
+            {
+                if (Jump)
+                {
+                    Height += 0.4f;
+                    if (Height > Water.AdjustedHeight)
+                    {
+                        Height = Water.AdjustedHeight;
+                        LifeBars[1].Restore();
+                    }
+                    Position = new Vector3(Position.X, Height/*CHARACTER_HEIGHT*/, Position.Z);
+                    //++Height;
+                }
+                else
+                {
+                    Height -= 0.4f;
+                    if (Height < HeightMap.GetHeight(Position))
+                    {
+                        Height = HeightMap.GetHeight(Position);
+                    }
+                    Position = new Vector3(Position.X, Height/*CHARACTER_HEIGHT*/, Position.Z);
+                    //--Height;
+                }
+            }
+            else
+            {
+                base.ManageJump();
             }
         }
 

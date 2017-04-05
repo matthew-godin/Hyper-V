@@ -142,13 +142,13 @@ namespace HyperV
                                 Vector3 initialRotation, Vector3 initialPosition)
             : base(game, modelName, initialScale, initialRotation, initialPosition)
         {
-
+            IsGrabbed = false;
         }
 
         public override void Initialize()
         {
             base.Initialize();
-            IsGrabbed = false;
+            //IsGrabbed = false;
             Radius = 10;
             //Placed = false;
         }

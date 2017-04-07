@@ -52,19 +52,21 @@ namespace HyperV
         string NomTileTexture { get; set; }
         float Radius { get; set; }
         Vector3 CenterPosition { get; set; }
+        public int Level { get; private set; }
 
         private bool IsWithin(float value, float thresholdA, float thresholdB)
         {
             return (value >= thresholdA && value <= thresholdB || value <= thresholdA && value >= thresholdB);
         }
 
-        public Portal(Game game, float initialScale, Vector3 initialRotation, Vector3 initialPosition, Vector2 span, string nomTileTexture, float updateInterval) : base(game, initialScale, initialRotation, initialPosition)
+        public Portal(Game game, float initialScale, Vector3 initialRotation, Vector3 initialPosition, Vector2 span, string nomTileTexture, int level, float updateInterval) : base(game, initialScale, initialRotation, initialPosition)
         {
             NomTileTexture = nomTileTexture;
             UpdateInterval = updateInterval;
             Delta = new Vector2(span.X, span.Y);
             Origin = new Vector3(0, -Delta.Y / 2, -Delta.X / 2); //to center the primitive to point (0,0,0)
             Radius = 30;
+            Level = level;
         }
 
         public override void Initialize()

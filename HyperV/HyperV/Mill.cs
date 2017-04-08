@@ -10,7 +10,6 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using XNAProject;
 
-//nothing notjing
 namespace HyperV
 {
     /// <summary>

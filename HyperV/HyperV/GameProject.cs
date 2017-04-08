@@ -56,10 +56,10 @@ namespace HyperV
             GraphicsMgr.SynchronizeWithGreenicalRetrace = false;
             IsFixedTimeStep = false;
             IsMouseVisible = false;
-            //GraphicsMgr.PreferredBackBufferHeight = 800;
-            //GraphicsMgr.PreferredBackBufferWidth = 1500;
-            GraphicsMgr.PreferredBackBufferHeight = 500;
-            GraphicsMgr.PreferredBackBufferWidth = 1000;
+            GraphicsMgr.PreferredBackBufferHeight = 800;
+            GraphicsMgr.PreferredBackBufferWidth = 1500;
+            //GraphicsMgr.PreferredBackBufferHeight = 500;
+            //GraphicsMgr.PreferredBackBufferWidth = 1000;
         }
 
         Grass Grass0 { get; set; }
@@ -647,7 +647,7 @@ namespace HyperV
 
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.Black);
+            GraphicsDevice.Clear(Color.Orange);
             base.Draw(gameTime);
         }
     }

@@ -861,7 +861,6 @@ namespace HyperV
                 ManageJump();
 
                 ManageLifeBars();
-                //Game.Window.Title = GamePadMgr.PositionsGâchettes.X.ToString();
                 TimeElapsedSinceUpdate = 0;
             }
             base.Update(gameTime);
@@ -1053,7 +1052,6 @@ namespace HyperV
                 grabbableSphere.Grab = grabbableSphere.IsColliding(Visor) <= MINIMAL_DISTANCE_POUR_RAMASSAGE &&
                            grabbableSphere.IsColliding(Visor) != null && Grab;
 
-                //Game.Window.Title = grabbableSphere.IsColliding(Visor).ToString();
                 if (grabbableSphere.Grab && !grabbableSphere.Placed)
                 {
                     if (!GrabbableModel.Taken)
@@ -1076,8 +1074,7 @@ namespace HyperV
             {
                 grabbableSphere.Grab = grabbableSphere.IsColliding(Visor) <= MINIMAL_DISTANCE_POUR_RAMASSAGE &&
                            grabbableSphere.IsColliding(Visor) != null && Grab;
-
-                //Game.Window.Title = grabbableSphere.IsColliding(Visor).ToString();
+                
                 if (grabbableSphere.Grab && !grabbableSphere.Placed)
                 {
                     if (/*!GrabbableModel.Taken*/true)

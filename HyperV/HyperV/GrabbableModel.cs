@@ -198,7 +198,7 @@ namespace HyperV
             Monde *= Matrix.CreateFromYawPitchRoll(angleX, angleY, Rotation.Z);
             Monde *= Matrix.CreateTranslation(Position);
 
-            Game.Window.Title = PlayerCamera.Direction.ToString() + "      " + MathHelper.ToDegrees(angleX).ToString() + "       " + MathHelper.ToDegrees(angleY).ToString().ToString();
+            //Game.Window.Title = PlayerCamera.Direction.ToString() + "      " + MathHelper.ToDegrees(angleX).ToString() + "       " + MathHelper.ToDegrees(angleY).ToString().ToString();
         }
     }
 }

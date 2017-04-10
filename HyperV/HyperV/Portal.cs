@@ -54,6 +54,12 @@ namespace HyperV
         Vector3 CenterPosition { get; set; }
         public int Level { get; private set; }
 
+        Vector3 PlanePoint { get; set; }
+        Vector2 FirstVertex { get; set; }
+        Vector2 SecondVertex { get; set; }
+        Vector3 PlaneEquation { get; set; }
+        float Magnitude { get; set; }
+
         private bool IsWithin(float value, float thresholdA, float thresholdB)
         {
             return (value >= thresholdA && value <= thresholdB || value <= thresholdA && value >= thresholdB);
@@ -77,6 +83,23 @@ namespace HyperV
             CreateVertexArray();
             Position = InitialPosition;
             CenterPosition = Position + Origin;
+
+            if (InitialRotation.Y == -1.570796f)
+            {
+                FirstVertex = new Vector2(InitialPosition.X, InitialPosition.Z) + new Vector2(VerticesPts[0, 0].Z, VerticesPts[0, 0].X);
+                SecondVertex = new Vector2(InitialPosition.X, InitialPosition.Z) + new Vector2(-VerticesPts[1, 1].Z, VerticesPts[1, 1].X);
+            }
+            else
+            {
+                FirstVertex = new Vector2(InitialPosition.X, InitialPosition.Z) + new Vector2(VerticesPts[0, 0].X, VerticesPts[0, 0].Z);
+                SecondVertex = new Vector2(InitialPosition.X, InitialPosition.Z) + new Vector2(VerticesPts[1, 1].X, VerticesPts[1, 1].Z);
+            }
+            PlanePoint = new Vector3(SecondVertex.X, 0, SecondVertex.Y);
+            Vector2 u2 = SecondVertex - FirstVertex;
+            Vector3 u = new Vector3(u2.X, 0, u2.Y);
+            Vector3 v = new Vector3(0, Delta.Y * 2, 0);
+            PlaneEquation = Vector3.Cross(u, v);
+            Magnitude = PlaneEquation.Length();
             base.Initialize();
         }
 
@@ -169,6 +192,22 @@ namespace HyperV
                 positionWithHeight = position;
             }
             return positionWithHeight;
+        }
+
+        const int MAX_DISTANCE = 1;
+
+        public bool CheckForCollisions(Vector3 Position)
+        {
+            Vector3 AP;
+            bool result = false;
+            float wallDistance;
+
+            AP = Position - PlanePoint;
+            wallDistance = Vector2.Distance(FirstVertex, SecondVertex);
+            result = Math.Abs(Vector3.Dot(AP, PlaneEquation)) / Magnitude < MAX_DISTANCE && (Position - new Vector3(FirstVertex.X, Position.Y, FirstVertex.Y)).Length() < wallDistance && (Position - new Vector3(SecondVertex.X, Position.Y, SecondVertex.Y)).Length() < wallDistance;
+            //CreateNewDirection(result, i, Direction, ref newDirection);
+
+            return result;
         }
 
         public float? Collision(Ray ray)

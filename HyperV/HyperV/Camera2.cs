@@ -648,6 +648,7 @@ namespace HyperV
         Boss Boss { get; set; }
         HeightMap HeightMap { get; set; }
         Water Water { get; set; }
+        Grass Grass { get; set; }
 
         public Camera2(Game game, Vector3 positionCamera, Vector3 target, Vector3 orientation, float updateInterval, float renderDistance)
             : base(game, positionCamera, target, orientation, updateInterval, renderDistance)
@@ -660,6 +661,7 @@ namespace HyperV
             Characters = Game.Services.GetService(typeof(List<Character>)) as List<Character>;
             Boss = Game.Services.GetService(typeof(Boss)) as Boss;
             HeightMap = Game.Services.GetService(typeof(HeightMap)) as HeightMap;
+            Grass = Game.Services.GetService(typeof(Grass)) as Grass;
             ManageHeight();
             Water = Game.Services.GetService(typeof(Water)) as Water;
         }
@@ -676,11 +678,20 @@ namespace HyperV
         //    //    }
         //}
 
+        protected override void ManageHeight()
+        {
+            if (HeightMap != null)
+            {
+                Height = HeightMap.GetHeight(Position);
+            }
+            base.ManageHeight();
+        }
+
         protected override void ManageDisplacement(float direction, float lateral)
         {
             base.ManageDisplacement(direction, lateral);
 
-            if (Maze.CheckForCollisions(Position) /*|| CheckForBossCollision()*/)
+            if (Maze != null ? Maze.CheckForCollisions(Position) : false /*|| CheckForBossCollision()*/)
             {
                 Position -= direction * TranslationSpeed * Direction;
                 Position += lateral * TranslationSpeed * Lateral;

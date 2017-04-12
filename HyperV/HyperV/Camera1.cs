@@ -29,6 +29,15 @@ namespace HyperV
             Portals = Game.Services.GetService(typeof(List<Portal>)) as List<Portal>;
         }
 
+        //protected override void ManageHeight()
+        //{
+        //    //if (HeightMap != null)
+        //    //{
+        //    //    Height = HeightMap.GetHeight(Position);
+        //    //}
+        //    //base.ManageHeight();
+        //}
+
         protected override void ManageDisplacement(float direction, float lateral)
         {
             base.ManageDisplacement(direction, lateral);

@@ -245,7 +245,7 @@ namespace HyperV
             int i = (int)(position.X / Delta.X), j = (int)(position.Z / Delta.Y);
             Vector3 n;
             float height;
-            if (i >= 0 && j >= 0 && i < Heights.GetLength(0) && j < Heights.GetLength(1))
+            if (i >= 0 && j >= 0 && i + 1 < /*Heights.GetLength(0)*/VerticesPts.GetLength(0) && j + 1 < VerticesPts.GetLength(1)/*Heights.GetLength(1)*/)
             {
                 n = Vector3.Cross(VerticesPts[i + 1, j] - VerticesPts[i, j], VerticesPts[i, j + 1] - VerticesPts[i, j]);
                 height = (n.X * VerticesPts[i, j].X + n.Y * VerticesPts[i, j].Y + n.Z * VerticesPts[i, j].Z - n.X * position.X - n.Z * position.Z) / n.Y + 5;

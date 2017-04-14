@@ -31,7 +31,7 @@ namespace HyperV
         const int SUPPLEMENTARY_VERTEX_FOR_LINE = 1;
         const int NULL_COMPENSATION = 0;
         const int HALF_DIVISOR = 2;
-        const int NUM_TEXTURE_PTS_POSSIBLE = 20;
+        const int NUM_TEXTURE_PTS_POSSIBLE = 4;
         const int NUM_VERTICES_PER_TILE = 4;
         const int NULL_Y = 0;
         const int TEXEL_POSITION_REMOVED_RELATIVE_TO_DIMENSION = 1;
@@ -56,7 +56,7 @@ namespace HyperV
         Color[] DataTexture { get; set; }
         int TileWidth { get; set; }
         Vector3[,] VerticesPts { get; set; }
-        Vector2[] TexturePts { get; set; }
+        Vector2[,] TexturePts { get; set; }
         VertexPositionTexture[] Vertices { get; set; }
         Vector2 Delta { get; set; }
         int NumTexels { get; set; }
@@ -118,7 +118,7 @@ namespace HyperV
             // FireBall
             Vertices = new VertexPositionTexture[NumVertices];
             //TexturePts = new Vector2[GroundMap.Width, GroundMap.Height];
-            TexturePts = new Vector2[NUM_TEXTURE_PTS_POSSIBLE];
+            TexturePts = new Vector2[2, 2];
             //VerticesPts = new Vector3[GroundMap.Width, GroundMap.Height];
             //Delta = new Vector2(Span.X / NumRows, Span.Z / NumColumns);
             AffecterPointsTexture();
@@ -134,14 +134,18 @@ namespace HyperV
             //        TexturePts[i, j] = new Vector2(0, VerticesPts[i, j].Y / Span.Y);
             //    }
             //}
-            for (int i = 0; i < 5; ++i)
-            {
-                for (int j = 0; j < 4; ++j)
-                {
-                    TexturePts[NUM_VERTICES_PER_TILE * i + j] = new Vector2(j % NUM_TRIANGLES_PAR_TUILE, (i + (j > J_MAX_VALUE_TOP_TILE ? BOTTOM_TILE_VALUE : TOP_TILE_VALUE) * (1 - 1 / (float)TextureTerrain.Height)) / NumTextureLevels);
-                    //TexturePts[NUM_VERTICES_PER_TILE * i + j] = new Vector2(0.5f, 0.9f);
-                }
-            }
+            //for (int i = 0; i < 1; ++i)
+            //{
+            //    for (int j = 0; j < 1; ++j)
+            //    {
+            //        TexturePts[NUM_VERTICES_PER_TILE * i + j] = new Vector2(j % NUM_TRIANGLES_PAR_TUILE, (i + (j > J_MAX_VALUE_TOP_TILE ? BOTTOM_TILE_VALUE : TOP_TILE_VALUE) * (1 - 1 / (float)TextureTerrain.Height)) / NumTextureLevels);
+            //        //TexturePts[NUM_VERTICES_PER_TILE * i + j] = new Vector2(0.5f, 0.9f);
+            //    }
+            //}
+            TexturePts[0, 0] = new Vector2(0, 1);
+            TexturePts[1, 0] = new Vector2(1, 1);
+            TexturePts[0, 1] = new Vector2(0, 0);
+            TexturePts[1, 1] = new Vector2(1, 0);
         }
 
         protected override void LoadContent()
@@ -215,12 +219,12 @@ namespace HyperV
             //{
             //    Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i, j], TexturePts[k + noCase * ]);
             //} 
-            Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i, j], TexturePts[noCase]);
-            Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i + 1, j], TexturePts[noCase + 1]);
-            Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i, j + 1], TexturePts[noCase + 2]);
-            Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i + 1, j], TexturePts[noCase + 1]);
-            Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i + 1, j + 1], TexturePts[noCase + 3]);
-            Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i, j + 1], TexturePts[noCase + 2]);
+            Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i, j], TexturePts[0, 0]);
+            Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i + 1, j], TexturePts[0, 1]);
+            Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i, j + 1], TexturePts[1, 0]);
+            Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i + 1, j], TexturePts[0, 1]);
+            Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i + 1, j + 1], TexturePts[1, 1]);
+            Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i, j + 1], TexturePts[1, 0]);
         }
 
         //

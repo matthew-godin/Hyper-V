@@ -56,10 +56,10 @@ namespace HyperV
             GraphicsMgr.SynchronizeWithGreenicalRetrace = false;
             IsFixedTimeStep = false;
             IsMouseVisible = false;
-            //GraphicsMgr.PreferredBackBufferHeight = 800;
-            //GraphicsMgr.PreferredBackBufferWidth = 1500;
-            GraphicsMgr.PreferredBackBufferHeight = 500;
-            GraphicsMgr.PreferredBackBufferWidth = 1000;
+            GraphicsMgr.PreferredBackBufferHeight = 800;
+            GraphicsMgr.PreferredBackBufferWidth = 1500;
+            //GraphicsMgr.PreferredBackBufferHeight = 500;
+            //GraphicsMgr.PreferredBackBufferWidth = 1000;
         }
 
         Grass Grass0 { get; set; }
@@ -323,7 +323,7 @@ namespace HyperV
                         Services.AddService(typeof(List<HeightMap>), HeightMap);
                         break;
                     case "House":
-                        Houses.Add(new House(this, parts[1], float.Parse(parts[2]), Vector3Parse(parts[3]), Vector3Parse(parts[4]), Vector3Parse(parts[5])));
+                        Houses.Add(new House(this, parts[1], float.Parse(parts[2]), Vector3Parse(parts[3]), Vector3Parse(parts[4]), Vector3Parse(parts[5]), Vector3Parse(parts[6])));
                         Components.Add(Houses.Last());
                         Services.RemoveService(typeof(List<House>));
                         Services.AddService(typeof(List<House>), Houses);
@@ -332,7 +332,6 @@ namespace HyperV
             }
             if (Level != 0)
             {
-                AddCharacterLabels();
                 Components.Add(PressSpaceLabel);
                 PressSpaceLabel.Visible = false;
                 if (boss)
@@ -343,6 +342,7 @@ namespace HyperV
                 Components.Add(LifeBars[0]);
                 Components.Add(LifeBars[1]);
                 Services.AddService(typeof(LifeBar[]), LifeBars);
+                AddCharacterLabels();
                 Components.Add(Camera);
                 Components.Remove(Loading);
                 Components.Add(Crosshair);

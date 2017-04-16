@@ -21,7 +21,7 @@ namespace HyperV
         float TimeElapsedSinceUpdate { get; set; }
         float TotalTime { get; set; }
         Boss Boss { get; set; }
-        Enemy Enemy { get; set; }
+        List<Enemy> Enemy { get; set; }
 
         public Arrow(Game game, string modelName, float initialScale,
                     Vector3 initialRotation, Vector3 initialPosition, Vector3 direction)
@@ -35,7 +35,7 @@ namespace HyperV
             TotalTime = 0;
             base.Initialize();
             Boss = Game.Services.GetService(typeof(Boss)) as Boss;
-            Enemy = Game.Services.GetService(typeof(Enemy)) as Enemy;
+            Enemy = Game.Services.GetService(typeof(List<Enemy>)) as List<Enemy>;
         }
 
         public override void Update(GameTime gameTime)
@@ -46,7 +46,13 @@ namespace HyperV
             if (TimeElapsedSinceUpdate >= FPS_60_INTERVAL)
             {
                 Boss.CheckForArrowAttack(Position, Direction, 1, this);
-                Enemy.CheckForArrowAttack(Position, 1, this);
+                if (Enemy.Count > 0)
+                {
+                    foreach (Enemy e in Enemy)
+                    {
+                        e.CheckForArrowAttack(Position, 1, this);
+                    }
+                }
                 if (TotalTime >= 5)
                 {
                     Game.Components.Remove(this);

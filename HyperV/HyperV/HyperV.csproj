@@ -115,6 +115,7 @@
     <Compile Include="SkipCutsceneLabel.cs" />
     <Compile Include="Skybox.cs" />
     <Compile Include="GrabbableSphere.cs" />
+    <Compile Include="UnlockableWall.cs" />
     <Compile Include="Walls.cs" />
     <Compile Include="Water.cs" />
   </ItemGroup>

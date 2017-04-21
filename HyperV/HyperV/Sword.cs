@@ -16,7 +16,7 @@ namespace HyperV
     public class Sword : GrabbableModel
     {
         bool SwordHit { get; set; }
-        bool ContinueSwordHit { get; set; }
+        public bool ContinueSwordHit { get; private set; }
         float t { get; set; }
         InputManager InputMgr { get; set; }
         GamePadManager GamePadMgr { get; set; }

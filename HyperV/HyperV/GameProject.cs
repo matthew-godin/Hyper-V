@@ -56,10 +56,10 @@ namespace HyperV
             GraphicsMgr.SynchronizeWithGreenicalRetrace = false;
             IsFixedTimeStep = false;
             IsMouseVisible = false;
-            GraphicsMgr.PreferredBackBufferHeight = 800;
-            GraphicsMgr.PreferredBackBufferWidth = 1500;
-            //GraphicsMgr.PreferredBackBufferHeight = 500;
-            //GraphicsMgr.PreferredBackBufferWidth = 1000;
+            //GraphicsMgr.PreferredBackBufferHeight = 800;
+            //GraphicsMgr.PreferredBackBufferWidth = 1500;
+            GraphicsMgr.PreferredBackBufferHeight = 500;
+            GraphicsMgr.PreferredBackBufferWidth = 1000;
         }
 
         Grass Grass0 { get; set; }
@@ -180,7 +180,8 @@ namespace HyperV
 
         void SelectWorld(bool usePosition)
         {
-            SelectLevel(usePosition, Level);
+            //SelectLevel(usePosition, Level);
+            PrisonLevel(usePosition);
             Save();
         }
 
@@ -468,6 +469,7 @@ namespace HyperV
         protected override void Initialize()
         {
             Sleep = false;
+            Services.AddService(typeof(Random), new Random());
             FirstGameOver = true;
             FpsInterval = 1f / 60f;
             SongManager = new RessourcesManager<Song>(this, "Songs");
@@ -528,7 +530,7 @@ namespace HyperV
                 TimePlayed = TimePlayed.Add(gameTime.ElapsedGameTime);
                 if (Timer >= FpsInterval)
                 {
-                    //Window.Title = Camera.Position.ToString();
+                    Window.Title = Camera.Position.ToString();
                     switch (Level)
                     {
                         case 0:
@@ -689,6 +691,97 @@ namespace HyperV
             GraphicsDevice.Clear(Color.Orange);
             base.Draw(gameTime);
         }
+
+
+
+
+
+        // PrisonLevel
+        #region
+
+        BouncingBall Ball { get; set; }
+        Sword Sword { get; set; }
+        Random GénérateurAléatoire { get; set; }
+        const int TILE_WIDTH = 20, NUM_BALLS_DESIRED = 20;
+        const float SWORD_SCALE = 0.009f;
+        const string SWORD_MODEL_NAME = "robot";
+
+        void PrisonLevel(bool usePosition)
+        {
+            GénérateurAléatoire = new Random();
+            Components.Add(InputManager);
+            usePosition = false;
+
+            Display3D = new Displayer3D(this);
+            Components.Add(Display3D);
+            CréationCamera(usePosition);
+            CréationMurs("imagePrisonMur", "DataPrison.txt");
+            CréerPlancherEtPlafond(TILE_WIDTH);
+
+            for (int i = 0; i < NUM_BALLS_DESIRED; i++)
+            {
+                Ball = new BouncingBall(this, 1f, Vector3.Zero, ComputeInitialPosition(), 5f, new Vector2(50), "Ball_Bois", FpsInterval);
+                Components.Add(Ball);
+            }
+            CréerSword(SWORD_MODEL_NAME, SWORD_SCALE);
+            Components.Add(LifeBars[0]);
+            Components.Add(LifeBars[1]);
+            Services.AddService(typeof(LifeBar[]), LifeBars);
+            Components.Add(Crosshair);
+            Components.Add(FPSLabel);
+        }
+        Vector3 ComputeInitialPosition()
+        {
+            float x = GénérateurAléatoire.Next(-190, 70);
+            float z = GénérateurAléatoire.Next(-40, 220);
+            float y = GénérateurAléatoire.Next(-35, -15);
+            return new Vector3(x, y, z);
+        }
+
+        void CréerPlancherEtPlafond(int largeurTuiles)
+        {
+            GrassArray = new Grass[largeurTuiles, largeurTuiles];
+            CeilingArray = new Ceiling[largeurTuiles, largeurTuiles];
+            Components.Add(new Grass(this, 1f, Vector3.Zero, new Vector3(-200, -40, -50), new Vector2(40, 40), "imagePrisonMur", new Vector2(largeurTuiles, largeurTuiles), FpsInterval));
+            Components.Add(new Ceiling(this, 1f, Vector3.Zero, new Vector3(-200, 0, -50), new Vector2(40, 40), "imagePrisonMur", new Vector2(largeurTuiles, largeurTuiles), FpsInterval));
+        }
+
+        void CréationCamera(bool usePosition)
+        {
+            if (usePosition)
+            {
+                Camera = new Camera1(this, Position, new Vector3(20, 0, 0), Vector3.Up, FpsInterval, RenderDistance);
+                (Camera as Camera1).InitializeDirection(Direction);
+            }
+            else
+            {
+                Camera = new Camera1 (this, new Vector3(76, -20, -45), new Vector3(20, 0, 0), Vector3.Up, FpsInterval, RenderDistance);
+            }
+
+            Services.AddService(typeof(Camera), Camera);
+
+            Components.Add(Camera);
+        }
+
+        Walls Murs { get; set; }
+
+        void CréationMurs(string nomTexture, string nomFichierTexte)
+        {
+            Murs = new Walls(this, FpsInterval, nomTexture, "../../../" + nomFichierTexte, -40);
+            Components.Add(Murs);
+            Services.AddService(typeof(Walls), Murs);
+        }
+
+        void CréerSword(string modelName, float scale)
+        {
+            Sword = new Sword(this, modelName, scale, Vector3.Zero, Camera.Position);
+            Sword.IsGrabbed = true;
+
+            Components.Add(Sword);
+            Services.AddService(typeof(Sword), Sword);
+        }
+
+        #endregion
     }
 }
 

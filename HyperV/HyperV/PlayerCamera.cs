@@ -730,13 +730,13 @@ namespace HyperV
 
         protected bool Jump { get; private set; }
         bool Run { get; set; }
-        bool Grab { get; set; }
+        public bool Grab { get; set; }
 
         public bool IsMouseCameraActivated { get; set; }
         bool EstDisplacementEtAutresKeyboardActivated { get; set; }
         bool IsKeyboardCameraActivated { get; set; }
 
-        Ray Visor { get; set; }
+        public Ray Visor { get; private set; }
 
         protected float Height { get; set; }
 

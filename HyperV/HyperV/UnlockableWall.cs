@@ -36,9 +36,7 @@ namespace HyperV
 
         Vector2[,] PtsTexture { get; set; }
         string NomTileTexture { get; set; }
-        float Radius { get; set; }
         Vector3 CentrePosition { get; set; }
-        public int Level { get; private set; }
 
         Vector3 PlanePoint { get; set; }
         Vector2 FirstVertex { get; set; }
@@ -51,14 +49,12 @@ namespace HyperV
             return (valeur >= thresholdA && valeur <= thresholdB || valeur <= thresholdA && valeur >= thresholdB);
         }
 
-        public UnlockableWall(Game game, float saveVal, Vector3 initialRotation, Vector3 initialPosition, Vector2 scale, string nomTileTexture, int level, float updateInterval) : base(game, SaveIndex, initialRotation, initialPosition)
+        public UnlockableWall(Game game, float saveVal, Vector3 initialRotation, Vector3 initialPosition, Vector2 scale, string nomTileTexture, float updateInterval) : base(game, SaveIndex, initialRotation, initialPosition)
         {
             NomTileTexture = nomTileTexture;
             UpdateInterval = updateInterval;
             Delta = new Vector2(scale.X, scale.Y);
             Origin = new Vector3(0, -Delta.Y / 2, -Delta.X / 2); //pour centrer la primitive au point (0,0,0)
-            Radius = 30;
-            Level = level;
         }
 
         public override void Initialize()
@@ -187,20 +183,14 @@ namespace HyperV
             Vector3 AP;
             bool result = false;
             float wallDistance;
-
-            AP = Position - PlanePoint;
-            wallDistance = Vector2.Distance(FirstVertex, SecondVertex);
-            result = Math.Abs(Vector3.Dot(AP, PlaneEquation)) / Magnitude < MAX_DISTANCE && (Position - new Vector3(FirstVertex.X, Position.Y, FirstVertex.Y)).Length() < wallDistance && (Position - new Vector3(SecondVertex.X, Position.Y, SecondVertex.Y)).Length() < wallDistance;
-            //CreateNewDirection(result, i, Direction, ref newDirection);
-
+            if (Visible)
+            {
+                AP = Position - PlanePoint;
+                wallDistance = Vector2.Distance(FirstVertex, SecondVertex);
+                result = Math.Abs(Vector3.Dot(AP, PlaneEquation)) / Magnitude < MAX_DISTANCE && (Position - new Vector3(FirstVertex.X, Position.Y, FirstVertex.Y)).Length() < wallDistance && (Position - new Vector3(SecondVertex.X, Position.Y, SecondVertex.Y)).Length() < wallDistance;
+                //CreateNewDirection(result, i, Direction, ref newDirection);
+            }
             return result;
         }
-
-        public float? Collision(Ray ray)
-        {
-            return BoundingSphere.Intersects(ray);
-        }
-
-        public BoundingSphere BoundingSphere { get { return new BoundingSphere(CentrePosition, Radius); } }
     }
 }

@@ -81,7 +81,7 @@ namespace HyperV
                 FirstVertex = new Vector2(PositionInitiale.X, PositionInitiale.Z) + new Vector2(PtsVertices[0, 0].X, PtsVertices[0, 0].Z);
                 SecondVertex = new Vector2(PositionInitiale.X, PositionInitiale.Z) + new Vector2(PtsVertices[1, 1].X, -PtsVertices[1, 1].Z);
             }
-            else
+            else if (RotationInitiale.Y == 0)
             {
                 FirstVertex = new Vector2(PositionInitiale.X, PositionInitiale.Z) + new Vector2(PtsVertices[0, 0].X, PtsVertices[0, 0].Z);
                 SecondVertex = new Vector2(PositionInitiale.X, PositionInitiale.Z) + new Vector2(PtsVertices[1, 1].X, PtsVertices[1, 1].Z);

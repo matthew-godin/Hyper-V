@@ -94,7 +94,12 @@ namespace HyperV
                 FirstVertex = new Vector2(InitialPosition.X, InitialPosition.Z) + new Vector2(VerticesPts[0, 0].X, VerticesPts[0, 0].Z);
                 SecondVertex = new Vector2(InitialPosition.X, InitialPosition.Z) + new Vector2(-VerticesPts[1, 1].X, -VerticesPts[1, 1].Z);
             }
-            else
+            else if (InitialRotation.Y == 1.570796f)
+            {
+                FirstVertex = new Vector2(InitialPosition.X, InitialPosition.Z) + new Vector2(-VerticesPts[0, 0].X, VerticesPts[0, 0].Z);
+                SecondVertex = new Vector2(InitialPosition.X, InitialPosition.Z) + new Vector2(VerticesPts[1, 1].X, -VerticesPts[1, 1].Z); // TO FINISH
+            }
+            else if (InitialRotation.Y == 0)
             {
                 FirstVertex = new Vector2(InitialPosition.X, InitialPosition.Z) + new Vector2(VerticesPts[0, 0].X, VerticesPts[0, 0].Z);
                 SecondVertex = new Vector2(InitialPosition.X, InitialPosition.Z) + new Vector2(VerticesPts[1, 1].X, VerticesPts[1, 1].Z);

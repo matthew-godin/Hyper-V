@@ -43,6 +43,11 @@ namespace HyperV
             NomFichierLecture = fileNameLecture;
             TextureName = textureName;
             UpdateInterval = updateInterval;
+        }
+
+        public override void Initialize()
+        {
+            base.Initialize();
 
             ButtonOne = false;
             ButtonTwo = false;
@@ -58,13 +63,6 @@ namespace HyperV
 
             TestInitialisation();
             LoadContent();
-        }
-
-        public override void Initialize()
-        {
-            base.Initialize();
-
-            
         }
 
         void InitializePositions()
@@ -186,7 +184,7 @@ namespace HyperV
             if (i > 120)
             {
                 int slopeChoice = RandomNumberGenerator.Next(0, 3) * 2;
-
+                //Game.Components.Add(new Displayer3D(Game));
                 Game.Components.Add(new RythmSphere(Game, 1, Vector3.Zero,
                                     Positions[slopeChoice], 1, new Vector2(20, 20),
                                     "BlueWhiteRed", UpdateInterval, Positions[slopeChoice + 1]));

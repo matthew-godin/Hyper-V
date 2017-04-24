@@ -1,6 +1,3 @@
-// By Matthew Godin
-// Created on January 2017
-
 using System;
 using System.Collections.Generic;
 using System.Linq;

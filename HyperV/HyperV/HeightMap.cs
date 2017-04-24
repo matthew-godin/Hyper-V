@@ -1,21 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XNAProject;
 
 
 namespace HyperV
 {
-    /// <summary>
-    /// This is a game component that implements IUpdateable.
-    /// </summary>
     public class HeightMap : BasicPrimitive
     {
         const int NUM_TRIANGLES_PAR_TUILE = 2;
@@ -104,8 +93,8 @@ namespace HyperV
             Heights = new float[GroundMap.Width, GroundMap.Height];
             Origin = new Vector3(/*-Span.X / HALF_DIVISOR, 0, -Span.Z / HALF_DIVISOR*/0, 0, 0); //to center the primitive to point (0,0,0)##########################Moins à Z ajouté
 
-            AllocateArrays(); // ################## INVERSÉ
-            CreateArrayVerticesPts(); // ############### INVERSÉ
+            AllocateArrays();
+            CreateArrayVerticesPts(); 
             CreateArrayTexturePts();
             CreateCombinedTexture();
             InitializeVertices();
@@ -117,11 +106,7 @@ namespace HyperV
         {
             Vertices = new VertexPositionTexture[NumVertices];
             TexturePts = new Vector2[GroundMap.Width, GroundMap.Height];
-            //TexturePts = new Vector2[2, 2];
             VerticesPts = new Vector3[GroundMap.Width, GroundMap.Height];
-            //VerticesPts = new Vector3[GroundMap.Width, GroundMap.Height];
-            //Delta = new Vector2(Span.X / NumRows, Span.Z / NumColumns);
-
         }
 
         void CreateArrayTexturePts()
@@ -148,10 +133,6 @@ namespace HyperV
             BscEffect.Texture = CombinedTexture;
         }
 
-        //
-        // Création du tableau des points de sommets (on crée les points)
-        // Ce processus implique la transformation des points 2D de la texture en coordonnées 3D du terrain
-        //
         private void CreateArrayVerticesPts()
         {
             Delta = new Vector2(Span.X / NumRows, Span.Z / NumColumns);
@@ -170,61 +151,21 @@ namespace HyperV
         //
         protected override void InitializeVertices()
         {
-            // FireBall
             int cpt = -1;
             for (int j = 0; j < NumRows; ++j)
             {
                 for (int i = 0; i < NumColumns; ++i)
                 {
-                    //int val1 = (int)(VerticesPts[i, j].Y + VerticesPts[i + 1, j].Y + VerticesPts[i, j + 1].Y) / 3;
-                    //int woho = (int)(val1 / MAX_COLOR);
-
-                    //Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i, j], TexturePts[i, j]);
-                    //Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i + 1, j], TexturePts[i + 1, j]);
-                    //Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i, j + 1], TexturePts[i, j + 1]);
-
-                    ////AssociéTruc(ref Vertices[cpt - 2], ref Vertices[cpt - 1], ref Vertices[cpt]);
-
-                    //int val2 = (int)(((VerticesPts[i + 1, j].Y + VerticesPts[i + 1, j + 1].Y + VerticesPts[i, j + 1].Y) / 3 - Origin.Y) / Delta.Y);
-                    //woho = (int)(val2 / MAX_COLOR);
-
-                    //Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i + 1, j], TexturePts[i + 1, j]);
-                    //Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i + 1, j + 1], TexturePts[i + 1, j + 1]);
-                    //Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i, j + 1], TexturePts[i, j + 1]);
-                    AffecterTuile(ref cpt, i, j);
+                    Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i, j], TexturePts[i, j]);
+                    Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i + 1, j], TexturePts[i + 1, j]);
+                    Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i, j + 1], TexturePts[i, j + 1]);
+                    Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i + 1, j], TexturePts[i + 1, j]);
+                    Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i + 1, j + 1], TexturePts[i + 1, j + 1]);
+                    Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i, j + 1], TexturePts[i, j + 1]);
                 }
             }
         }
 
-        void AffecterTuile(ref int cpt, int i, int j)
-        {
-            int noCase = (int)((VerticesPts[i, j].Y + VerticesPts[i + 1, j].Y + VerticesPts[i, j + 1].Y + VerticesPts[i + 1, j + 1].Y) / 4.0f / Span.Y * 19) / 4 * 4;
-
-            //for (int k = 0; k < 4; ++k)
-            //{
-            //    Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i, j], TexturePts[k + noCase * ]);
-            //} 
-
-            Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i, j], TexturePts[i, j]);
-            Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i + 1, j], TexturePts[i + 1, j]);
-            Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i, j + 1], TexturePts[i, j + 1]);
-            Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i + 1, j], TexturePts[i + 1, j]);
-            Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i + 1, j + 1], TexturePts[i + 1, j + 1]);
-            Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i, j + 1], TexturePts[i, j + 1]);
-
-            //Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i, j], TexturePts[i+1, j+1]);
-            //Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i + 1, j], TexturePts[i, j+1]);
-            //Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i, j + 1], TexturePts[i+1, j]);
-            //Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i + 1, j], TexturePts[i, j+1]);
-            //Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i + 1, j + 1], TexturePts[i, j]);
-            //Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i, j + 1], TexturePts[i+1, j]);
-
-
-        }
-
-        //
-        // Deviner ce que fait cette méthode...
-        //
         public override void Draw(GameTime gameTime)
         {
             // FireBall

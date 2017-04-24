@@ -185,9 +185,9 @@ namespace HyperV
 
         void SelectWorld(bool usePosition)
         {
-            //SelectLevel(usePosition, Level);
+            SelectLevel(usePosition, Level);
             //PrisonLevel(usePosition);
-            RythmLevel();
+            //RythmLevel();
             Save();
         }
 

@@ -36,7 +36,6 @@ namespace HyperV
 
         public Vector3? RedCubePosition { get; set; }
 
-
         public RythmLevel(Game game, string fileNameLecture, string textureName, float updateInterval)
             : base(game)
         {
@@ -155,7 +154,6 @@ namespace HyperV
         void PerformUpdate()
         {
             i++;
-
 
             foreach (TexturedCube cube in Game.Components.Where(component => component is TexturedCube))
             {

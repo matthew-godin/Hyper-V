@@ -1,21 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XNAProject;
 
 
 namespace HyperV
 {
-    /// <summary>
-    /// This is a game component that implements IUpdateable.
-    /// </summary>
     public class HeightMap : BasicPrimitive
     {
         const int NUM_TRIANGLES_PAR_TUILE = 2;
@@ -41,111 +30,94 @@ namespace HyperV
 
         Vector3 Span { get; set; }
         string GroundMapName { get; set; }
-        string TextureNameTerrain { get; set; }
+        string[] TextureNameTerrain { get; set; }
         int NumTextureLevels { get; set; }
 
         BasicEffect BscEffect { get; set; }
         RessourcesManager<Texture2D> TextureMgr { get; set; }
         Texture2D GroundMap { get; set; }
-        Texture2D TextureTerrain { get; set; }
         Vector3 Origin { get; set; }
 
         // to complete with the properties that will be necessary to implement the component
         int NumRows { get; set; }
         int NumColumns { get; set; }
-        Color[] DataTexture { get; set; }
+        Color[] TextureMapData { get; set; }
         int TileWidth { get; set; }
         Vector3[,] VerticesPts { get; set; }
         Vector2[,] TexturePts { get; set; }
         VertexPositionTexture[] Vertices { get; set; }
         Vector2 Delta { get; set; }
-        int NumTexels { get; set; }
+        //int NumTexels { get; set; }
         float[,] Heights { get; set; }
 
-        public HeightMap(Game game, float initialScale, Vector3 initialRotation, Vector3 initialPosition, Vector3 span, string nomGroundMap, string textureNameTerrain) : base(game, initialScale, initialRotation, initialPosition)
+        Texture2D CombinedTexture { get; set; }
+        Texture2D SandTexture { get; set; }
+        Texture2D GrassTexture { get; set; }
+
+        public HeightMap(Game game, float initialScale, Vector3 initialRotation,
+                        Vector3 initialPosition, Vector3 span, string nomGroundMap,
+                        string[] textureNameTerrain)
+            : base(game, initialScale, initialRotation, 
+                   initialPosition)
       {
             Span = span;
             GroundMapName = nomGroundMap;
             TextureNameTerrain = textureNameTerrain;
         }
 
+        void InitializeMapData()
+        {
+            GroundMap = TextureMgr.Find(GroundMapName);
+            TextureMapData = new Color[GroundMap.Width * GroundMap.Height];
+            GroundMap.GetData<Color>(TextureMapData);
+        }
+
+        void InitializeTextureData()
+        {
+            SandTexture = TextureMgr.Find(TextureNameTerrain[0]);
+            GrassTexture = TextureMgr.Find(TextureNameTerrain[1]);
+            TileWidth = (int)(SandTexture.Height / (float)NumTextureLevels);
+        }
+
         public override void Initialize()
         {
             TextureMgr = Game.Services.GetService(typeof(RessourcesManager<Texture2D>)) as RessourcesManager<Texture2D>;
-            InitializeMapData();
-            Heights = new float[GroundMap.Width, GroundMap.Height];
-            InitializeTextureData();
-            Origin = new Vector3(/*-Span.X / HALF_DIVISOR, 0, -Span.Z / HALF_DIVISOR*/0, 0, 0); //to center the primitive to point (0,0,0)##########################Moins à Z ajouté
-            CreatePointArray(); // ############### INVERSÉ
-            AllocateArrays(); // ################## INVERSÉ
-            base.Initialize();
-        }
 
-        //
-        // à partir de la texture servant de carte de height (HeightMap), on initialise les données
-        // relatives à la structure de la carte
-        //
-        void InitializeMapData()
-        {
-            // FireBall
-            GroundMap = TextureMgr.Find(GroundMapName);
+            InitializeMapData();
+            InitializeTextureData();
+
             NumRows = GroundMap.Width - SUPPLEMENTARY_VERTEX_FOR_LINE;
             NumColumns = GroundMap.Height - SUPPLEMENTARY_VERTEX_FOR_LINE;
             NumTriangles = NumRows * NumColumns * NUM_TRIANGLES_PAR_TUILE;
             NumVertices = NumTriangles * NUM_VERTICES_PER_TRIANGLE;
-            NumTexels = GroundMap.Width * GroundMap.Height;
-            DataTexture = new Color[NumTexels];
-            GroundMap.GetData<Color>(DataTexture);
+            Heights = new float[GroundMap.Width, GroundMap.Height];
+            Origin = new Vector3(/*-Span.X / HALF_DIVISOR, 0, -Span.Z / HALF_DIVISOR*/0, 0, 0); //to center the primitive to point (0,0,0)##########################Moins à Z ajouté
+
+            AllocateArrays();
+            CreateArrayVerticesPts(); 
+            CreateArrayTexturePts();
+            CreateCombinedTexture();
+            InitializeVertices();
+
+            base.Initialize();
         }
 
-        //
-        // à partir de la texture contenant les textures carte de height (HeightMap), on initialise les données
-        // relatives à l'application des textures de la carte
-        //
-        void InitializeTextureData()
-        {
-            // FireBall
-            TextureTerrain = TextureMgr.Find(TextureNameTerrain);
-            TileWidth = (int)(TextureTerrain.Height / (float)NumTextureLevels);
-        }
-
-        //
-        // Allocation des deux tableaux
-        //    1) celui contenant les points de sommet (les points uniques), 
-        //    2) celui contenant les sommets servant à dessiner les triangles
         void AllocateArrays()
         {
-            // FireBall
             Vertices = new VertexPositionTexture[NumVertices];
-            //TexturePts = new Vector2[GroundMap.Width, GroundMap.Height];
-            TexturePts = new Vector2[2, 2];
-            //VerticesPts = new Vector3[GroundMap.Width, GroundMap.Height];
-            //Delta = new Vector2(Span.X / NumRows, Span.Z / NumColumns);
-            AffecterPointsTexture();
-            InitializeVertices();
+            TexturePts = new Vector2[GroundMap.Width, GroundMap.Height];
+            VerticesPts = new Vector3[GroundMap.Width, GroundMap.Height];
         }
 
-        void AffecterPointsTexture()
+        void CreateArrayTexturePts()
         {
-            //for (int i = 0; i < TexturePts.GetLength(0); ++i)
-            //{
-            //    for (int j = 0; j < TexturePts.GetLength(1); ++j)
-            //    {
-            //        TexturePts[i, j] = new Vector2(0, VerticesPts[i, j].Y / Span.Y);
-            //    }
-            //}
-            //for (int i = 0; i < 1; ++i)
-            //{
-            //    for (int j = 0; j < 1; ++j)
-            //    {
-            //        TexturePts[NUM_VERTICES_PER_TILE * i + j] = new Vector2(j % NUM_TRIANGLES_PAR_TUILE, (i + (j > J_MAX_VALUE_TOP_TILE ? BOTTOM_TILE_VALUE : TOP_TILE_VALUE) * (1 - 1 / (float)TextureTerrain.Height)) / NumTextureLevels);
-            //        //TexturePts[NUM_VERTICES_PER_TILE * i + j] = new Vector2(0.5f, 0.9f);
-            //    }
-            //}
-            TexturePts[0, 0] = new Vector2(0, 1);
-            TexturePts[1, 0] = new Vector2(1, 1);
-            TexturePts[0, 1] = new Vector2(0, 0);
-            TexturePts[1, 1] = new Vector2(1, 0);
+            for (int i = 0; i < TexturePts.GetLength(0); ++i)
+            {
+                for (int j = 0; j < TexturePts.GetLength(1); ++j)
+                {
+                    TexturePts[i, j] = new Vector2(i / (float)NumColumns, -j / (float)NumRows);
+                }
+            }
         }
 
         protected override void LoadContent()
@@ -158,23 +130,17 @@ namespace HyperV
         void InitializeBscEffectParameters()
         {
             BscEffect.TextureEnabled = true;
-            BscEffect.Texture = TextureTerrain;
+            BscEffect.Texture = CombinedTexture;
         }
 
-        //
-        // Création du tableau des points de sommets (on crée les points)
-        // Ce processus implique la transformation des points 2D de la texture en coordonnées 3D du terrain
-        //
-        private void CreatePointArray()
+        private void CreateArrayVerticesPts()
         {
-            // FireBall
-            VerticesPts = new Vector3[GroundMap.Width, GroundMap.Height];
             Delta = new Vector2(Span.X / NumRows, Span.Z / NumColumns);
             for (int i = 0; i < VerticesPts.GetLength(0); ++i)
             {
                 for (int j = 0; j < VerticesPts.GetLength(1); ++j)
                 {
-                    VerticesPts[i, j] = Origin + new Vector3(Delta.X * i, DataTexture[i * VerticesPts.GetLength(1) + j].B / MAX_COLOR * Span.Y, Delta.Y * j);
+                    VerticesPts[i, j] = Origin + new Vector3(Delta.X * i, TextureMapData[j * VerticesPts.GetLength(1) + i].B / MAX_COLOR * Span.Y, Delta.Y * j);
                 }
             }
         }
@@ -185,51 +151,21 @@ namespace HyperV
         //
         protected override void InitializeVertices()
         {
-            // FireBall
             int cpt = -1;
             for (int j = 0; j < NumRows; ++j)
             {
                 for (int i = 0; i < NumColumns; ++i)
                 {
-                    //int val1 = (int)(VerticesPts[i, j].Y + VerticesPts[i + 1, j].Y + VerticesPts[i, j + 1].Y) / 3;
-                    //int woho = (int)(val1 / MAX_COLOR);
-
-                    //Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i, j], TexturePts[i, j]);
-                    //Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i + 1, j], TexturePts[i + 1, j]);
-                    //Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i, j + 1], TexturePts[i, j + 1]);
-
-                    ////AssociéTruc(ref Vertices[cpt - 2], ref Vertices[cpt - 1], ref Vertices[cpt]);
-
-                    //int val2 = (int)(((VerticesPts[i + 1, j].Y + VerticesPts[i + 1, j + 1].Y + VerticesPts[i, j + 1].Y) / 3 - Origin.Y) / Delta.Y);
-                    //woho = (int)(val2 / MAX_COLOR);
-
-                    //Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i + 1, j], TexturePts[i + 1, j]);
-                    //Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i + 1, j + 1], TexturePts[i + 1, j + 1]);
-                    //Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i, j + 1], TexturePts[i, j + 1]);
-                    AffecterTuile(ref cpt, i, j);
+                    Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i, j], TexturePts[i, j]);
+                    Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i + 1, j], TexturePts[i + 1, j]);
+                    Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i, j + 1], TexturePts[i, j + 1]);
+                    Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i + 1, j], TexturePts[i + 1, j]);
+                    Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i + 1, j + 1], TexturePts[i + 1, j + 1]);
+                    Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i, j + 1], TexturePts[i, j + 1]);
                 }
             }
         }
 
-        void AffecterTuile(ref int cpt, int i, int j)
-        {
-            int noCase = (int)((VerticesPts[i, j].Y + VerticesPts[i + 1, j].Y + VerticesPts[i, j + 1].Y + VerticesPts[i + 1, j + 1].Y) / 4.0f / Span.Y * 19) / 4 * 4;
-
-            //for (int k = 0; k < 4; ++k)
-            //{
-            //    Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i, j], TexturePts[k + noCase * ]);
-            //} 
-            Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i, j], TexturePts[0, 0]);
-            Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i + 1, j], TexturePts[0, 1]);
-            Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i, j + 1], TexturePts[1, 0]);
-            Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i + 1, j], TexturePts[0, 1]);
-            Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i + 1, j + 1], TexturePts[1, 1]);
-            Vertices[++cpt] = new VertexPositionTexture(VerticesPts[i, j + 1], TexturePts[1, 0]);
-        }
-
-        //
-        // Deviner ce que fait cette méthode...
-        //
         public override void Draw(GameTime gameTime)
         {
             // FireBall
@@ -239,7 +175,7 @@ namespace HyperV
             foreach (EffectPass passEffect in BscEffect.CurrentTechnique.Passes)
             {
                 passEffect.Apply();
-                GraphicsDevice.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleList, Vertices, NULL_COMPENSATION, NumTriangles);
+                GraphicsDevice.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleList, Vertices, NULL_COMPENSATION, Vertices.Length / NUM_VERTICES_PER_TRIANGLE);
             }
         }
 
@@ -260,6 +196,36 @@ namespace HyperV
                 height = 5;//position.Y;
             }
             return height;
+        }
+
+        void CreateCombinedTexture()
+        {
+            CombinedTexture = new Texture2D(SandTexture.GraphicsDevice, VerticesPts.GetLength(0), VerticesPts.GetLength(1));
+            int nbTexels = VerticesPts.GetLength(0) * VerticesPts.GetLength(0);
+            Color[] texels = new Color[nbTexels];
+            SandTexture.GetData(texels);
+
+            Color[] sandTexels = new Color[SandTexture.Width * SandTexture.Height];
+            SandTexture.GetData(sandTexels);
+
+            Color[] grassTexels = new Color[GrassTexture.Width * GrassTexture.Height];
+            GrassTexture.GetData(grassTexels);
+
+            for (int texelIndex = 0; texelIndex < nbTexels; ++texelIndex)
+            {
+                float percent = GetPercent(texelIndex);
+
+                texels[texelIndex].R = (byte)((percent * (byte)grassTexels[texelIndex].R) + (byte)((1 - percent) * (byte)sandTexels[texelIndex].R));
+                texels[texelIndex].G = (byte)((percent * (byte)grassTexels[texelIndex].G) + (byte)((1 - percent) * (byte)sandTexels[texelIndex].G));
+                texels[texelIndex].B = (byte)((percent * (byte)grassTexels[texelIndex].B) + (byte)((1 - percent) * (byte)sandTexels[texelIndex].B));
+            }
+
+            CombinedTexture.SetData<Color>(texels);
+        }
+
+        float GetPercent(int texelIndex)
+        {
+            return TextureMapData[texelIndex].B / MAX_COLOR;
         }
     }
 }

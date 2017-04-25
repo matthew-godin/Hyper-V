@@ -77,7 +77,7 @@ namespace HyperV
         {
             NomTileTexture = nomTileTexture;
             UpdateInterval = updateInterval;
-            Delta = new Vector2(span.X, span.Y);
+            Delta = new Vector2(span.X, span.Y)/2;
             //Origin = new Vector3(-Delta.X / 2, 0, -Delta.Y / 2); //to center the primitive to point (0,0,0)
             NumRows = (int)numbers.X;
             NumColumns = (int)numbers.Y;

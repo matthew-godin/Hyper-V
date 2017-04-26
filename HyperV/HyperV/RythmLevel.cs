@@ -14,7 +14,6 @@ using XNAProject;
 
 namespace HyperV
 {
-    //hfttp://xboxforums.create.msdn.com/forums/t/12089.aspx
     public class RythmLevel : Microsoft.Xna.Framework.GameComponent
     {
         //Constructeur
@@ -29,13 +28,16 @@ namespace HyperV
         bool ButtonTwo { get; set; }
         bool ButtonThree { get; set; }
 
-        int i { get; set; }
+        int cpt { get; set; }
+        int numGotten { get; set; }
         Random RandomNumberGenerator { get; set; }
 
         InputManager InputMgr { get; set; }
         GamePadManager GamePadMgr { get; set; }
 
         public Vector3? RedCubePosition { get; set; }
+
+        AfficheurScore Score { get; set; }
 
         public RythmLevel(Game game, string fileNameLecture, string textureName, float updateInterval)
             : base(game)
@@ -56,12 +58,14 @@ namespace HyperV
             RedCubePosition = null;
 
             RandomNumberGenerator = new Random();
-            i = 0;
+            numGotten = 0;
+            cpt = 0;
             TimeElapsedSinceUpdate = 0;
             Positions = new List<Vector3>();
             InitializePositions();
+            Score = new AfficheurScore(Game, "Arial50", Color.Black, UpdateInterval);
 
-            TestInitialisation();
+            InitializeComponents();
             LoadContent();
         }
 
@@ -97,39 +101,25 @@ namespace HyperV
             GamePadMgr = Game.Services.GetService(typeof(GamePadManager)) as GamePadManager;
         }
 
-        void TestInitialisation()
+        void InitializeComponents()
         {
-            Game.Components.Add(new TexturedCylinder(Game, 1, new Vector3(0, 0, 0), 
-                                Vector3.Zero, new Vector2(1, 1), new Vector2(20, 20), 
-                                "Electric Cable", UpdateInterval, Positions[0], 
-                                Positions[1]));
 
-            Game.Components.Add(new TexturedCylinder(Game, 1, new Vector3(0, 0, 0),
-                                Vector3.Zero, new Vector2(1, 1), new Vector2(20, 20),
-                                "Electric Cable", UpdateInterval, Positions[2],
-                                Positions[3]));
+            Game.Components.Add(Score);
+            Game.Components.Add(new Displayer3D(Game));
 
-            Game.Components.Add(new TexturedCylinder(Game, 1, new Vector3(0, 0, 0),
-                                Vector3.Zero, new Vector2(1, 1), new Vector2(20, 20),
-                                "Electric Cable", UpdateInterval, Positions[4],
-                                Positions[5]));
+            for(int i = 0; i < Positions.Count; i += 2)
+            {
+                Game.Components.Add(new TexturedCylinder(Game, 1, new Vector3(0, 0, 0),
+                                    Vector3.Zero, new Vector2(1, 1), new Vector2(20, 20),
+                                    "Electric Cable", UpdateInterval, Positions[i],
+                                    Positions[i+1]));
 
-           Game.Components.Add(new TexturedCube(Game, 1, Vector3.Zero, Positions[1],
-                              "White", new Vector3(3, 3, 3), UpdateInterval));
+                Game.Components.Add(new TexturedCube(Game, 1, Vector3.Zero, Positions[i+1],
+                                    "White", new Vector3(3, 3, 3), UpdateInterval));
 
-            Game.Components.Add(new TexturedCube(Game, 1, Vector3.Zero, Positions[3],
-                              "White", new Vector3(3, 3, 3), UpdateInterval));
-
-            Game.Components.Add(new TexturedCube(Game, 1, Vector3.Zero, Positions[5],
-                              "White", new Vector3(3, 3, 3), UpdateInterval));
-
-            Game.Components.Add(new TexturedTile(Game, 1, new Vector3(0, -MathHelper.PiOver2, 0), Positions[1] - 1.65f * Vector3.UnitX, 
-                                new Vector2(3, 3), "1"));
-            Game.Components.Add(new TexturedTile(Game, 1, new Vector3(0, -MathHelper.PiOver2, 0), Positions[3] - 1.65f * Vector3.UnitX,
-                    new Vector2(3, 3), "2"));
-            Game.Components.Add(new TexturedTile(Game, 1, new Vector3(0, -MathHelper.PiOver2, 0), Positions[5] - 1.65f * Vector3.UnitX,
-                    new Vector2(3, 3), "3"));
-
+                Game.Components.Add(new TexturedTile(Game, 1, new Vector3(0, -MathHelper.PiOver2, 0),
+                                    Positions[i+1] - 1.65f * Vector3.UnitX, new Vector2(3, 3), (i/2+1).ToString()));
+            }
         }
 
         public override void Update(GameTime gameTime)
@@ -148,14 +138,20 @@ namespace HyperV
 
         void LookUpKeys()
         {
-            ButtonOne = InputMgr.IsNewKey(Keys.NumPad1) || ButtonOne;
-            ButtonTwo = InputMgr.IsNewKey(Keys.NumPad2) || ButtonTwo;
-            ButtonThree = InputMgr.IsNewKey(Keys.NumPad3) || ButtonThree;
+            ButtonOne = InputMgr.IsNewKey(Keys.NumPad1)|| 
+                      InputMgr.IsNewKey(Keys.D1) ||
+                      GamePadMgr.IsPressed(Buttons.DPadLeft) || ButtonOne;
+            ButtonTwo = InputMgr.IsNewKey(Keys.NumPad2) || 
+                        InputMgr.IsNewKey(Keys.D2) ||
+                      GamePadMgr.IsPressed(Buttons.DPadDown) || ButtonTwo;
+            ButtonThree = InputMgr.IsNewKey(Keys.NumPad3) || 
+                        InputMgr.IsNewKey(Keys.D3) ||
+                      GamePadMgr.IsPressed(Buttons.DPadRight) || ButtonThree;
         }
 
         void PerformUpdate()
         {
-            i++;
+            cpt++;
 
             foreach (TexturedCube cube in Game.Components.Where(component => component is TexturedCube))
             {
@@ -165,30 +161,34 @@ namespace HyperV
                     cube.InitializeBscEffectParameters();
                     RedCubePosition = null;
                 }
-                if (AreEqualVectors(RedCubePosition, cube.Position))
-                {
-                    cube.TextureNameCube = "Red";
-                    cube.InitializeBscEffectParameters();
-                    RedCubePosition = null;
 
-                }
-                if (AreEqualVectors(RedCubePosition, cube.Position))
+                foreach (RythmSphere sp in Game.Components.Where(component => component is RythmSphere))
                 {
-                    cube.TextureNameCube = "Red";
-                    cube.InitializeBscEffectParameters();
-                    RedCubePosition = null;
-
+                    if (sp.IsColliding(cube))
+                    {
+                        if (AreEqualVectors(sp.Extremity1, Positions[0]) && ButtonOne ||
+                        AreEqualVectors(sp.Extremity1, Positions[2]) && ButtonTwo ||
+                        AreEqualVectors(sp.Extremity1, Positions[4]) && ButtonThree)
+                        {
+                            sp.ToDestroy = true;
+                            cube.TextureNameCube = "Green";
+                            cube.InitializeBscEffectParameters();
+                            ++numGotten;
+                        }
+                    }
                 }
             }
 
-            if (i > 120)
+            Score.Val = numGotten.ToString() + "/15";
+
+            if (cpt > 120)
             {
                 int slopeChoice = RandomNumberGenerator.Next(0, 3) * 2;
                 //Game.Components.Add(new Displayer3D(Game));
                 Game.Components.Add(new RythmSphere(Game, 1, Vector3.Zero,
                                     Positions[slopeChoice], 1, new Vector2(20, 20),
                                     "BlueWhiteRed", UpdateInterval, Positions[slopeChoice + 1]));
-                i = 0;
+                cpt = 0;
 
                 foreach (TexturedCube cube in Game.Components.Where(component => component is TexturedCube))
                 {
@@ -197,39 +197,12 @@ namespace HyperV
                 }
             }
 
-            foreach (TexturedCube cube in Game.Components.Where(component => component is TexturedCube))
-            {
-                foreach (RythmSphere sp in Game.Components.Where(component => component is RythmSphere))
-                {
-                    if (sp.IsColliding(cube))
-                    {
-                        if(AreEqualVectors(sp.Extremity1, Positions[0]) && ButtonOne)
-                        {
-                           sp.ToDestroy = true;
-                            cube.TextureNameCube = "Green";
-                            cube.InitializeBscEffectParameters();
-                        }
-                        if (AreEqualVectors(sp.Extremity1, Positions[2]) && ButtonTwo)
-                        {
-                            sp.ToDestroy = true;
-                            cube.TextureNameCube = "Green";
-                            cube.InitializeBscEffectParameters();
-                        }
-                        if (AreEqualVectors(sp.Extremity1, Positions[4]) && ButtonThree)
-                        {
-                            sp.ToDestroy = true;
-                            cube.TextureNameCube = "Green";
-                            cube.InitializeBscEffectParameters();
-                        }
-
-                    }
-                }
-            }
-
             ButtonOne = false;
             ButtonTwo = false;
             ButtonThree = false;
         }
+
+
 
         bool AreEqualVectors(Vector3? a, Vector3 b)
         {

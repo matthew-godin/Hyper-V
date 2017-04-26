@@ -1,14 +1,22 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using XNAProject;
-
+using System.Collections.Generic;
+using System;
 
 namespace HyperV
 {
     public class ModelCreator : Microsoft.Xna.Framework.DrawableGameComponent
     {
+        public bool ButtonDisplacement = false;
         RessourcesManager<Model> ModelManager { get; set; }
         RessourcesManager<Texture2D> TextureManager { get; set; }
+
+        List<BoundingSphere> CollisionSphere { get; set; }
+        public List<BoundingSphere> GetCollisionSphere()
+        {
+            return CollisionSphere;
+        }
 
         string Model3DName { get; set; }
         protected Model Model3D { get; set; } //the 3d model we want to place
@@ -22,6 +30,11 @@ namespace HyperV
         {
             return Position;
         }
+        public void DisplaceModel(Vector3 displacement)
+        {
+            Position += displacement;
+        }
+
         protected float Rotation { get; set; }
         Camera Camera { get; set; }
         float Scale { get; set; }
@@ -37,6 +50,22 @@ namespace HyperV
             Rotation = rotation;
         }
 
+        public ModelCreator(Game game, string model3D, Vector3 position, float scale, float rotation, string textureName2D)
+            : base(game)
+        {
+            Model3DName = model3D;
+            Position = position;
+            Scale = scale;
+            Rotation = rotation;
+            TextureName2D = textureName2D;
+        }
+
+        public override void Initialize()
+        {
+            base.Initialize();
+            CollisionSphere = new List<BoundingSphere>();
+        }
+
         protected override void LoadContent()
         {
             Camera = Game.Services.GetService(typeof(Camera)) as Camera;
@@ -44,6 +73,10 @@ namespace HyperV
             TextureManager = Game.Services.GetService(typeof(RessourcesManager<Texture2D>)) as RessourcesManager<Texture2D>;
 
             Model3D = ModelManager.Find(Model3DName);
+            if (TextureName2D != null)
+            {
+                Texture2D = TextureManager.Find(TextureName2D);
+            }
         }
 
         public override void Draw(GameTime gameTime)
@@ -53,8 +86,14 @@ namespace HyperV
 
             foreach (ModelMesh mesh in Model3D.Meshes)
             {
+                CollisionSphere.Add(mesh.BoundingSphere);
                 foreach (BasicEffect effect in mesh.Effects)
                 {
+                    if (Texture2D != null)
+                    {
+                        effect.TextureEnabled = true;
+                        effect.Texture = Texture2D;
+                    }
                     effect.EnableDefaultLighting();
                     effect.World = transforms[mesh.ParentBone.Index] * Matrix.CreateScale(Scale) * Matrix.CreateRotationY(Rotation) * Matrix.CreateTranslation(Position);
                     effect.View = Camera.View;

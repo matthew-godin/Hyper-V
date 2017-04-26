@@ -60,10 +60,8 @@ namespace HyperV
             IsMouseVisible = false;
             //GraphicsMgr.PreferredBackBufferHeight = 800;
             //GraphicsMgr.PreferredBackBufferWidth = 1500;
-            ////GraphicsMgr.PreferredBackBufferHeight = 500;
-            ////GraphicsMgr.PreferredBackBufferWidth = 1000;
-            GraphicsMgr.PreferredBackBufferHeight = 500;
-            GraphicsMgr.PreferredBackBufferWidth = 900;
+            GraphicsMgr.PreferredBackBufferHeight = 400;
+            GraphicsMgr.PreferredBackBufferWidth = 1000;
         }
 
         Grass Grass0 { get; set; }
@@ -203,6 +201,7 @@ namespace HyperV
             string line;
             string[] parts;
             bool boss = false;
+            bool prison = false;
             Components.Add(InputManager);
             Components.Add(GamePadManager);
             while (!reader.EndOfStream)
@@ -252,6 +251,9 @@ namespace HyperV
                         //(Camera as Camera2).SetRenderDistance(RenderDistance);
                         Services.RemoveService(typeof(Camera));
                         Services.AddService(typeof(Camera), Camera);
+                        break;
+                    case "Runes":
+                        AddRunes();
                         break;
                     case "Maze":
                         Maze.Add(new Maze(this, float.Parse(parts[1]), Vector3Parse(parts[2]), Vector3Parse(parts[3]), Vector3Parse(parts[4]), parts[5], FpsInterval, parts[6]));
@@ -340,6 +342,16 @@ namespace HyperV
                         Services.RemoveService(typeof(List<HeightMap>));
                         Services.AddService(typeof(List<HeightMap>), HeightMap);
                         break;
+                    case "Books":
+                        AddBooks();
+                        break;
+                    case "Boutons":
+                        AddButtons();
+                        break;
+                    case "Skybox":
+                        Components.Add(new Displayer3D(this));
+                        Components.Add(new Skybox(this, parts[1]));
+                        break;
                     case "House":
                         Houses.Add(new House(this, parts[1], float.Parse(parts[2]), Vector3Parse(parts[3]), Vector3Parse(parts[4]), Vector3Parse(parts[5]), Vector3Parse(parts[6])));
                         Components.Add(Houses.Last());
@@ -362,6 +374,10 @@ namespace HyperV
                         Services.RemoveService(typeof(List<Water>));
                         Services.AddService(typeof(List<Water>), Water);
                         break;
+                    case "Prison":
+                        prison = true;
+                        PrisonLevel(false);
+                        break;
                 }
             }
             if (Level != 0)
@@ -378,7 +394,10 @@ namespace HyperV
                 Services.RemoveService(typeof(LifeBar[]));
                 Services.AddService(typeof(LifeBar[]), LifeBars);
                 AddCharacterLabels();
-                Components.Add(Camera);
+                if (!prison)
+                {
+                    Components.Add(Camera);
+                }
                 Components.Remove(Loading);
                 Components.Add(Crosshair);
                 Components.Add(FPSLabel);
@@ -444,6 +463,48 @@ namespace HyperV
                 x.IsTower = true;
             }
 
+        }
+
+        List<Rune> RuneList { get; set; }
+
+        private void AddRunes()
+        {
+            StreamReader file = new StreamReader("../../../World1_Runes.txt");
+            file.ReadLine();
+            while (!file.EndOfStream)
+            {
+                string lineRead = file.ReadLine();
+                string[] splitLine = lineRead.Split(';');
+                Rune x = new Rune(this, 1f, new Vector3(-(MathHelper.ToRadians(90)), 0, 0), new Vector3(float.Parse(splitLine[0]), -19.8f, float.Parse(splitLine[1])), new Vector2(3, 3), Vector2.One, splitLine[2], FpsInterval);
+                RuneList.Add(x);
+                Components.Add(x);
+            }
+        }
+
+        private void AddBooks()
+        {
+            StreamReader file = new StreamReader("../../../World1_Models.txt");
+            file.ReadLine();
+            while (!file.EndOfStream)
+            {
+                string lineRead = file.ReadLine();
+                string[] splitLine = lineRead.Split(';');
+                Book x = new Book(this, splitLine[0], new Vector3(int.Parse(splitLine[1]), int.Parse(splitLine[2]), int.Parse(splitLine[3])), int.Parse(splitLine[4]), int.Parse(splitLine[5]), "Briques", "ImageBook" + (splitLine[6]));
+                Components.Add(new Displayer3D(this));
+                Components.Add(x);
+            }
+        }
+
+        private void AddButtons()
+        {
+            Random generator = new Random();
+            int[] order = new int[4];
+            for (int i = 0; i < order.Length; ++i)
+            {
+                order[i] = generator.Next(0, 4);
+            }
+            ButtonPuzzle ButtonPuzzle = new ButtonPuzzle(this, order, "../../../ButtonPositions.txt");
+            Components.Add(ButtonPuzzle);
         }
 
         const int NUM_LEVELS = 10;
@@ -545,6 +606,9 @@ namespace HyperV
             Walls = new List<Walls>();
             Unlockables = new List<UnlockableWall>();
             Water = new List<Water>();
+            RuneList = new List<Rune>();
+            Services.RemoveService(typeof(List<Rune>));
+            Services.AddService(typeof(List<Rune>), RuneList);
             Services.RemoveService(typeof(List<Character>));
             Services.AddService(typeof(List<Character>), Characters);
             Services.RemoveService(typeof(List<Enemy>));
@@ -760,12 +824,12 @@ namespace HyperV
             Components.Add(Wall);
             Services.AddService(typeof(Walls), Wall);
 
-            Grass = new Grass(this, 1f, Vector3.Zero, new Vector3(-45, -60, -45), new Vector2(10, 10), "Ceiling", new Vector2(13, 4), FpsInterval);
+            Grass = new Grass(this, 1f, Vector3.Zero, new Vector3(-50, -60, -200), new Vector2(40, 40), "Ceiling", new Vector2(7, 7), FpsInterval);
             Components.Add(Grass);
 
-            Ceiling = new Ceiling(this, 1f, Vector3.Zero, new Vector3(-45, 0, -45), new Vector2(10, 10), "Ceiling", new Vector2(13, 4), FpsInterval);
+            Ceiling = new Ceiling(this, 1f, Vector3.Zero, new Vector3(-50, 0, -200), new Vector2(40, 40), "Ceiling", new Vector2(7, 7), FpsInterval);
             Components.Add(Ceiling);
-
+            
             NiveauRythmé circuit = new NiveauRythmé(this, "../../../Data3.txt", "Fence", FpsInterval);
             Components.Add(circuit);
             Services.AddService(typeof(NiveauRythmé), circuit);
@@ -792,11 +856,6 @@ namespace HyperV
         void PrisonLevel(bool usePosition)
         {
             GénérateurAléatoire = new Random();
-            Components.Add(InputManager);
-            usePosition = false;
-
-            Display3D = new Displayer3D(this);
-            Components.Add(Display3D);
             CréationCamera(usePosition);
             CréationMurs("imagePrisonMur", "DataPrison.txt");
             CréerPlancherEtPlafond(TILE_WIDTH);
@@ -807,11 +866,6 @@ namespace HyperV
                 Components.Add(Ball);
             }
             CréerSword(SWORD_MODEL_NAME, SWORD_SCALE);
-            Components.Add(LifeBars[0]);
-            Components.Add(LifeBars[1]);
-            Services.AddService(typeof(LifeBar[]), LifeBars);
-            Components.Add(Crosshair);
-            Components.Add(FPSLabel);
         }
         Vector3 ComputeInitialPosition()
         {
@@ -833,14 +887,15 @@ namespace HyperV
         {
             if (usePosition)
             {
-                Camera = new Camera1(this, Position, new Vector3(20, 0, 0), Vector3.Up, FpsInterval, RenderDistance);
-                (Camera as Camera1).InitializeDirection(Direction);
+                Camera = new Camera2(this, Position, new Vector3(20, 0, 0), Vector3.Up, FpsInterval, RenderDistance);
+                (Camera as Camera2).InitializeDirection(Direction);
             }
             else
             {
-                Camera = new Camera1 (this, new Vector3(76, -20, -45), new Vector3(20, 0, 0), Vector3.Up, FpsInterval, RenderDistance);
+                Camera = new Camera2 (this, new Vector3(76, -20, -45), new Vector3(20, 0, 0), Vector3.Up, FpsInterval, RenderDistance);
             }
 
+            Services.RemoveService(typeof(Camera));
             Services.AddService(typeof(Camera), Camera);
 
             Components.Add(Camera);
@@ -850,7 +905,7 @@ namespace HyperV
 
         void CréationMurs(string nomTexture, string nomFichierTexte)
         {
-            Murs = new Walls(this, FpsInterval, nomTexture, "../../../" + nomFichierTexte, -40);
+            Murs = new Walls(this, FpsInterval, nomTexture, nomFichierTexte, -40);
             Components.Add(Murs);
             Services.AddService(typeof(Walls), Murs);
         }

@@ -58,10 +58,10 @@ namespace HyperV
             GraphicsMgr.SynchronizeWithGreenicalRetrace = false;
             IsFixedTimeStep = false;
             IsMouseVisible = false;
-            //GraphicsMgr.PreferredBackBufferHeight = 800;
-            //GraphicsMgr.PreferredBackBufferWidth = 1500;
-            GraphicsMgr.PreferredBackBufferHeight = 400;
-            GraphicsMgr.PreferredBackBufferWidth = 1000;
+            GraphicsMgr.PreferredBackBufferHeight = 800;
+            GraphicsMgr.PreferredBackBufferWidth = 1500;
+            //GraphicsMgr.PreferredBackBufferHeight = 400;
+            //GraphicsMgr.PreferredBackBufferWidth = 1000;
         }
 
         Grass Grass0 { get; set; }
@@ -394,10 +394,7 @@ namespace HyperV
                 Services.RemoveService(typeof(LifeBar[]));
                 Services.AddService(typeof(LifeBar[]), LifeBars);
                 AddCharacterLabels();
-                if (!prison)
-                {
-                    Components.Add(Camera);
-                }
+                Components.Add(Camera);
                 Components.Remove(Loading);
                 Components.Add(Crosshair);
                 Components.Add(FPSLabel);
@@ -558,7 +555,8 @@ namespace HyperV
             Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("en-US");
 
             Sleep = false;
-            Services.AddService(typeof(Random), new Random());
+            Random = new Random();
+            Services.AddService(typeof(Random), Random);
             FirstGameOver = true;
             FpsInterval = 1f / 60f;
             SongManager = new RessourcesManager<Song>(this, "Songs");
@@ -848,14 +846,13 @@ namespace HyperV
 
         BouncingBall Ball { get; set; }
         Sword Sword { get; set; }
-        Random GénérateurAléatoire { get; set; }
+        Random Random { get; set; }
         const int TILE_WIDTH = 20, NUM_BALLS_DESIRED = 20;
         const float SWORD_SCALE = 0.009f;
         const string SWORD_MODEL_NAME = "robot";
 
         void PrisonLevel(bool usePosition)
         {
-            GénérateurAléatoire = new Random();
             CréationCamera(usePosition);
             CréationMurs("imagePrisonMur", "DataPrison.txt");
             CréerPlancherEtPlafond(TILE_WIDTH);
@@ -869,9 +866,9 @@ namespace HyperV
         }
         Vector3 ComputeInitialPosition()
         {
-            float x = GénérateurAléatoire.Next(-190, 70);
-            float z = GénérateurAléatoire.Next(-40, 220);
-            float y = GénérateurAléatoire.Next(-35, -15);
+            float x = Random.Next(-190, 70);
+            float z = Random.Next(-40, 220);
+            float y = Random.Next(-35, -15);
             return new Vector3(x, y, z);
         }
 
@@ -885,20 +882,21 @@ namespace HyperV
 
         void CréationCamera(bool usePosition)
         {
-            if (usePosition)
-            {
-                Camera = new Camera2(this, Position, new Vector3(20, 0, 0), Vector3.Up, FpsInterval, RenderDistance);
-                (Camera as Camera2).InitializeDirection(Direction);
-            }
-            else
-            {
-                Camera = new Camera2 (this, new Vector3(76, -20, -45), new Vector3(20, 0, 0), Vector3.Up, FpsInterval, RenderDistance);
-            }
+            //if (usePosition)
+            //{
+            //    Camera = new Camera2(this, Position, new Vector3(20, 0, 0), Vector3.Up, FpsInterval, RenderDistance);
+            //    (Camera as Camera2).InitializeDirection(Direction);
+            //}
+            //else
+            //{
+            //    Camera = new Camera2 (this, new Vector3(76, -20, -45), new Vector3(20, 0, 0), Vector3.Up, FpsInterval, RenderDistance);
+            //    (Camera as Camera2).InitializeDirection(Direction);
+            //}
 
-            Services.RemoveService(typeof(Camera));
-            Services.AddService(typeof(Camera), Camera);
+            //Services.RemoveService(typeof(Camera));
+            //Services.AddService(typeof(Camera), Camera);
 
-            Components.Add(Camera);
+            //Components.Add(Camera);
         }
 
         Walls Murs { get; set; }

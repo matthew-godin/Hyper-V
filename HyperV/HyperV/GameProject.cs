@@ -201,7 +201,6 @@ namespace HyperV
             string line;
             string[] parts;
             bool boss = false;
-            bool prison = false;
             Components.Add(InputManager);
             Components.Add(GamePadManager);
             while (!reader.EndOfStream)
@@ -375,8 +374,10 @@ namespace HyperV
                         Services.AddService(typeof(List<Water>), Water);
                         break;
                     case "Prison":
-                        prison = true;
                         PrisonLevel(false);
+                        break;
+                    case "Rythm":
+                        RythmLevel();
                         break;
                 }
             }
@@ -589,7 +590,7 @@ namespace HyperV
             Crosshair = new Sprite(this, "crosshair", new Vector2(Window.ClientBounds.Width / 2 - 18, Window.ClientBounds.Height / 2 - 18));
             LoadSave();
             LoadSettings();
-            //Level = 0;
+            Level = 7;
             SelectWorld(true);
             base.Initialize();
         }
@@ -814,13 +815,13 @@ namespace HyperV
 
         void RythmLevel()
         {
-            Components.Add(InputManager);
+            //Components.Add(InputManager);
             Components.Add(SpaceBackground);
             Components.Add(new Displayer3D(this));
 
-            Camera = new Camera1(this, new Vector3(-45, -56, -30), new Vector3(20, 0, 0), Vector3.Up, FpsInterval, RenderDistance);
-            Components.Add(Camera);
-            Services.AddService(typeof(Camera), Camera);
+            //Camera = new Camera1(this, new Vector3(-45, -56, -30), new Vector3(20, 0, 0), Vector3.Up, FpsInterval, RenderDistance);
+            //Components.Add(Camera);
+            //Services.AddService(typeof(Camera), Camera);
 
             Wall = new Walls(this, FpsInterval, "Rockwall", "Data2.txt", -60);
             Components.Add(Wall);
@@ -837,11 +838,11 @@ namespace HyperV
             Services.AddService(typeof(NiveauRythmé), circuit);
 
             //Components.Add(new Displayer3D(this));
-            Components.Add(LifeBars[0]);
-            Components.Add(LifeBars[1]);
-            Services.RemoveService(typeof(LifeBar[]));
-            Services.AddService(typeof(LifeBar[]), LifeBars);
-            Components.Add(FPSLabel);
+            //Components.Add(LifeBars[0]);
+            //Components.Add(LifeBars[1]);
+            //Services.RemoveService(typeof(LifeBar[]));
+            //Services.AddService(typeof(LifeBar[]), LifeBars);
+            //Components.Add(FPSLabel);
             Components.Add(new Displayer3D(this));
         }
 
@@ -857,16 +858,14 @@ namespace HyperV
 
         void PrisonLevel(bool usePosition)
         {
-            CréationCamera(usePosition);
             CréationMurs("imagePrisonMur", "DataPrison.txt");
             CréerPlancherEtPlafond(TILE_WIDTH);
-
+            CréerSword(SWORD_MODEL_NAME, SWORD_SCALE);
             for (int i = 0; i < NUM_BALLS_DESIRED; i++)
             {
                 Ball = new BouncingBall(this, 1f, Vector3.Zero, ComputeInitialPosition(), 5f, new Vector2(50), "Ball_Bois", FpsInterval);
                 Components.Add(Ball);
             }
-            CréerSword(SWORD_MODEL_NAME, SWORD_SCALE);
         }
         Vector3 ComputeInitialPosition()
         {
@@ -882,25 +881,6 @@ namespace HyperV
             CeilingArray = new Ceiling[largeurTuiles, largeurTuiles];
             Components.Add(new Grass(this, 1f, Vector3.Zero, new Vector3(-200, -40, -50), new Vector2(40, 40), "imagePrisonMur", new Vector2(largeurTuiles, largeurTuiles), FpsInterval));
             Components.Add(new Ceiling(this, 1f, Vector3.Zero, new Vector3(-200, 0, -50), new Vector2(40, 40), "imagePrisonMur", new Vector2(largeurTuiles, largeurTuiles), FpsInterval));
-        }
-
-        void CréationCamera(bool usePosition)
-        {
-            //if (usePosition)
-            //{
-            //    Camera = new Camera2(this, Position, new Vector3(20, 0, 0), Vector3.Up, FpsInterval, RenderDistance);
-            //    (Camera as Camera2).InitializeDirection(Direction);
-            //}
-            //else
-            //{
-            //    Camera = new Camera2 (this, new Vector3(76, -20, -45), new Vector3(20, 0, 0), Vector3.Up, FpsInterval, RenderDistance);
-            //    (Camera as Camera2).InitializeDirection(Direction);
-            //}
-
-            //Services.RemoveService(typeof(Camera));
-            //Services.AddService(typeof(Camera), Camera);
-
-            //Components.Add(Camera);
         }
 
         Walls Murs { get; set; }

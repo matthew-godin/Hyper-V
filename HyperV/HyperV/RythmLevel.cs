@@ -11,7 +11,6 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using XNAProject;
 
-
 namespace HyperV
 {
     public class RythmLevel : Microsoft.Xna.Framework.GameComponent

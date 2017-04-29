@@ -58,10 +58,10 @@ namespace HyperV
             GraphicsMgr.SynchronizeWithGreenicalRetrace = false;
             IsFixedTimeStep = false;
             IsMouseVisible = false;
-            GraphicsMgr.PreferredBackBufferHeight = 800;
-            GraphicsMgr.PreferredBackBufferWidth = 1500;
-            //GraphicsMgr.PreferredBackBufferHeight = 400;
-            //GraphicsMgr.PreferredBackBufferWidth = 1000;
+            //GraphicsMgr.PreferredBackBufferHeight = 800;
+            //GraphicsMgr.PreferredBackBufferWidth = 1500;
+            GraphicsMgr.PreferredBackBufferHeight = 500;
+            GraphicsMgr.PreferredBackBufferWidth = 900;
         }
 
         Grass Grass0 { get; set; }
@@ -590,7 +590,7 @@ namespace HyperV
             Crosshair = new Sprite(this, "crosshair", new Vector2(Window.ClientBounds.Width / 2 - 18, Window.ClientBounds.Height / 2 - 18));
             LoadSave();
             LoadSettings();
-            Level = 7;
+            Level = 0;
             SelectWorld(true);
             base.Initialize();
         }
@@ -816,8 +816,8 @@ namespace HyperV
         void RythmLevel()
         {
             //Components.Add(InputManager);
-            Components.Add(SpaceBackground);
-            Components.Add(new Displayer3D(this));
+            //Components.Add(SpaceBackground);
+            //Components.Add(new Displayer3D(this));
 
             //Camera = new Camera1(this, new Vector3(-45, -56, -30), new Vector3(20, 0, 0), Vector3.Up, FpsInterval, RenderDistance);
             //Components.Add(Camera);
@@ -832,7 +832,7 @@ namespace HyperV
 
             Ceiling = new Ceiling(this, 1f, Vector3.Zero, new Vector3(-50, 0, -200), new Vector2(40, 40), "Ceiling", new Vector2(7, 7), FpsInterval);
             Components.Add(Ceiling);
-            
+
             NiveauRythmé circuit = new NiveauRythmé(this, "../../../Data3.txt", "Fence", FpsInterval);
             Components.Add(circuit);
             Services.AddService(typeof(NiveauRythmé), circuit);
@@ -843,7 +843,7 @@ namespace HyperV
             //Services.RemoveService(typeof(LifeBar[]));
             //Services.AddService(typeof(LifeBar[]), LifeBars);
             //Components.Add(FPSLabel);
-            Components.Add(new Displayer3D(this));
+            //Components.Add(new Displayer3D(this));
         }
 
         // PrisonLevel

@@ -38,6 +38,7 @@ namespace HyperV
 
         AfficheurScore Score { get; set; }
 
+
         public RythmLevel(Game game, string fileNameLecture, string textureName, float updateInterval)
             : base(game)
         {

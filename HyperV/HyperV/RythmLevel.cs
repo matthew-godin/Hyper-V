@@ -15,7 +15,7 @@ namespace HyperV
 {
     public class RythmLevel : Microsoft.Xna.Framework.GameComponent
     {
-        const int NB_À_RÉUSSIR = 15;
+        const int NB_À_RÉUSSIR = 5;
 
         //Constructeur
         readonly string NomFichierLecture;
@@ -40,6 +40,7 @@ namespace HyperV
         InputManager InputMgr { get; set; }
         GamePadManager GamePadMgr { get; set; }
         List<UnlockableWall> WallToRemove { get; set; }
+        List<Portal> PortalList { get; set; }
 
         public RythmLevel(Game game, string fileNameLecture, string textureName, float updateInterval)
             : base(game)
@@ -65,8 +66,9 @@ namespace HyperV
             Positions = new List<Vector3>();
             InitializePositions();
             Score = new AfficheurScore(Game, "Arial50", Color.Black, UpdateInterval);
-            InitializeComponents();
             LoadContent();
+            InitializeComponents();
+            
         }
 
         void InitializePositions()
@@ -101,11 +103,12 @@ namespace HyperV
             GamePadMgr = Game.Services.GetService(typeof(GamePadManager)) as GamePadManager;
             RandomNumberGenerator = Game.Services.GetService(typeof(Random)) as Random;
             WallToRemove = Game.Services.GetService(typeof(List<UnlockableWall>)) as List<UnlockableWall>;
+            PortalList = Game.Services.GetService(typeof(List<Portal>)) as List<Portal>;
         }
 
         void InitializeComponents()
         {
-
+          
             Game.Components.Add(Score);
             Game.Components.Add(new Displayer3D(Game));
 
@@ -191,17 +194,25 @@ namespace HyperV
                 LevelIsCompleted = true;
                 cpt = 121;
                 Game.Components.Remove(WallToRemove[0]);
+                PortalList.Add(new Portal(Game, 1, new Vector3(0, 1.570796f, 0),
+                                  new Vector3(170, -60, -10), new Vector2(40, 40), "White",
+                                  1, UpdateInterval));
+                Game.Components.Add(PortalList.Last());
             }
 
             if (cpt > 120)
             {
                 if (!LevelIsCompleted)
                 {
-                    int slopeChoice = RandomNumberGenerator.Next(0, 3) * 2;
-                    Game.Components.Add(new Displayer3D(Game));
-                    Game.Components.Add(new RythmSphere(Game, 1, Vector3.Zero,
-                                        Positions[slopeChoice], 1, new Vector2(20, 20),
-                                        "BlueWhiteRed", UpdateInterval, Positions[slopeChoice + 1]));
+                    int nbreBalles = RandomNumberGenerator.Next(1, 4);
+                    for(int i = 0; i < nbreBalles; i++)
+                    {
+                        int slopeChoice = RandomNumberGenerator.Next(0, 3) * 2;
+                        Game.Components.Add(new Displayer3D(Game));
+                        Game.Components.Add(new RythmSphere(Game, 1, Vector3.Zero,
+                                            Positions[slopeChoice], 1, new Vector2(20, 20),
+                                            "BlueWhiteRed", UpdateInterval, Positions[slopeChoice + 1]));
+                    }
                 }
 
                 cpt = 0;

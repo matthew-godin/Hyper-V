@@ -195,12 +195,12 @@ namespace HyperV
                 cpt = 121;
                 Game.Components.Remove(WallToRemove[0]);
                 PortalList.Add(new Portal(Game, 1, new Vector3(0, 1.570796f, 0),
-                                  new Vector3(170, -60, -10), new Vector2(40, 40), "White",
+                                  new Vector3(170, -60, -10), new Vector2(40, 40), "Transparent",
                                   1, UpdateInterval));
                 Game.Components.Add(PortalList.Last());
             }
 
-            if (cpt > 120)
+            if (cpt > 120 || cpt == 60)
             {
                 if (!LevelIsCompleted)
                 {

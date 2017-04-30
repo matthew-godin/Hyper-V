@@ -289,7 +289,10 @@ namespace HyperV
                         Components.Add(new Bow(this, parts[1], float.Parse(parts[2]), Vector3Parse(parts[3]), Vector3Parse(parts[4])));
                         break;
                     case "Sword":
-                        Components.Add(new Sword(this, parts[1], float.Parse(parts[2]), Vector3Parse(parts[3]), Vector3Parse(parts[4])));
+                        Sword = new Sword(this, parts[1], float.Parse(parts[2]), Vector3Parse(parts[3]), Vector3Parse(parts[4]));
+                        Components.Add(Sword);
+                        Services.RemoveService(typeof(Sword));
+                        Services.AddService(typeof(Sword), Sword);
                         break;
                     case "Character":
                         Characters.Add(new Character(this, parts[1], float.Parse(parts[2]), Vector3Parse(parts[3]), Vector3Parse(parts[4]), parts[5], parts[6], parts[7], parts[8], FpsInterval));
@@ -590,7 +593,7 @@ namespace HyperV
             Crosshair = new Sprite(this, "crosshair", new Vector2(Window.ClientBounds.Width / 2 - 18, Window.ClientBounds.Height / 2 - 18));
             LoadSave();
             LoadSettings();
-            Level = 0;
+            //Level = 0;
             SelectWorld(true);
             base.Initialize();
         }
@@ -894,11 +897,11 @@ namespace HyperV
 
         void CréerSword(string modelName, float scale)
         {
-            Sword = new Sword(this, modelName, scale, Vector3.Zero, Camera.Position);
-            Sword.IsGrabbed = true;
+            //Sword = new Sword(this, modelName, scale, Vector3.Zero, Camera.Position);
+            //Sword.IsGrabbed = true;
 
-            Components.Add(Sword);
-            Services.AddService(typeof(Sword), Sword);
+            //Components.Add(Sword);
+            //Services.AddService(typeof(Sword), Sword);
         }
 
         #endregion

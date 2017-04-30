@@ -16,14 +16,16 @@ namespace HyperV
     public class Catapult : ModelCreator
     {
         const float UPDATE_INTERVAL = 1 / 60f;
-        
+
         float UpdateTimeElapsed { get; set; }
         float UpdateTimeElapsed2 { get; set; }
         float ThrowCooldown { get; set; }
         InputManager InputMgr { get; set; }
-        Camera3 Camera { get; set; }
+        Camera2 Camera { get; set; }
         AmmunitionCatapult Ammunition { get; set; }
         bool IsActivated { get; set; }
+        RessourcesManager<SoundEffect> SoundManager { get; set; }
+        SoundEffect CatapultLaunched { get; set; }
 
         float angle_;
         float Angle
@@ -75,13 +77,16 @@ namespace HyperV
             base.Initialize();
             IsActivated = false;
             PreviousVector = new Vector2(Camera.Direction.X, Camera.Direction.Z);
+            CatapultLaunched = SoundManager.Find("CatapultLaunched");
+
         }
 
         protected override void LoadContent()
         {
             base.LoadContent();
-            Camera = Game.Services.GetService(typeof(Camera)) as Camera3;
+            Camera = Game.Services.GetService(typeof(Camera)) as Camera2;
             InputMgr = Game.Services.GetService(typeof(InputManager)) as InputManager;
+            SoundManager = Game.Services.GetService(typeof(RessourcesManager<SoundEffect>)) as RessourcesManager<SoundEffect>;
         }
 
         public override void Update(GameTime gameTime)
@@ -94,7 +99,7 @@ namespace HyperV
             }
 
             ManageTrajectory(gameTime);
-            ManageThrow(gameTime);           
+            ManageThrow(gameTime);
         }
 
         private void RotateModel()
@@ -138,7 +143,7 @@ namespace HyperV
             {
                 if (IsActivated)
                 {
-                    AmmunitionCatapult trajectory = new AmmunitionCatapult(Game, "Models_Ammunition", new Vector3(Position.X, Position.Y + 15, Position.Z), 1, 180);
+                    AmmunitionCatapult trajectory = new AmmunitionCatapult(Game, "Models_Ammunition", new Vector3(Position.X, Position.Y + 15, Position.Z), 0.4f, 180);
                     Game.Components.Add(new Displayer3D(Game));
                     Game.Components.Add(trajectory);
                     trajectory.ThrowProjectile(MathHelper.ToRadians(Angle), Camera.Direction, Speed);
@@ -162,18 +167,18 @@ namespace HyperV
                     {
                         if (ThrowCooldown >= 5)
                         {
-                            AmmunitionCatapult Ammunition = new AmmunitionCatapult(Game, "Models_Ammunition", new Vector3(Position.X, Position.Y + 15, Position.Z), 10, 180);
-                            Ammunition.DrawOrder = 3;
+                            AmmunitionCatapult Ammunition = new AmmunitionCatapult(Game, "Models_Ammunition", new Vector3(Position.X, Position.Y + 15, Position.Z), 2, 180);
                             Game.Components.Add(new Displayer3D(Game));
                             Game.Components.Add(Ammunition);
                             Ammunition.ThrowProjectile(MathHelper.ToRadians(Angle), Camera.Direction, Speed);
                             Ammunition.IsAmmunition = true;
                             ThrowCooldown = 0;
+                            CatapultLaunched.Play();
                         }
                     }
                 }
                 UpdateTimeElapsed = 0;
             }
         }
-    }     
+    }
 }

@@ -21,7 +21,7 @@ namespace HyperV
         const int MAXIMAL_RUN_FACTOR = 4;
         const int MINIMAL_DISTANCE_POUR_RAMASSAGE = 45;
 
-        public Vector3 Direction { get; private set; }//
+        public Vector3 Direction { get; protected set; }//
         public Vector3 Lateral { get; private set; }//
         Grass Grass { get; set; }
         protected float TranslationSpeed { get; set; }
@@ -30,8 +30,9 @@ namespace HyperV
         Point CurrentMousePosition { get; set; }
         public Vector2 DisplacementMouse { get; set; }
 
-        float UpdateInterval { get; set; }
-        float TimeElapsedSinceUpdate { get; set; }
+        protected bool DésactiverDisplacement { get; set; }
+        protected float UpdateInterval { get; set; }
+        protected float TimeElapsedSinceUpdate { get; set; }
         InputManager InputMgr { get; set; }
         GamePadManager GamePadMgr { get; set; }
 
@@ -153,7 +154,10 @@ namespace HyperV
             if (TimeElapsedSinceUpdate >= UpdateInterval)
             {
                 MouseFunctions();
-                KeyboardFunctions();
+                if (!DésactiverDisplacement)
+                {
+                    KeyboardFunctions();
+                }
                 GamePadFunctions();
 
                 ManageHeight();
@@ -211,7 +215,10 @@ namespace HyperV
         private void ManageMouseRotation()
         {
             ManageMouseYaw();
-            ManageMouseRoll();
+            if (!DésactiverDisplacement)
+            {
+                ManageMouseRoll();
+            }
         }
 
         private void ManageMouseYaw()

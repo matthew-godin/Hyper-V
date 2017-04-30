@@ -1,4 +1,6 @@
+using GameProjectXNA;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +15,7 @@ namespace HyperV
         const float GRAVITY = -9.81f;
         const float Weight = 0.1f;
         const float UPDATE_INTERVAL = 1 / 60f;
-        
+
         int SpeedY { get; set; }
         float TimeElapsed = 0;
         float TimeElapsedSinceUpdate = 0;
@@ -21,9 +23,13 @@ namespace HyperV
 
         float AirFriction { get; set; }
         float Angle { get; set; }
-                
+
         Vector3 Displacement { get; set; }
         Vector2 Speed { get; set; }
+        SoundEffect TowerDestroyed { get; set; }
+        RessourcesManager<SoundEffect> SoundManager { get; set; }
+
+
 
         public AmmunitionCatapult(Game game, string model3D, Vector3 position, float scale, float rotation)
             : base(game, model3D, position, scale, rotation)
@@ -36,6 +42,7 @@ namespace HyperV
             InitialPosition = Position;
             IsThrown = true;
             IsAmmunition = false;
+            TowerDestroyed = SoundManager.Find("TowerDestroyed");
         }
 
         public override void Update(GameTime gameTime)
@@ -43,16 +50,16 @@ namespace HyperV
             if (IsThrown)
             {
                 TimeElapsedSinceUpdate += (float)gameTime.ElapsedGameTime.TotalSeconds;
-                if(TimeElapsedSinceUpdate >= UPDATE_INTERVAL)
+                if (TimeElapsedSinceUpdate >= UPDATE_INTERVAL)
                 {
                     TimeElapsed += UPDATE_INTERVAL;
                     Vector3 Displacement = ProjectilePosition(TimeElapsed);
                     Position = InitialPosition + Displacement;
                     base.Update(gameTime);
-                    TimeElapsedSinceUpdate = 0;                    
+                    TimeElapsedSinceUpdate = 0;
                 }
             }
-            if(Position.Y < -100)
+            if (Position.Y < -100)
             {
                 Game.Components.Remove(this);
                 //Game.Components.RemoveAt(0);  //remove the Displayer3D that will be at the rock -1 ... 
@@ -61,6 +68,12 @@ namespace HyperV
             {
                 ManageCollision();
             }
+        }
+
+        protected override void LoadContent()
+        {
+            SoundManager = Game.Services.GetService(typeof(RessourcesManager<SoundEffect>)) as RessourcesManager<SoundEffect>;
+            base.LoadContent();
         }
 
         public void ThrowProjectile(float angle, Vector3 speed, int SpeedModifier)
@@ -96,18 +109,19 @@ namespace HyperV
         {
             bool toDestroy = false;
             List<ModelCreator> modelToDestroy = new List<ModelCreator>();
-            foreach(ModelCreator model in Game.Components.Where(x => x is ModelCreator))
+            foreach (ModelCreator model in Game.Components.Where(x => x is ModelCreator))
             {
                 if (model.IsTower)
                 {
-                    if(Position.X < model.GetPosition().X + 3 && Position.X > model.GetPosition().X - 3) //test X
+                    if (Position.X < model.GetPosition().X + 8 && Position.X > model.GetPosition().X - 8) //test X
                     {
-                        if(Position.Z < model.GetPosition().Z + 3 && Position.Z > model.GetPosition().Z - 3) //test z
+                        if (Position.Z < model.GetPosition().Z + 8 && Position.Z > model.GetPosition().Z - 8) //test z
                         {
-                            if (Position.Y < model.GetPosition().Y + 130 && Position.Y > model.GetPosition().Y) //test y
+                            if (Position.Y < model.GetPosition().Y + 120 && Position.Y > model.GetPosition().Y) //test y
                             {
                                 modelToDestroy.Add(model);
                                 toDestroy = true;
+                                TowerDestroyed.Play();
                             }
                         }
                     }
@@ -116,11 +130,11 @@ namespace HyperV
             if (toDestroy)
             {
                 Game.Components.Remove(this);
-                foreach(ModelCreator model in modelToDestroy)
+                foreach (ModelCreator model in modelToDestroy)
                 {
                     Game.Components.Remove(model);
                 }
-            }            
+            }
         }
     }
 }

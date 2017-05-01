@@ -200,19 +200,19 @@ namespace HyperV
                 Game.Components.Add(PortalList.Last());
             }
 
-            if (cpt > 120 || cpt == 60)
+            if (cpt > 120 )
             {
                 if (!LevelIsCompleted)
                 {
-                    int nbreBalles = RandomNumberGenerator.Next(1, 4);
-                    for(int i = 0; i < nbreBalles; i++)
-                    {
+                    //int nbreBalles = RandomNumberGenerator.Next(1, 4);
+                    //for(int i = 0; i < nbreBalles; i++)
+                    //{
                         int slopeChoice = RandomNumberGenerator.Next(0, 3) * 2;
                         Game.Components.Add(new Displayer3D(Game));
                         Game.Components.Add(new RythmSphere(Game, 1, Vector3.Zero,
                                             Positions[slopeChoice], 1, new Vector2(20, 20),
                                             "BlueWhiteRed", UpdateInterval, Positions[slopeChoice + 1]));
-                    }
+                    //}
                 }
 
                 cpt = 0;

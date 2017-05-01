@@ -743,7 +743,7 @@ namespace HyperV
 
         void ManageKeyboard(GameTime gameTime)
         {
-            if (InputManager.IsNewKey(Keys.Escape) || GamePadManager.EstNouveauBouton(Buttons.Start))
+            if (InputManager.IsNewKey(Keys.Escape) || GamePadManager.EstNouveauBouton(Buttons.Start) && Level > 0)
             {
                 LaunchPause();
             }

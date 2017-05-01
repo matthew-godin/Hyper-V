@@ -702,7 +702,7 @@ namespace HyperV
                 if (collision < 30 && collision != null)
                 {
                     PressSpaceLabel.Visible = true;
-                    if (InputManager.IsPressed(Keys.Space))
+                    if (InputManager.IsPressed(Keys.Space) || GamePadManager.EstEnfoncé(Buttons.Y))
                     {
                         if (Level > 1)
                         {
@@ -743,7 +743,7 @@ namespace HyperV
 
         void ManageKeyboard(GameTime gameTime)
         {
-            if (InputManager.IsNewKey(Keys.Escape))
+            if (InputManager.IsNewKey(Keys.Escape) || GamePadManager.EstNouveauBouton(Buttons.Start))
             {
                 LaunchPause();
             }

@@ -101,7 +101,7 @@ namespace HyperV
 
         public override void Update(GameTime gameTime)
         {
-            SwordHit = (InputMgr.IsPressede(Keys.T) || InputMgr.EstNouveauClicRight() )&& IsGrabbed;
+            SwordHit = (InputMgr.IsPressede(Keys.T) || InputMgr.EstNouveauClicRight() || GamePadMgr.IsNewButton(Buttons.B) )&& IsGrabbed;
 
             base.Update(gameTime);
         }

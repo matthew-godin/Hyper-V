@@ -179,7 +179,7 @@ namespace HyperV
         {
             if (!LifeBars[1].Water)
             {
-                if (Run && !LifeBars[1].Tired && (InputMgr.IsPressed(Keys.W) || InputMgr.IsPressed(Keys.A) || InputMgr.IsPressed(Keys.S) || InputMgr.IsPressed(Keys.D)))
+                if (Run && !LifeBars[1].Tired && (InputMgr.IsPressed(Keys.W) || InputMgr.IsPressed(Keys.A) || InputMgr.IsPressed(Keys.S) || InputMgr.IsPressed(Keys.D) || GamePadMgr.PositionThumbStickLeft.X!=0 || GamePadMgr.PositionThumbStickLeft.Y != 0))
                 {
                     LifeBars[1].Attack();
                 }
@@ -337,7 +337,7 @@ namespace HyperV
             Grab = InputMgr.IsNewLeftClick() ||
                        InputMgr.IsOldLeftClick() ||
                        InputMgr.IsNewKey(Keys.E) && EstDisplacementEtAutresKeyboardActivated ||
-                       GamePadMgr.IsNewButton(Buttons.RightStick);
+                       GamePadMgr.IsNewButton(Buttons.X);
         }
 
         protected virtual void ManageHeight()

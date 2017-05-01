@@ -200,7 +200,7 @@ namespace HyperV
                 Game.Components.Add(PortalList.Last());
             }
 
-            if (cpt > 120 )
+            if (cpt > 120)
             {
                 if (!LevelIsCompleted)
                 {

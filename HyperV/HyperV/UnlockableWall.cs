@@ -79,7 +79,7 @@ namespace HyperV
             else if (RotationInitiale.Y == 1.570796f)
             {
                 FirstVertex = new Vector2(PositionInitiale.X, PositionInitiale.Z) + new Vector2(PtsVertices[0, 0].X, PtsVertices[0, 0].Z);
-                SecondVertex = new Vector2(PositionInitiale.X, PositionInitiale.Z) + new Vector2(PtsVertices[1, 1].X, -PtsVertices[1, 1].Z);
+                SecondVertex = new Vector2(PositionInitiale.X, PositionInitiale.Z) + new Vector2(PtsVertices[1, 1].X, PtsVertices[1, 1].Z);
             }
             else if (RotationInitiale.Y == 0)
             {

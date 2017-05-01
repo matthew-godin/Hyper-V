@@ -15,29 +15,32 @@ namespace HyperV
 {
     public class RythmLevel : Microsoft.Xna.Framework.GameComponent
     {
+        const int NB_À_RÉUSSIR = 5;
+
         //Constructeur
         readonly string NomFichierLecture;
         readonly string TextureName;
         readonly float UpdateInterval;
 
-        float TimeElapsedSinceUpdate { get; set; }
-        List<Vector3> Positions { get; set; }
-
+        //Initialize
         bool ButtonOne { get; set; }
         bool ButtonTwo { get; set; }
         bool ButtonThree { get; set; }
+        bool LevelIsCompleted { get; set; }
 
+        float TimeElapsedSinceUpdate { get; set; }
+        List<Vector3> Positions { get; set; }
         int cpt { get; set; }
         int numGotten { get; set; }
-        Random RandomNumberGenerator { get; set; }
-
-        InputManager InputMgr { get; set; }
-        GamePadManager GamePadMgr { get; set; }
-
         public Vector3? RedCubePosition { get; set; }
-
         AfficheurScore Score { get; set; }
 
+        //LoadContent
+        Random RandomNumberGenerator { get; set; }
+        InputManager InputMgr { get; set; }
+        GamePadManager GamePadMgr { get; set; }
+        List<UnlockableWall> WallToRemove { get; set; }
+        List<Portal> PortalList { get; set; }
 
         public RythmLevel(Game game, string fileNameLecture, string textureName, float updateInterval)
             : base(game)
@@ -54,19 +57,18 @@ namespace HyperV
             ButtonOne = false;
             ButtonTwo = false;
             ButtonThree = false;
-
+            LevelIsCompleted = false;
             RedCubePosition = null;
-
-            RandomNumberGenerator = new Random();
             numGotten = 0;
             cpt = 0;
             TimeElapsedSinceUpdate = 0;
+
             Positions = new List<Vector3>();
             InitializePositions();
             Score = new AfficheurScore(Game, "Arial50", Color.Black, UpdateInterval);
-
-            InitializeComponents();
             LoadContent();
+            InitializeComponents();
+            
         }
 
         void InitializePositions()
@@ -99,11 +101,14 @@ namespace HyperV
         {
             InputMgr = Game.Services.GetService(typeof(InputManager)) as InputManager;
             GamePadMgr = Game.Services.GetService(typeof(GamePadManager)) as GamePadManager;
+            RandomNumberGenerator = Game.Services.GetService(typeof(Random)) as Random;
+            WallToRemove = Game.Services.GetService(typeof(List<UnlockableWall>)) as List<UnlockableWall>;
+            PortalList = Game.Services.GetService(typeof(List<Portal>)) as List<Portal>;
         }
 
         void InitializeComponents()
         {
-
+          
             Game.Components.Add(Score);
             Game.Components.Add(new Displayer3D(Game));
 
@@ -130,7 +135,10 @@ namespace HyperV
             TimeElapsedSinceUpdate += elapsedTime;
             if (TimeElapsedSinceUpdate >= UpdateInterval)
             {
-                PerformUpdate();
+                if (!LevelIsCompleted)
+                {
+                    PerformUpdate();
+                }
                 TimeElapsedSinceUpdate = 0;
             }
             base.Update(gameTime);
@@ -179,15 +187,34 @@ namespace HyperV
                 }
             }
 
-            Score.Val = numGotten.ToString() + "/15";
+            Score.Val = numGotten.ToString() + "/" + NB_À_RÉUSSIR.ToString();
 
-            if (cpt > 120)
+            if(numGotten >= NB_À_RÉUSSIR)
             {
-                int slopeChoice = RandomNumberGenerator.Next(0, 3) * 2;
-                //Game.Components.Add(new Displayer3D(Game));
-                Game.Components.Add(new RythmSphere(Game, 1, Vector3.Zero,
-                                    Positions[slopeChoice], 1, new Vector2(20, 20),
-                                    "BlueWhiteRed", UpdateInterval, Positions[slopeChoice + 1]));
+                LevelIsCompleted = true;
+                cpt = 121;
+                Game.Components.Remove(WallToRemove[0]);
+                PortalList.Add(new Portal(Game, 1, new Vector3(0, 1.570796f, 0),
+                                  new Vector3(170, -60, -10), new Vector2(40, 40), "Transparent",
+                                  1, UpdateInterval));
+                Game.Components.Add(PortalList.Last());
+            }
+
+            if (cpt > 120 || cpt == 60)
+            {
+                if (!LevelIsCompleted)
+                {
+                    int nbreBalles = RandomNumberGenerator.Next(1, 4);
+                    for(int i = 0; i < nbreBalles; i++)
+                    {
+                        int slopeChoice = RandomNumberGenerator.Next(0, 3) * 2;
+                        Game.Components.Add(new Displayer3D(Game));
+                        Game.Components.Add(new RythmSphere(Game, 1, Vector3.Zero,
+                                            Positions[slopeChoice], 1, new Vector2(20, 20),
+                                            "BlueWhiteRed", UpdateInterval, Positions[slopeChoice + 1]));
+                    }
+                }
+
                 cpt = 0;
 
                 foreach (TexturedCube cube in Game.Components.Where(component => component is TexturedCube))
@@ -202,18 +229,21 @@ namespace HyperV
             ButtonThree = false;
         }
 
-
-
         bool AreEqualVectors(Vector3? a, Vector3 b)
         {
+            bool areEqual;
+
             if(a == null)
             {
-                return false;
+                areEqual = false;
+            }
+            else
+            {
+                Vector3 c = (Vector3)a - b;
+                areEqual = (c.X < 1 && c.X > -1) && (c.Y < 1 && c.Y > -1) && (c.Z < 1 && c.Z > -1);
             }
 
-            Vector3 c = (Vector3)a - b;
-
-            return (c.X < 1 && c.X > -1) && (c.Y < 1 && c.Y > -1) && (c.Z < 1 && c.Z > -1);
+            return areEqual;
         }
     }
 }

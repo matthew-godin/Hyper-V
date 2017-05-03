@@ -15,7 +15,7 @@ namespace HyperV
 {
     public class RythmLevel : Microsoft.Xna.Framework.GameComponent
     {
-        const int NB_À_RÉUSSIR = 5;
+        const int NB_À_RÉUSSIR = 15;
 
         //Constructeur
         readonly string NomFichierLecture;
@@ -31,9 +31,11 @@ namespace HyperV
         float TimeElapsedSinceUpdate { get; set; }
         List<Vector3> Positions { get; set; }
         int cpt { get; set; }
+        int cptt { get; set; }
         int numGotten { get; set; }
         public Vector3? RedCubePosition { get; set; }
         AfficheurScore Score { get; set; }
+        int MaximalThresholdCpt { get; set; }
 
         //LoadContent
         Random RandomNumberGenerator { get; set; }
@@ -41,6 +43,7 @@ namespace HyperV
         GamePadManager GamePadMgr { get; set; }
         List<UnlockableWall> WallToRemove { get; set; }
         List<Portal> PortalList { get; set; }
+        
 
         public RythmLevel(Game game, string fileNameLecture, string textureName, float updateInterval)
             : base(game)
@@ -61,6 +64,8 @@ namespace HyperV
             RedCubePosition = null;
             numGotten = 0;
             cpt = 0;
+            cptt = 0;
+            MaximalThresholdCpt = 120;
             TimeElapsedSinceUpdate = 0;
 
             Positions = new List<Vector3>();
@@ -160,6 +165,7 @@ namespace HyperV
         void PerformUpdate()
         {
             cpt++;
+            cptt++;
 
             foreach (TexturedCube cube in Game.Components.Where(component => component is TexturedCube))
             {
@@ -168,6 +174,7 @@ namespace HyperV
                     cube.TextureNameCube = "Red";
                     cube.InitializeBscEffectParameters();
                     RedCubePosition = null;
+                    cptt = 0;
                 }
 
                 foreach (RythmSphere sp in Game.Components.Where(component => component is RythmSphere))
@@ -182,6 +189,7 @@ namespace HyperV
                             cube.TextureNameCube = "Green";
                             cube.InitializeBscEffectParameters();
                             ++numGotten;
+                            cptt = 0;
                         }
                     }
                 }
@@ -192,7 +200,7 @@ namespace HyperV
             if(numGotten >= NB_À_RÉUSSIR)
             {
                 LevelIsCompleted = true;
-                cpt = 121;
+                cpt = 1000;
                 Game.Components.Remove(WallToRemove[0]);
                 PortalList.Add(new Portal(Game, 1, new Vector3(0, 1.570796f, 0),
                                   new Vector3(170, -60, -10), new Vector2(40, 40), "Transparent",
@@ -200,10 +208,12 @@ namespace HyperV
                 Game.Components.Add(PortalList.Last());
             }
 
-            if (cpt > 120)
+            
+            if (cpt > MaximalThresholdCpt)
             {
                 if (!LevelIsCompleted)
                 {
+                    MaximalThresholdCpt = RandomNumberGenerator.Next(35, 100);
                     //int nbreBalles = RandomNumberGenerator.Next(1, 4);
                     //for(int i = 0; i < nbreBalles; i++)
                     //{
@@ -217,13 +227,17 @@ namespace HyperV
 
                 cpt = 0;
 
+            }
+
+            if(cptt > 25)
+            {
                 foreach (TexturedCube cube in Game.Components.Where(component => component is TexturedCube))
                 {
                     cube.TextureNameCube = "White";
                     cube.InitializeBscEffectParameters();
                 }
+                cptt = 0;
             }
-
             ButtonOne = false;
             ButtonTwo = false;
             ButtonThree = false;

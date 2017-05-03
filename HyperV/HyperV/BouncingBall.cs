@@ -130,7 +130,7 @@ namespace HyperV
         {
             Count = 0;
         }
-
+      // rien
         void ManageBallCollisions()
         {
             if (IsCollidingBall(CameraPrison.Viseur) < VISOR_LENGTH && Sword.ContinuerCoupDSword)

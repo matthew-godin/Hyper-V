@@ -31,6 +31,7 @@ namespace HyperV
         Random RandomNumberGenerator { get; set; }
         float ThetaDisplacementAngle { get; set; }
         float PhiDisplacementAngle { get; set; }
+        public bool isEliminated { get; private set; }
 
         Sword Sword { get; set; }
         float Radius { get; set; }
@@ -51,6 +52,7 @@ namespace HyperV
             UpdateIntervalDéplacement = updateInterval * SPEED_FACTOR_INTERVAL;
             Position = initialPosition;
             Radius = rayon;
+            ++Count;
         }
 
         public override void Initialize()
@@ -122,11 +124,20 @@ namespace HyperV
             }
         }
 
+        public static int Count { get; private set; }
+
+        static BouncingBall()
+        {
+            Count = 0;
+        }
+
         void ManageBallCollisions()
         {
             if (IsCollidingBall(CameraPrison.Viseur) < VISOR_LENGTH && Sword.ContinuerCoupDSword)
             {
                 Game.Components.Remove(this);
+                isEliminated = true;
+                --Count;
             }
             if (BallCollisionCamera(COLLISION_DISTANCE))
             {

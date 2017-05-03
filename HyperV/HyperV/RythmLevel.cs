@@ -15,7 +15,7 @@ namespace HyperV
 {
     public class RythmLevel : Microsoft.Xna.Framework.GameComponent
     {
-        const int NB_À_RÉUSSIR = 15;
+        const int NB_À_RÉUSSIR = 20;
 
         //Constructeur
         readonly string NomFichierLecture;
@@ -213,7 +213,7 @@ namespace HyperV
             {
                 if (!LevelIsCompleted)
                 {
-                    MaximalThresholdCpt = RandomNumberGenerator.Next(35, 100);
+                    MaximalThresholdCpt = RandomNumberGenerator.Next(30, 90);
                     //int nbreBalles = RandomNumberGenerator.Next(1, 4);
                     //for(int i = 0; i < nbreBalles; i++)
                     //{
@@ -229,7 +229,7 @@ namespace HyperV
 
             }
 
-            if(cptt > 25)
+            if(cptt > 20|| LevelIsCompleted)
             {
                 foreach (TexturedCube cube in Game.Components.Where(component => component is TexturedCube))
                 {

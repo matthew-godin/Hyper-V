@@ -58,10 +58,10 @@ namespace HyperV
             GraphicsMgr.SynchronizeWithGreenicalRetrace = false;
             IsFixedTimeStep = false;
             IsMouseVisible = false;
-            //GraphicsMgr.PreferredBackBufferHeight = 500;
-            //GraphicsMgr.PreferredBackBufferWidth = 900;
-            GraphicsMgr.PreferredBackBufferHeight = 800;
-            GraphicsMgr.PreferredBackBufferWidth = 1500;
+            GraphicsMgr.PreferredBackBufferHeight = 500;
+            GraphicsMgr.PreferredBackBufferWidth = 900;
+            //GraphicsMgr.PreferredBackBufferHeight = 800;
+            //GraphicsMgr.PreferredBackBufferWidth = 1500;
         }
 
         Grass Grass0 { get; set; }
@@ -217,7 +217,7 @@ namespace HyperV
                     case "#":
                         break;
                     case "SpaceBackground":
-                        Components.Add(SpaceBackground);
+                        Components.Add(new NightSkyBackground(this, parts[1], FpsInterval));
                         break;
                     case "Display3D":
                         Display3D = new Displayer3D(this);

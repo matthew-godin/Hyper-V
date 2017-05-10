@@ -38,7 +38,7 @@ namespace HyperV
 
         protected bool Jump { get; private set; }
         bool Run { get; set; }
-        public bool Grab { get; set; }
+        bool Grab { get; set; }
 
         public bool IsMouseCameraActivated { get; set; }
         bool EstDisplacementEtAutresKeyboardActivated { get; set; }

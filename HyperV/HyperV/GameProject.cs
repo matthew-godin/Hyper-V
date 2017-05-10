@@ -489,6 +489,7 @@ namespace HyperV
                 order[i] = generator.Next(0, 4);
             }
             ButtonPuzzle ButtonPuzzle = new ButtonPuzzle(this, order, "../../../ButtonPositions.txt");
+            Services.AddService(typeof(ButtonPuzzle),ButtonPuzzle);
             Components.Add(ButtonPuzzle);
         }
 

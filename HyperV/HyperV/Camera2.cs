@@ -68,6 +68,8 @@ namespace HyperV
             }
         }
 
+     
+
         //protected override void ManageHeight()
         //{
         //    if (!SubjectiveCamera)
@@ -262,7 +264,7 @@ namespace HyperV
         public void DeactivateCamera()
         {
             DésactiverDéplacement = !DésactiverDéplacement;
-            Direction = new Vector3(1, 0, 0);
+            InitializeDirection(new Vector3(1, 0, 0));
         }
 
         bool placePlayer { get; set; }
@@ -295,6 +297,27 @@ namespace HyperV
         //    }
         //    base.Update(gameTime);
         //}
+
+        protected override void PerformUpdate()
+        {
+            base.PerformUpdate();
+            if (!DésactiverDéplacement)
+            {
+                if (placePlayer)
+                {
+                    Height = 2;
+                    placePlayer = false;
+                    Position = new Vector3(-27, 2, -28);
+                }
+            }
+            if (DésactiverDéplacement)
+            {
+                Height = 15;
+                Position = new Vector3(-57, 15, -52);
+                placePlayer = true;
+            }
+            Position = new Vector3(Position.X, Height, Position.Z);
+        }
 
 
     }

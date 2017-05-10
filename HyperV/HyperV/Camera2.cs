@@ -269,34 +269,6 @@ namespace HyperV
 
         bool placePlayer { get; set; }
 
-        //public override void Update(GameTime gameTime) // To make the catapult work
-        //{
-        //    float elapsedTime = (float)gameTime.ElapsedGameTime.TotalSeconds;
-        //    TimeElapsedSinceUpdate += elapsedTime;
-        //    if (TimeElapsedSinceUpdate >= UpdateInterval)
-        //    {
-        //        {
-        //            if (!DésactiverDéplacement)
-        //            {
-        //                if (placePlayer)
-        //                {
-        //                    Height = 2;
-        //                    placePlayer = false;
-        //                    Position = new Vector3(-27, 2, -28);
-        //                }
-        //            }
-        //            if (DésactiverDéplacement)
-        //            {
-        //                Height = 15;
-        //                Position = new Vector3(-57, 15, -52);
-        //                placePlayer = true;
-        //            }
-        //            Position = new Vector3(Position.X, Height, Position.Z);
-        //        }
-        //        TimeElapsedSinceUpdate = 0;
-        //    }
-        //    base.Update(gameTime);
-        //}
 
         protected override void PerformUpdate()
         {

@@ -3,24 +3,45 @@ using System.Collections.Generic;
 using System.Linq;
 using System.IO;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XNAProject;
 
 namespace HyperV
 {
+    //void RythmLevel()
+    //{
+    //    RythmLevel circuit = new RythmLevel(this, "Electric Cable", "../../../Data3.txt",
+    //                                            3, "White", "Red",
+    //                                            "Green", "BlueWhiteRed", "Arial50",
+    //                                            Color.Black, 15, 1,
+    //                                            FpsInterval);
+    //    Components.Add(circuit);
+    //    Services.AddService(typeof(RythmLevel), circuit);
+    //}
+
+
+        //Take lives if presses key and no collision
     public class RythmLevel : Microsoft.Xna.Framework.GameComponent
     {
-        const int NB_À_RÉUSSIR = 20;
+        //CONSTRUCTOR
+        //Cylinder
+        readonly string CylinderTexture,
+                        CylinderPositionFileNameReading;
+        //Cube
+        readonly float CubeEdgeLength;
+        readonly string CubeBaseTexture,
+                        CubeFailureTexture,
+                        CubeSuccessTexture;
+        //RythmSphere
+        readonly string TextureRythmSphere;
+        //Score
+        readonly string ScoreFontName;
+        readonly Color ScoreColor;
+        readonly int NumBallsToSucceed,
+                     Difficulty;
 
-        //Constructeur
-        readonly string NomFichierLecture;
-        readonly string TextureName;
         readonly float UpdateInterval;
+
 
         //Initialize
         bool ButtonOne { get; set; }
@@ -30,12 +51,13 @@ namespace HyperV
 
         float TimeElapsedSinceUpdate { get; set; }
         List<Vector3> Positions { get; set; }
-        int cpt { get; set; }
-        int cptt { get; set; }
+        int i { get; set; }
+        int j { get; set; }
         int numGotten { get; set; }
         public Vector3? RedCubePosition { get; set; }
         AfficheurScore Score { get; set; }
-        int MaximalThresholdCpt { get; set; }
+        int MaximalThreshold_i { get; set; }
+        int MaximalThreshold_j { get; set; }
 
         //LoadContent
         Random RandomNumberGenerator { get; set; }
@@ -45,11 +67,28 @@ namespace HyperV
         List<Portal> PortalList { get; set; }
         
 
-        public RythmLevel(Game game, string fileNameLecture, string textureName, float updateInterval)
+        public RythmLevel(Game game, string cylinderTexture, string cylinderPositionsFileName,
+                            float cubeEdgeLength, string cubeBaseTexture, string cubeFailureTexture,
+                            string cubeSuccessTexture, string textureRythmSphere, string scoreFontName,
+                            Color couleurScore, int numBallsToSucceed, int difficulty, 
+                            float updateInterval)
             : base(game)
         {
-            NomFichierLecture = fileNameLecture;
-            TextureName = textureName;
+            CylinderTexture = cylinderTexture;
+            CylinderPositionFileNameReading = cylinderPositionsFileName;
+
+            CubeEdgeLength = cubeEdgeLength;
+            CubeBaseTexture = cubeBaseTexture;
+            CubeFailureTexture = cubeFailureTexture;
+            CubeSuccessTexture = cubeSuccessTexture;
+
+            TextureRythmSphere = textureRythmSphere;
+
+            ScoreFontName = scoreFontName;
+            ScoreColor = couleurScore;
+            NumBallsToSucceed = numBallsToSucceed;
+            Difficulty = difficulty;
+
             UpdateInterval = updateInterval;
         }
 
@@ -63,14 +102,15 @@ namespace HyperV
             LevelIsCompleted = false;
             RedCubePosition = null;
             numGotten = 0;
-            cpt = 0;
-            cptt = 0;
-            MaximalThresholdCpt = 120;
+            i = 0;
+            j = 0;
+            MaximalThreshold_i = 120;
+            MaximalThreshold_j = 20;  // CONSTANTS ________________________________________________________
             TimeElapsedSinceUpdate = 0;
 
             Positions = new List<Vector3>();
             InitializePositions();
-            Score = new AfficheurScore(Game, "Arial50", Color.Black, UpdateInterval);
+            Score = new AfficheurScore(Game, ScoreFontName, ScoreColor, UpdateInterval);
             LoadContent();
             InitializeComponents();
             
@@ -82,12 +122,12 @@ namespace HyperV
             int startIndicator;
             float componentX, componentY, componentZ;
 
-            StreamReader fileReader = new StreamReader(NomFichierLecture);
+            StreamReader fileReader = new StreamReader(CylinderPositionFileNameReading);
 
             while (!fileReader.EndOfStream)
             {
                 lineRead = fileReader.ReadLine();
-
+                 // Make function one line
                 startIndicator = lineRead.IndexOf("X:") + 2;
                 componentX = float.Parse(lineRead.Substring(startIndicator, lineRead.IndexOf(" Y") - startIndicator));
 
@@ -119,16 +159,18 @@ namespace HyperV
 
             for(int i = 0; i < Positions.Count; i += 2)
             {
-                Game.Components.Add(new TexturedCylinder(Game, 1, new Vector3(0, 0, 0),
+                // constants ---------------------------------------------------------------------
+
+                Game.Components.Add(new TexturedCylinder(Game, 1, Vector3.Zero,
                                     Vector3.Zero, new Vector2(1, 1), new Vector2(20, 20),
-                                    "Electric Cable", UpdateInterval, Positions[i],
+                                    CylinderTexture, UpdateInterval, Positions[i],
                                     Positions[i+1]));
 
                 Game.Components.Add(new TexturedCube(Game, 1, Vector3.Zero, Positions[i+1],
-                                    "White", new Vector3(3, 3, 3), UpdateInterval));
+                                    CubeBaseTexture, new Vector3(CubeEdgeLength, CubeEdgeLength, CubeEdgeLength), UpdateInterval));
 
                 Game.Components.Add(new TexturedTile(Game, 1, new Vector3(0, -MathHelper.PiOver2, 0),
-                                    Positions[i+1] - 1.65f * Vector3.UnitX, new Vector2(3, 3), (i/2+1).ToString()));
+                                    Positions[i+1] - 1.65f * Vector3.UnitX, new Vector2(CubeEdgeLength, CubeEdgeLength), (i/2+1).ToString()));
             }
         }
 
@@ -152,7 +194,7 @@ namespace HyperV
         void LookUpKeys()
         {
             ButtonOne = InputMgr.IsNewKey(Keys.NumPad1)|| 
-                      InputMgr.IsNewKey(Keys.D1) ||
+                       InputMgr.IsNewKey(Keys.D1) ||
                       GamePadMgr.IsPressed(Buttons.DPadLeft) || ButtonOne;
             ButtonTwo = InputMgr.IsNewKey(Keys.NumPad2) || 
                         InputMgr.IsNewKey(Keys.D2) ||
@@ -164,83 +206,107 @@ namespace HyperV
 
         void PerformUpdate()
         {
-            cpt++;
-            cptt++;
+            i++;
+            j++;
 
             foreach (TexturedCube cube in Game.Components.Where(component => component is TexturedCube))
             {
-                if (AreEqualVectors(RedCubePosition, cube.Position))
-                {
-                    cube.TextureNameCube = "Red";
-                    cube.InitializeBscEffectParameters();
-                    RedCubePosition = null;
-                    cptt = 0;
-                }
+                PutBackInitialCubeTextures(cube);
+                ManageFailure(cube);
 
                 foreach (RythmSphere sp in Game.Components.Where(component => component is RythmSphere))
                 {
                     if (sp.IsColliding(cube))
                     {
-                        if (AreEqualVectors(sp.Extremity1, Positions[0]) && ButtonOne ||
-                        AreEqualVectors(sp.Extremity1, Positions[2]) && ButtonTwo ||
-                        AreEqualVectors(sp.Extremity1, Positions[4]) && ButtonThree)
-                        {
-                            sp.ToDestroy = true;
-                            cube.TextureNameCube = "Green";
-                            cube.InitializeBscEffectParameters();
-                            ++numGotten;
-                            cptt = 0;
-                        }
+                        ManageSuccess(sp, cube);
                     }
                 }
             }
 
-            Score.Val = numGotten.ToString() + "/" + NB_À_RÉUSSIR.ToString();
+            ManageScore();
+            AddSpheres();
 
-            if(numGotten >= NB_À_RÉUSSIR)
+            ButtonOne = false;
+            ButtonTwo = false;
+            ButtonThree = false;
+        }
+
+        void ManageScore()
+        {
+            Score.Val = numGotten.ToString() + "/" + NumBallsToSucceed.ToString();
+
+            if (numGotten >= NumBallsToSucceed)
             {
+
+                // constants  ----------------------------------
+
+
                 LevelIsCompleted = true;
-                cpt = 1000;
+                i = 1000;
                 Game.Components.Remove(WallToRemove[0]);
-                PortalList.Add(new Portal(Game, 1, new Vector3(0, 1.570796f, 0),
+                PortalList.Add(new Portal(Game, 1, new Vector3(0, MathHelper.PiOver2, 0),
                                   new Vector3(170, -60, -10), new Vector2(40, 40), "Transparent",
                                   1, UpdateInterval));
                 Game.Components.Add(PortalList.Last());
             }
+        }
 
-            
-            if (cpt > MaximalThresholdCpt)
+        void AddSpheres()
+        {
+            if (i > MaximalThreshold_i)
             {
+                // constants ---------------------------------------------
+
+
                 if (!LevelIsCompleted)
                 {
-                    MaximalThresholdCpt = RandomNumberGenerator.Next(30, 90);
-                    //int nbreBalles = RandomNumberGenerator.Next(1, 4);
-                    //for(int i = 0; i < nbreBalles; i++)
-                    //{
-                        int slopeChoice = RandomNumberGenerator.Next(0, 3) * 2;
-                        Game.Components.Add(new Displayer3D(Game));
-                        Game.Components.Add(new RythmSphere(Game, 1, Vector3.Zero,
-                                            Positions[slopeChoice], 1, new Vector2(20, 20),
-                                            "BlueWhiteRed", UpdateInterval, Positions[slopeChoice + 1]));
-                    //}
+                    MaximalThreshold_i = RandomNumberGenerator.Next(30/Difficulty, 90/Difficulty);
+                    
+                    int slopeChoice = RandomNumberGenerator.Next(0, 3) * 2;
+                    Game.Components.Add(new Displayer3D(Game));
+                    Game.Components.Add(new RythmSphere(Game, 1, Vector3.Zero,
+                                        Positions[slopeChoice], 1, new Vector2(20, 20),
+                                        TextureRythmSphere, UpdateInterval, Positions[slopeChoice + 1]));
+                    
                 }
-
-                cpt = 0;
-
+                i = 0;
             }
+        }
 
-            if(cptt > 20|| LevelIsCompleted)
+        void PutBackInitialCubeTextures(TexturedCube cube)
+        {
+            if (j > MaximalThreshold_j/Difficulty || LevelIsCompleted)
             {
-                foreach (TexturedCube cube in Game.Components.Where(component => component is TexturedCube))
-                {
-                    cube.TextureNameCube = "White";
-                    cube.InitializeBscEffectParameters();
-                }
-                cptt = 0;
+                cube.TextureNameCube = CubeBaseTexture;
+                cube.InitializeBscEffectParameters();
+
+                //j = 0;
             }
-            ButtonOne = false;
-            ButtonTwo = false;
-            ButtonThree = false;
+        }
+
+        void ManageFailure(TexturedCube cube)
+        {
+            if (AreEqualVectors(RedCubePosition, cube.Position))
+            {
+                cube.TextureNameCube = CubeFailureTexture;
+                cube.InitializeBscEffectParameters();
+                RedCubePosition = null;
+                j = 0;
+            }
+        }
+
+        void ManageSuccess(RythmSphere sp, TexturedCube cube)
+        {
+            if (AreEqualVectors(sp.Extremity1, Positions[0]) && ButtonOne ||
+                                    AreEqualVectors(sp.Extremity1, Positions[2]) && ButtonTwo ||
+                                    AreEqualVectors(sp.Extremity1, Positions[4]) && ButtonThree)
+            {
+                sp.ToDestroy = true;
+                cube.TextureNameCube = CubeSuccessTexture;
+                cube.InitializeBscEffectParameters();
+                ++numGotten;
+                j = 0;
+            }
         }
 
         bool AreEqualVectors(Vector3? a, Vector3 b)

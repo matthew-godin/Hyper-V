@@ -105,6 +105,7 @@ namespace HyperV
             {
                 for (int j = 0; j < VerticesPts.GetLength(1); ++j)
                 {
+                    // small function-----------------------------------------------------------------------------------
                     VerticesPts[i, j] = new Vector3(Origin.X - (i/NumColumns * (Extremity2 - Extremity1).Length()* (Vector3.Normalize(Extremity1 - Extremity2).X)) + Extremity1.X,
                                                    Origin.Y - (i / NumColumns * (Extremity2 - Extremity1).Length() * (Vector3.Normalize(Extremity1 - Extremity2).Y)) + (float)Math.Cos(j * 2 * Math.PI / NumLines) + Extremity1.Y,
                                                    Origin.Z - (i / NumColumns * (Extremity2 - Extremity1).Length() * (Vector3.Normalize(Extremity1 - Extremity2).Z))+(float)Math.Sin(j * 2 * Math.PI / NumLines) + Extremity1.Z);

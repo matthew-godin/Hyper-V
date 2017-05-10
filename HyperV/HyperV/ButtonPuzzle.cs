@@ -26,9 +26,9 @@ namespace HyperV
         InputManager InputMgrs { get; set; }
         Camera2 Camera { get; set; }
         RessourcesManager<SoundEffect> SoundManager { get; set; }
-        SoundEffect BellSuccess {get;set;}
+        SoundEffect BellSuccess { get; set; }
         SoundEffect BellMissed { get; set; }
-        SoundEffect PuzzleComleted { get; set; }    
+        SoundEffect PuzzleComleted { get; set; }
 
         public ButtonPuzzle(Game game, int[] buttonOrder, string buttonPositions)
             : base(game)
@@ -53,7 +53,7 @@ namespace HyperV
             {
                 string lineRead = file.ReadLine();
                 string[] lineSplit = lineRead.Split(';');
-                ModelCreator x = new ModelCreator(Game, lineSplit[0], new Vector3(float.Parse(lineSplit[1]), float.Parse(lineSplit[2]), float.Parse(lineSplit[3])), int.Parse(lineSplit[4]), int.Parse(lineSplit[5]),"Rock");
+                ModelCreator x = new ModelCreator(Game, lineSplit[0], new Vector3(float.Parse(lineSplit[1]), float.Parse(lineSplit[2]), float.Parse(lineSplit[3])), int.Parse(lineSplit[4]), int.Parse(lineSplit[5]), "Rock");
                 Game.Components.Add(new Displayer3D(Game));
                 Game.Components.Add(x);
                 ButtonList.Add(x);
@@ -76,6 +76,13 @@ namespace HyperV
 
         public override void Update(GameTime gameTime)
         {
+            //Cheat to put in the title the order of buttons to press !
+            if (InputMgrs.IsPressede(Microsoft.Xna.Framework.Input.Keys.B))
+            {
+                Game.Window.Title = ButtonOrder[0].ToString() + ButtonOrder[1].ToString() + ButtonOrder[2].ToString() + ButtonOrder[3].ToString();
+            }
+
+
             if (InputMgrs.IsNewLeftClick())
             {
                 for (int i = 0; i < ButtonList.Capacity; ++i)
@@ -138,17 +145,17 @@ namespace HyperV
         }
 
         bool TestFirstButton(int buttonActivated)
-        {            
+        {
             bool isOk = false;
             if (buttonActivated == ButtonOrder[0]) //if button is good and not pressed correctly
-            {                
+            {
                 BellSuccess.Play();
                 isOk = true;
             }
             else
             {
                 BellMissed.Play();
-            }            
+            }
             return isOk;
         }
 
@@ -210,7 +217,7 @@ namespace HyperV
             {
                 if (button.ButtonDisplacement)
                 {
-                    button.DisplaceModel(0.03f * new Vector3(-(float)(Math.Cos(MathHelper.ToRadians(alpha))), 0, 0));
+                    button.DisplaceModel(0.03f * new Vector3(0, 0, -(float)(Math.Cos(MathHelper.ToRadians(alpha)))));
                     alpha += 10;
                     if (alpha > 180)
                     {
@@ -220,6 +227,6 @@ namespace HyperV
                 }
                 UpdateTimeElapsed = 0;
             }
-        }        
+        }
     }
 }

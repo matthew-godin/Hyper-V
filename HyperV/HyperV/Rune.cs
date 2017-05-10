@@ -42,15 +42,15 @@ namespace HyperV
         public override void Update(GameTime gameTime)
         {
 
-            UpdateTimeElapsed += (float)gameTime.ElapsedGameTime.TotalSeconds;      
+            UpdateTimeElapsed += (float)gameTime.ElapsedGameTime.TotalSeconds;
             RuneActivationTime += (float)gameTime.ElapsedGameTime.TotalSeconds;
             if (UpdateTimeElapsed >= 1 / 60f)
             {
                 TestPlayerPosition();
                 if (IsUnderPlayer)
                 {
-                    if(RuneActivationTime > 2)
-                    ActiverRune();
+                    if (RuneActivationTime > 2)
+                        ActiverRune();
                 }
                 UpdateTimeElapsed = 0;
             }
@@ -60,7 +60,8 @@ namespace HyperV
 
         private void TestPlayerPosition()
         {
-            if (Camera.Position.X < InitialPosition.X && Camera.Position.X > InitialPosition.X - 3 && Camera.Position.Z > InitialPosition.Z && Camera.Position.Z < InitialPosition.Z + 3)
+            const int RUNE_SIZE = 2;
+            if (Camera.Position.X < InitialPosition.X + RUNE_SIZE && Camera.Position.X > InitialPosition.X - RUNE_SIZE && Camera.Position.Z > InitialPosition.Z - RUNE_SIZE && Camera.Position.Z < InitialPosition.Z + RUNE_SIZE)
             {
                 IsUnderPlayer = true;
             }
@@ -80,7 +81,7 @@ namespace HyperV
             }
             else
             {
-                RuneCubeActivated = new ModelCreator(Game, "Cube", new Vector3(InitialPosition.X - 1, InitialPosition.Y + 2, InitialPosition.Z + 1), 0.6f, 0);
+                RuneCubeActivated = new ModelCreator(Game, "axle", new Vector3(InitialPosition.X, InitialPosition.Y + 2, InitialPosition.Z), 0.005f, 0);
                 Game.Components.Add(new Displayer3D(Game));
                 Game.Components.Add(RuneCubeActivated);
                 RuneActivated.Play();

@@ -21,18 +21,18 @@ namespace HyperV
         const int MAXIMAL_RUN_FACTOR = 4;
         const int MINIMAL_DISTANCE_POUR_RAMASSAGE = 45;
 
-        public Vector3 Direction { get; protected set; }//
+        public Vector3 Direction { get; private set; }//
         public Vector3 Lateral { get; private set; }//
         Grass Grass { get; set; }
-        protected float TranslationSpeed { get; set; }
+        protected float TranslationSpeed { get; private set; }
         float SpeedRotation { get; set; }
         Point PreviousMousePosition { get; set; }
         Point CurrentMousePosition { get; set; }
-        public Vector2 DisplacementMouse { get; set; }
+        public Vector2 DisplacementMouse { get; private set; }   //**************************
 
         protected bool DésactiverDisplacement { get; set; }
-        protected float UpdateInterval { get; set; }
-        protected float TimeElapsedSinceUpdate { get; set; }
+        float UpdateInterval { get; set; }
+        float TimeElapsedSinceUpdate { get; set; }
         InputManager InputMgr { get; set; }
         GamePadManager GamePadMgr { get; set; }
 
@@ -51,7 +51,9 @@ namespace HyperV
         protected LifeBar[] LifeBars { get; set; }
         Vector2 Origin { get; set; }
 
-        public PlayerCamera(Game game, Vector3 cameraPosition, Vector3 target, Vector3 orientation, float updateInterval, float renderDistance) : base(game)
+        public PlayerCamera(Game game, Vector3 cameraPosition, Vector3 target,
+                            Vector3 orientation, float updateInterval, float renderDistance)
+            : base(game)
         {
             FarPlaneDistance = renderDistance;
             UpdateInterval = updateInterval;
@@ -59,11 +61,6 @@ namespace HyperV
             CreateLookAt(cameraPosition, target, orientation);
             Height = cameraPosition.Y;
             Origin = new Vector2(Game.Window.ClientBounds.Width, Game.Window.ClientBounds.Height) / 2;
-        }
-
-        public float GetRenderDistance()
-        {
-            return FarPlaneDistance;
         }
 
         public void SetRenderDistance(float renderDistance)
@@ -153,26 +150,31 @@ namespace HyperV
             TimeElapsedSinceUpdate += timeElapsed;
             if (TimeElapsedSinceUpdate >= UpdateInterval)
             {
-                MouseFunctions();
-                if (!DésactiverDisplacement)
-                {
-                    KeyboardFunctions();
-                }
-                GamePadFunctions();
-
-                ManageHeight();
-                CreateLookAt();
-
-                PopulateCommands(); // Grab moved to AffectCommandsForGrab()
-
-                //ManageGrabbing();
-                ManageRun();
-                ManageJump();
-
-                ManageLifeBars();
+                PerformUpdate();
                 TimeElapsedSinceUpdate = 0;
             }
             base.Update(gameTime);
+        }
+
+        protected virtual void PerformUpdate()
+        {
+            MouseFunctions();
+            if (!DésactiverDisplacement)
+            {
+                KeyboardFunctions();
+            }
+            GamePadFunctions();
+
+            ManageHeight();
+            CreateLookAt();
+
+            PopulateCommands(); // Grab moved to AffectCommandsForGrab()
+
+            //ManageGrabbing();
+            ManageRun();
+            ManageJump();
+
+            ManageLifeBars();
         }
 
         protected virtual void ManageLifeBars()
@@ -251,6 +253,7 @@ namespace HyperV
             }
         }
 
+ 
         protected virtual void ManageDisplacement(float direction, float latéral)
         {
             float displacementDirection = direction * TranslationSpeed;
@@ -406,19 +409,6 @@ namespace HyperV
             //NEW
         }
 
-        //private bool Taken()
-        //{
-        //    bool result = false;
-        //    foreach (GrabbableModel grabbableSphere in Game.Components.Where(component => component is GrabbableModel))
-        //    {
-        //        if (grabbableSphere.IsGrabbed && !grabbableSphere.Placed)
-        //        {
-        //            result = true;
-        //            break;
-        //        }
-        //    }
-        //    return result;
-        //}
 
         //Jump
         #region

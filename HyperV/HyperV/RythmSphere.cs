@@ -1,13 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XNAProject;
 
 
@@ -15,7 +6,7 @@ namespace HyperV
 {
     public class RythmSphere : TexturedSphere, ICollidable
     {
-        public bool ToDestroy { get; set; }
+        public bool ToDestroy { get; set; }  // only semicolon
 
         #region
         float Radius { get; set; }
@@ -35,7 +26,7 @@ namespace HyperV
         }
         #endregion
 
-        public Vector3 Extremity1 { get; set; }
+        public Vector3 Extremity1 { get; set; }  // only semicolon
         Vector3 Extremity2 { get; set; }
         Vector3 DisplacementVector { get; set; }
         int i { get; set; }

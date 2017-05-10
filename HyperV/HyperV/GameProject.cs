@@ -58,10 +58,10 @@ namespace HyperV
             GraphicsMgr.SynchronizeWithGreenicalRetrace = false;
             IsFixedTimeStep = false;
             IsMouseVisible = false;
-            GraphicsMgr.PreferredBackBufferHeight = 500;
-            GraphicsMgr.PreferredBackBufferWidth = 900;
-            //GraphicsMgr.PreferredBackBufferHeight = 800;
-            //GraphicsMgr.PreferredBackBufferWidth = 1500;
+            //GraphicsMgr.PreferredBackBufferHeight = 500;
+            //GraphicsMgr.PreferredBackBufferWidth = 900;
+            GraphicsMgr.PreferredBackBufferHeight = 800;
+            GraphicsMgr.PreferredBackBufferWidth = 1500;
         }
 
         Grass Grass0 { get; set; }
@@ -349,14 +349,10 @@ namespace HyperV
                         Components.Add(new Skybox(this, parts[1]));
                         break;
                     case "UnlockableWall":
-                        int a = int.Parse(parts[6]);
-                        if (CountComplete() < a)
-                        {
-                            Unlockables.Add(new UnlockableWall(this, float.Parse(parts[1]), Vector3Parse(parts[2]), Vector3Parse(parts[3]), Vector2Parse(parts[4]), parts[5], FpsInterval));
-                            Components.Add(Unlockables.Last());
-                            Services.RemoveService(typeof(List<UnlockableWall>));
-                            Services.AddService(typeof(List<UnlockableWall>), Unlockables);
-                        }
+                        Unlockables.Add(new UnlockableWall(this, float.Parse(parts[1]), Vector3Parse(parts[2]), Vector3Parse(parts[3]), Vector2Parse(parts[4]), parts[5], FpsInterval, int.Parse(parts[6]), CountComplete(), RuneList));
+                        Components.Add(Unlockables.Last());
+                        Services.RemoveService(typeof(List<UnlockableWall>));
+                        Services.AddService(typeof(List<UnlockableWall>), Unlockables);
                         break;
                     case "Water":
                         Water.Add(new Water(this, float.Parse(parts[1]), Vector3Parse(parts[2]), Vector3Parse(parts[3]), Vector2Parse(parts[4]), FpsInterval));
@@ -368,7 +364,7 @@ namespace HyperV
                         PrisonLevel(false);
                         break;
                     case "Rythm":
-                        RythmLevel();
+                        NiveauRythmé();
                         break;
                 }
             }
@@ -829,9 +825,13 @@ namespace HyperV
 
         Walls Wall { get; set; }
 
-        void RythmLevel()
+        void NiveauRythmé()
         {
-            NiveauRythmé circuit = new NiveauRythmé(this, "../../../Data3.txt", "Fence", FpsInterval);
+            NiveauRythmé circuit = new NiveauRythmé(this, "Electric Cable", "../../../Data3.txt",
+                                                    3, "White", "Red",
+                                                    "Green", "BlueWhiteRed", "Arial50",
+                                                    Color.Black, 15, 1,
+                                                    FpsInterval);
             Components.Add(circuit);
             Services.AddService(typeof(NiveauRythmé), circuit);
         }

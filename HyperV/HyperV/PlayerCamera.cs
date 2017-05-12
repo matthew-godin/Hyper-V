@@ -21,24 +21,28 @@ namespace HyperV
         const int MAXIMAL_RUN_FACTOR = 4;
         const int MINIMAL_DISTANCE_POUR_RAMASSAGE = 45;
 
-        public Vector3 Direction { get; protected set; }//
-        public Vector3 Lateral { get; private set; }//
-        Grass Grass { get; set; }
+        //Constructeur
+        readonly float UpdateInterval;
+        protected float BaseHeight { get; set; }
+        Vector2 Origin { get; set; }
+
+        //Initialize
         protected float TranslationSpeed { get; set; }
-        float SpeedRotation { get; set; }
+        //readonly float SpeedRotation;
+
+
+        public Vector3 Direction { get; private set; }//
+        public Vector3 Lateral { get; private set; }//
+
         Point PreviousMousePosition { get; set; }
         Point CurrentMousePosition { get; set; }
-        public Vector2 DisplacementMouse { get; set; }   // checker justre point virgule !! ---------------
+        public Vector2 DisplacementMouse { get; private set; }   //**************************
 
         protected bool DésactiverDisplacement { get; set; }
-        protected float UpdateInterval { get; set; }
-        protected float TimeElapsedSinceUpdate { get; set; }
-        InputManager InputMgr { get; set; }
-        GamePadManager GamePadMgr { get; set; }
 
         protected bool Jump { get; private set; }
         bool Run { get; set; }
-        public bool Grab { get; set; }
+        bool Grab { get; set; }
 
         public bool IsMouseCameraActivated { get; set; }
         bool EstDisplacementEtAutresKeyboardActivated { get; set; }
@@ -46,30 +50,29 @@ namespace HyperV
 
         public Ray Visor { get; private set; }
 
-        protected float Height { get; set; }
+        float TimeElapsedSinceUpdate { get; set; }
 
-        protected LifeBar[] LifeBars { get; set; }
-        Vector2 Origin { get; set; }
+        LifeBar[] LifeBars { get; set; }
+        InputManager InputMgr { get; set; }
+        GamePadManager GamePadMgr { get; set; }
 
         public PlayerCamera(Game game, Vector3 cameraPosition, Vector3 target,
                             Vector3 orientation, float updateInterval, float renderDistance)
             : base(game)
         {
-            FarPlaneDistance = renderDistance;
-            UpdateInterval = updateInterval;
-            CreateViewingFrustum(OBJECTIVE_OPENNESS, NEAR_PLANE_DISTANCE, /*FAR_PLANE_DISTANCE*/FarPlaneDistance);
             CreateLookAt(cameraPosition, target, orientation);
-            Height = cameraPosition.Y;
+            UpdateInterval = updateInterval;
+            FarPlaneDistance = renderDistance;
+            CreateViewingFrustum(OBJECTIVE_OPENNESS, NEAR_PLANE_DISTANCE, FarPlaneDistance);
+
+            BaseHeight = Position.Y;
             Origin = new Vector2(Game.Window.ClientBounds.Width, Game.Window.ClientBounds.Height) / 2;
         }
-
-  
 
         public void SetRenderDistance(float renderDistance)
         {
             FarPlaneDistance = renderDistance;
-            CreateViewingFrustum(OBJECTIVE_OPENNESS, NEAR_PLANE_DISTANCE, /*FAR_PLANE_DISTANCE*/FarPlaneDistance);
-            //CreateLookAt(Position, Target, Orientation);
+            CreateViewingFrustum(OBJECTIVE_OPENNESS, NEAR_PLANE_DISTANCE, FarPlaneDistance);
         }
 
         public void InitializeDirection(Vector3 direction)
@@ -79,7 +82,7 @@ namespace HyperV
 
         public override void Initialize()
         {
-            SpeedRotation = INITIAL_ROTATION_SPEED;
+            //SpeedRotation = INITIAL_ROTATION_SPEED;
             TranslationSpeed = TRANSLATION_INITIAL_SPEED;
             TimeElapsedSinceUpdate = 0;
 
@@ -103,14 +106,13 @@ namespace HyperV
             LoadContent();
 
             InitializeComplexObjectsJump();
-            Height = Height;//CHARACTER_HEIGHT;
+            Height = BaseHeight;//CHARACTER_HEIGHT;
         }
 
         protected virtual void LoadContent()
         {
             InputMgr = Game.Services.GetService(typeof(InputManager)) as InputManager;
             GamePadMgr = Game.Services.GetService(typeof(GamePadManager)) as GamePadManager;
-
             LifeBars = Game.Services.GetService(typeof(LifeBar[])) as LifeBar[];
         }
 
@@ -152,26 +154,31 @@ namespace HyperV
             TimeElapsedSinceUpdate += timeElapsed;
             if (TimeElapsedSinceUpdate >= UpdateInterval)
             {
-                MouseFunctions();
-                if (!DésactiverDisplacement)
-                {
-                    KeyboardFunctions();
-                }
-                GamePadFunctions();
-
-                ManageHeight();
-                CreateLookAt();
-
-                PopulateCommands(); // Grab moved to AffectCommandsForGrab()
-
-                //ManageGrabbing();
-                ManageRun();
-                ManageJump();
-
-                ManageLifeBars();
+                PerformUpdate();
                 TimeElapsedSinceUpdate = 0;
             }
             base.Update(gameTime);
+        }
+
+        protected virtual void PerformUpdate()
+        {
+            MouseFunctions();
+            if (!DésactiverDisplacement)
+            {
+                KeyboardFunctions();
+            }
+            GamePadFunctions();
+
+            ManageHeight();
+            CreateLookAt();
+
+            PopulateCommands(); // Grab moved to AffectCommandsForGrab()
+
+            //ManageGrabbing();
+            ManageRun();
+            ManageJump();
+
+            ManageLifeBars();
         }
 
         protected virtual void ManageLifeBars()
@@ -250,6 +257,7 @@ namespace HyperV
             }
         }
 
+ 
         protected virtual void ManageDisplacement(float direction, float latéral)
         {
             float displacementDirection = direction * TranslationSpeed;
@@ -344,7 +352,7 @@ namespace HyperV
             //Position = Grass.GetPositionWithHeight(Position, (int)Height);
             if (!ContinueJump)
             {
-                Height = Height;
+                Height = BaseHeight;
             }
             Position = new Vector3(Position.X, Height, Position.Z);
         }
@@ -405,19 +413,6 @@ namespace HyperV
             //NEW
         }
 
-        //private bool Taken()
-        //{
-        //    bool result = false;
-        //    foreach (GrabbableModel grabbableSphere in Game.Components.Where(component => component is GrabbableModel))
-        //    {
-        //        if (grabbableSphere.IsGrabbed && !grabbableSphere.Placed)
-        //        {
-        //            result = true;
-        //            break;
-        //        }
-        //    }
-        //    return result;
-        //}
 
         //Jump
         #region
@@ -452,7 +447,7 @@ namespace HyperV
 
         void InitializeComplexObjectsJump()
         {
-            Position = new Vector3(Position.X, Height/*CHARACTER_HEIGHT*/, Position.Z);
+            Position = new Vector3(Position.X, BaseHeight/*CHARACTER_HEIGHT*/, Position.Z);
             ControlPositionPts = new Vector3(Position.X, Position.Y, Position.Z);
             ControlPositionPtsPlusUn = Position + Vector3.Normalize(new Vector3(Direction.X, 0, Direction.Z)) * 25;
             //Position = new Vector3(ControlPositionPts.X, ControlPositionPts.Y, ControlPositionPts.Z);//******

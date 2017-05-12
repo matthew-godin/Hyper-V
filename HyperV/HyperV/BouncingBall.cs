@@ -84,7 +84,6 @@ namespace HyperV
                 Position += UpdateDisplacementVector;
                 ManageBallCollisions();
                 TimeElapsedSinceUpdateDisplacement = NO_TIME_ELAPSED;
-                CameraPrison.Ramasser = true;
 
             }
             base.Update(gameTime);

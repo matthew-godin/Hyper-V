@@ -43,18 +43,27 @@ namespace HyperV
         Vector2 SecondVertex { get; set; }
         Vector3 PlaneEquation { get; set; }
         float Magnitude { get; set; }
+        int NumberRunesOpenWall { get; set; }
+        int NumLevelsCompleted { get; set; }
+
+        List<Rune> RunesList { get; set; }
+        ButtonPuzzle ButtonsPuzzle { get; set; }
+
 
         private bool IsWhitin(float valeur, float thresholdA, float thresholdB)
         {
             return (valeur >= thresholdA && valeur <= thresholdB || valeur <= thresholdA && valeur >= thresholdB);
         }
 
-        public UnlockableWall(Game game, float saveVal, Vector3 initialRotation, Vector3 initialPosition, Vector2 scale, string nomTileTexture, float updateInterval) : base(game, SaveIndex, initialRotation, initialPosition)
+        public UnlockableWall(Game game, float saveVal, Vector3 initialRotation, Vector3 initialPosition, Vector2 scale, string nomTileTexture, float updateInterval, int numberRunesOpenWall, int numLevelsCompleted, List<Rune> runesList) : base(game, SaveIndex, initialRotation, initialPosition)
         {
             NomTileTexture = nomTileTexture;
             UpdateInterval = updateInterval;
             Delta = new Vector2(scale.X, scale.Y);
             Origin = new Vector3(0, -Delta.Y / 2, -Delta.X / 2); //pour centrer la primitive au point (0,0,0)
+            NumberRunesOpenWall = numberRunesOpenWall;
+            NumLevelsCompleted = numLevelsCompleted;
+            RunesList = runesList;
         }
 
         public override void Initialize()
@@ -95,6 +104,7 @@ namespace HyperV
             base.Initialize();
         }
 
+
         private void CreatePointArray()
         {
             PtsVertices[0, 0] = new Vector3(Origin.X, Origin.Y, Origin.Z);
@@ -121,6 +131,7 @@ namespace HyperV
         protected override void LoadContent()
         {
             GestionnaireDeTextures = Game.Services.GetService(typeof(RessourcesManager<Texture2D>)) as RessourcesManager<Texture2D>;
+            ButtonsPuzzle = Game.Services.GetService(typeof(ButtonPuzzle)) as ButtonPuzzle;
             TileTexture = GestionnaireDeTextures.Find(NomTileTexture);
             BscEffect = new BasicEffect(GraphicsDevice);
             InitializeBscEffectParameters();
@@ -201,6 +212,33 @@ namespace HyperV
                 //CreateNewDirection(result, i, Direction, ref newDirection);
             }
             return result;
+        }
+
+        private bool RunePuzzleCompleted()
+        {
+            return RunesList[0].IsActivated && !RunesList[1].IsActivated && RunesList[2].IsActivated && !RunesList[3].IsActivated && !RunesList[4].IsActivated && RunesList[5].IsActivated;
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            if (NumberRunesOpenWall <= NumLevelsCompleted)
+            {
+                if (NumberRunesOpenWall == 1 && RunePuzzleCompleted())
+                {
+                    Visible = false;
+                    Game.Components.Remove(this);
+                }
+                if (NumberRunesOpenWall == 2 || NumberRunesOpenWall == 5)
+                {
+                    Visible = false;
+                    Game.Components.Remove(this);
+                }
+                if (NumberRunesOpenWall == 3 && ButtonsPuzzle.IsCompleted)
+                {
+                    Visible = false;
+                    Game.Components.Remove(this);
+                }
+            }
         }
     }
 }

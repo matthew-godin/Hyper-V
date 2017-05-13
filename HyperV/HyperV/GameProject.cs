@@ -54,10 +54,10 @@ namespace HyperV
             GraphicsMgr.SynchronizeWithGreenicalRetrace = false;
             IsFixedTimeStep = false;
             IsMouseVisible = false;
-            //GraphicsMgr.PreferredBackBufferHeight = 500;
-            //GraphicsMgr.PreferredBackBufferWidth = 900;
-            GraphicsMgr.PreferredBackBufferHeight = 800;
-            GraphicsMgr.PreferredBackBufferWidth = 1500;
+            GraphicsMgr.PreferredBackBufferHeight = 500;
+            GraphicsMgr.PreferredBackBufferWidth = 900;
+            //GraphicsMgr.PreferredBackBufferHeight = 800;
+            //GraphicsMgr.PreferredBackBufferWidth = 1500;
         }
 
         Grass Grass0 { get; set; }
@@ -695,7 +695,7 @@ namespace HyperV
          const int NUM_BALLS_LIMIT = 5;
             if (BouncingBall.Count < NUM_BALLS_LIMIT)
             {
-                foreach (BouncingBall e in Components)
+                foreach (BouncingBall e in (Components.Where(a => a is BouncingBall)))
                 {
                     Components.Remove(e);
                 }

@@ -69,6 +69,7 @@ namespace HyperV
             Visible = false;
             base.Initialize();
             UpdateLanguage();
+            DrawOrder = 1000;
             float height = (160f / 600f) * Game.Window.ClientBounds.Height;
             FaceImageRectangle = new Rectangle(10, (int)(Game.Window.ClientBounds.Height - height - 10) - 20, (int)((250f / 800f) * Game.Window.ClientBounds.Width) - 100, (int)height + 20);
             ScriptRectanglePosition = new Rectangle(FaceImageRectangle.X + FaceImageRectangle.Width + 10, FaceImageRectangle.Y + 10, (int)((510f / 800f) * Game.Window.ClientBounds.Width) + 140, (int)((143f / 600f) * Game.Window.ClientBounds.Height) + 25);
@@ -137,7 +138,7 @@ namespace HyperV
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         public override void Update(GameTime gameTime)
         {
-            if ((InputManager.IsNewKey(Keys.Space)|| GamePadMgr.IsNewButton(Buttons.Y)))
+            if ((InputManager.IsNewKey(/*Keys.Space*/Keys.R)|| GamePadMgr.IsNewButton(Buttons.Y)))
             {
                 Visible = !Visible;
                 PressSpaceLabel.Visible = !Visible;

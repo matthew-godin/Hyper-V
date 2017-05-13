@@ -186,8 +186,8 @@ namespace HyperV
 
         void SelectWorld(bool usePosition)
         {
-            SelectLevel(usePosition, Level);
-            //PrisonLevel(usePosition);
+           SelectLevel(usePosition, Level);
+       //  PrisonLevel(usePosition);
             //RythmLevel();
             Save();
         }
@@ -196,9 +196,9 @@ namespace HyperV
         {
             MediaPlayer.Stop();
             Components.Clear();
-            //Song = SongManager.Find("castle");
-            //MediaPlayer.Play(Song);
-            StreamReader reader = new StreamReader("../../../Levels/Level" + level.ToString() + ".txt");
+         //Song = SongManager.Find("castle");
+         //MediaPlayer.Play(Song);
+         StreamReader reader = new StreamReader("../../../Levels/Level" + level.ToString() + ".txt");
             string line;
             string[] parts;
             bool boss = false;
@@ -456,7 +456,11 @@ namespace HyperV
 
         }
 
-        List<Rune> RuneList { get; set; }
+
+      // Runes
+      #region
+
+      List<Rune> RuneList { get; set; }
 
         private void AddRunes()
         {
@@ -500,7 +504,11 @@ namespace HyperV
             Components.Add(ButtonPuzzle);
         }
 
-        const int NUM_LEVELS = 10;
+      #endregion
+
+
+
+      const int NUM_LEVELS = 10;
         List<bool> Complete { get; set; }
 
         void Save()
@@ -669,7 +677,6 @@ namespace HyperV
                 TimePlayed = TimePlayed.Add(gameTime.ElapsedGameTime);
                 if (Timer >= FpsInterval)
                 {
-                    //Window.Title = Camera.Position.ToString();
                     switch (Level)
                     {
                         case 0:
@@ -684,19 +691,6 @@ namespace HyperV
                     Timer = 0;
                 }
                 base.Update(gameTime);
-            }
-        }
-
-        void CheckForUnlockableWallBouncingBalls()
-        {
-         const int NUM_BALLS_LIMIT = 5;
-            if (BouncingBall.Count < NUM_BALLS_LIMIT)
-            {
-                foreach (BouncingBall e in Components)
-                {
-                    Components.Remove(e);
-                }
-                Components.Remove(Unlockables[0]);
             }
         }
 
@@ -879,17 +873,24 @@ namespace HyperV
         BouncingBall Ball { get; set; }
         Sword Sword { get; set; }
         Random Random { get; set; }
-        const int TILE_WIDTH = 20, NUM_BALLS_DESIRED = 20;
-        const float SWORD_SCALE = 0.009f;
+        const int TILE_WIDTH = 20, NUM_BALLS_DESIRED = 20,NUM_BALLS_LIMIT = 4;
+      const float SWORD_SCALE = 0.009f;
         const string SWORD_MODELE_NAME = "robot";
+      List<BouncingBall> BallList { get; set; }
 
         void PrisonLevel(bool usePosition)
         {
-            for (int i = 0; i < NUM_BALLS_DESIRED; i++)
+         BallList = new List<BouncingBall>();
+         Services.RemoveService(typeof(List<BouncingBall>));
+         Services.AddService(typeof(List<BouncingBall>), BallList);
+
+         for (int i = 0; i < NUM_BALLS_DESIRED; i++)
             {
                 Ball = new BouncingBall(this, 1f, Vector3.Zero, ComputeInitialPosition(), 5f, new Vector2(50), "Ball_Bois", FpsInterval);
+                BallList.Add(Ball);
                 Components.Add(Ball);
             }
+
         }
         Vector3 ComputeInitialPosition()
         {
@@ -900,8 +901,22 @@ namespace HyperV
         }
 
 
-        #endregion
-    }
+      void CheckForUnlockableWallBouncingBalls()
+      {
+
+         if (BouncingBall.Count < NUM_BALLS_LIMIT)
+         {
+            for (int i = 0; i < BallList.Count; i++)
+            {
+               Components.Remove(BallList[i]);
+            }
+
+            Components.Remove(Unlockables[0]);
+         }
+      }
+
+      #endregion
+   }
 }
 
 

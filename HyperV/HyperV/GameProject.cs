@@ -1,4 +1,4 @@
-// By Matthew Godin
+﻿// By Matthew Godin
 // Created on January 2017
 
 using System;
@@ -364,7 +364,7 @@ namespace HyperV
                         PrisonLevel(false);
                         break;
                     case "Rythm":
-                        NiveauRythm�();
+                        RythmLevel();
                         break;
                 }
             }
@@ -561,9 +561,9 @@ namespace HyperV
             FontManager = new RessourcesManager<SpriteFont>(this, "Fonts");
             SpaceBackground = new NightSkyBackground(this, "NightSky", FpsInterval);
             FPSLabel = new FPSDisplay(this, "Arial", Color.Tomato, FPS_COMPUTE_INTERVAL);
-            Loading = new CenteredText(this, "Loading . . .", "Arial", new Rectangle(Window.ClientBounds.Width / 2 - 200, Window.ClientBounds.Height / 2 - 40, 400, 80), Color.White, 0);
-            GameOver = new CenteredText(this, "Game Over", "Arial", new Rectangle(Window.ClientBounds.Width / 2 - 200, Window.ClientBounds.Height / 2 - 40, 400, 80), Color.White, 0);
-            Success = new CenteredText(this, "Success!", "Arial", new Rectangle(Window.ClientBounds.Width / 2 - 200, Window.ClientBounds.Height / 2 - 40, 400, 80), Color.White, 0);
+            Loading = new CenteredText(this, DetermineTexts(0), "Arial", new Rectangle(Window.ClientBounds.Width / 2 - 200, Window.ClientBounds.Height / 2 - 40, 400, 80), Color.White, 0);
+            GameOver = new CenteredText(this, DetermineTexts(1), "Arial", new Rectangle(Window.ClientBounds.Width / 2 - 200, Window.ClientBounds.Height / 2 - 40, 400, 80), Color.White, 0);
+            Success = new CenteredText(this, DetermineTexts(2), "Arial", new Rectangle(Window.ClientBounds.Width / 2 - 200, Window.ClientBounds.Height / 2 - 40, 400, 80), Color.White, 0);
             InputManager = new InputManager(this);
             Services.AddService(typeof(RessourcesManager<SpriteFont>), FontManager);
             Services.AddService(typeof(InputManager), InputManager);
@@ -585,6 +585,27 @@ namespace HyperV
             SelectWorld(true);
             base.Initialize();
         }
+
+
+      string DetermineTexts(int i)
+      {
+         const int NUM_TEXTS = 3;
+         string[] textArrays = new string[NUM_TEXTS] { "Loading ...", "Game Over", "Success!" };
+         switch (Language)
+         {
+            case Language.French:
+               textArrays = new string[NUM_TEXTS] {"Chargement ...","Fin de partie", "Réussi!" };
+               break;
+            case Language.Spanish:
+               textArrays = new string[NUM_TEXTS] {"Cargando ...", "Juego terminado", "¡Éxito!" };
+               break;
+            case Language.Japanese:
+               textArrays = new string[NUM_TEXTS] { "読み込んでいます...", "ゲームオーバー", "成功！" };
+               break;
+         }
+         return textArrays[i];
+      }
+
 
         void ResetLists()
         {
@@ -728,7 +749,7 @@ namespace HyperV
                 if (collision < 30 && collision != null)
                 {
                     PressSpaceLabel.Visible = true;
-                    if (InputManager.IsPressed(Keys.Space) || GamePadManager.EstEnfonc�(Buttons.Y))
+                    if (InputManager.isPressed(Keys.Space) || GamePadManager.IsPressed(Buttons.Y))
                     {
                         if (Level > 1)
                         {
@@ -827,15 +848,15 @@ namespace HyperV
 
         Walls Wall { get; set; }
 
-        void NiveauRythm�()
+        void RythmLevel()
         {
-            NiveauRythm� circuit = new NiveauRythm�(this, "Electric Cable", "../../../Data3.txt",
+            RythmLevel circuit = new RythmLevel(this, "Electric Cable", "../../../Data3.txt",
                                                     3, "White", "Red",
                                                     "Green", "BlueWhiteRed", "Arial50",
                                                     Color.Black, 15, 1,
                                                     FpsInterval);
             Components.Add(circuit);
-            Services.AddService(typeof(NiveauRythm�), circuit);
+            Services.AddService(typeof(RythmLevel), circuit);
         }
 
         // PrisonLevel
@@ -846,11 +867,11 @@ namespace HyperV
         Random Random { get; set; }
         const int TILE_WIDTH = 20, NUM_BALLS_DESIRED = 20;
         const float SWORD_SCALE = 0.009f;
-        const string SWORD_MODEL_NAME = "robot";
+        const string SWORD_MODELE_NAME = "robot";
 
         void PrisonLevel(bool usePosition)
         {
-            Cr�erSword(SWORD_MODEL_NAME, SWORD_SCALE);
+            CréerSword(SWORD_MODELE_NAME, SWORD_SCALE);
             for (int i = 0; i < NUM_BALLS_DESIRED; i++)
             {
                 Ball = new BouncingBall(this, 1f, Vector3.Zero, ComputeInitialPosition(), 5f, new Vector2(50), "Ball_Bois", FpsInterval);
@@ -865,10 +886,10 @@ namespace HyperV
             return new Vector3(x, y, z);
         }
 
-        void Cr�erSword(string modelName, float scale)
+        void CréerSword(string nomModèle, float scale)
         {
-            //Sword = new Sword(this, modelName, scale, Vector3.Zero, Camera.Position);
-            //Sword.IsGrabbed = true;
+            //Sword = new Sword(this, nomModèle, scale, Vector3.Zero, Camera.Position);
+            //Sword.EstRamassée = true;
 
             //Components.Add(Sword);
             //Services.AddService(typeof(Sword), Sword);

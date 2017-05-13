@@ -1,13 +1,8 @@
-﻿// By Matthew Godin
-// Created on January 2017
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
@@ -19,7 +14,7 @@ using System.Globalization;
 
 namespace HyperV
 {
-    enum Language
+   enum Language
     {
         French, English, Spanish, Japanese
     }
@@ -871,7 +866,6 @@ namespace HyperV
 
         void PrisonLevel(bool usePosition)
         {
-            CréerSword(SWORD_MODELE_NAME, SWORD_SCALE);
             for (int i = 0; i < NUM_BALLS_DESIRED; i++)
             {
                 Ball = new BouncingBall(this, 1f, Vector3.Zero, ComputeInitialPosition(), 5f, new Vector2(50), "Ball_Bois", FpsInterval);
@@ -886,14 +880,6 @@ namespace HyperV
             return new Vector3(x, y, z);
         }
 
-        void CréerSword(string nomModèle, float scale)
-        {
-            //Sword = new Sword(this, nomModèle, scale, Vector3.Zero, Camera.Position);
-            //Sword.EstRamassée = true;
-
-            //Components.Add(Sword);
-            //Services.AddService(typeof(Sword), Sword);
-        }
 
         #endregion
     }

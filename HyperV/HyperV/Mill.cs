@@ -167,7 +167,7 @@ namespace HyperV
         public override void Update(GameTime gameTime)
         {
             // TODO: Add your update code here
-            Space = InputManager.IsNewKey(Keys.Space) || GamePadMgr.IsNewButton(Buttons.Y) ? true : Space;
+            Space = InputManager.IsNewKey(/*Keys.Space*/Keys.R) || GamePadMgr.IsNewButton(Buttons.Y) ? true : Space;
             Taken = InputManager.IsNewKey(Keys.E) || GamePadMgr.IsNewButton(Buttons.X) ? true : Taken;
             Timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
             if (Timer >= Interval)

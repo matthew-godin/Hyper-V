@@ -90,7 +90,7 @@ namespace HyperV
             //    Player.IsLooped = true;
             //    Player.Play(Video);
             //}
-            if ((InputManager.IsKeyboardActivated && InputManager.IsNewKey(Keys.Space) )||GamePadMgr.IsNewButton(Buttons.Start))
+            if ((InputManager.IsKeyboardActivated && InputManager.IsNewKey(/*Keys.Space*/Keys.R) )||GamePadMgr.IsNewButton(Buttons.Start))
             {
                 Player.Stop();
             }

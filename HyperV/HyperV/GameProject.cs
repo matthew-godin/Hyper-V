@@ -271,7 +271,7 @@ namespace HyperV
                         Services.AddService(typeof(List<Enemy>), Enemy);
                         break;
                     case "Bow":
-                        Components.Add(new Bow(this, parts[1], float.Parse(parts[2]), Vector3Parse(parts[3]), Vector3Parse(parts[4])));
+                    //    Components.Add(new Bow(this, parts[1], float.Parse(parts[2]), Vector3Parse(parts[3]), Vector3Parse(parts[4])));
                         break;
                     case "Sword":
                         Sword = new Sword(this, parts[1], float.Parse(parts[2]), Vector3Parse(parts[3]), Vector3Parse(parts[4]));

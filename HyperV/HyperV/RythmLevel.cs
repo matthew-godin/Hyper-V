@@ -209,6 +209,8 @@ namespace HyperV
             i++;
             j++;
 
+            ManageScore();
+
             foreach (TexturedCube cube in Game.Components.Where(component => component is TexturedCube))
             {
                 PutBackInitialCubeTextures(cube);
@@ -223,7 +225,7 @@ namespace HyperV
                 }
             }
 
-            ManageScore();
+            
             AddSpheres();
 
             ButtonOne = false;

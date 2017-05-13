@@ -78,6 +78,7 @@
   <ItemGroup>
     <Compile Include="AfficheurScore.cs" />
     <Compile Include="AmmunitionCatapult.cs" />
+    <Compile Include="Arc.cs" />
     <Compile Include="BouncingBall.cs" />
     <Compile Include="Boss.cs" />
     <Compile Include="BossLabel.cs" />

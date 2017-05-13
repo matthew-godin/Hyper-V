@@ -275,26 +275,31 @@ namespace HyperV
 
         protected override void PerformUpdate()
         {
-            base.PerformUpdate();
-            if (!DésactiverDéplacement)
+            if (!SubjectiveCamera)
             {
-                if (placePlayer)
+                base.PerformUpdate();
+                if (!DésactiverDéplacement)
                 {
-                    BaseHeight = 2;
-                    placePlayer = false;
-                    Position = new Vector3(-27, 2, -28);
+                    if (placePlayer)
+                    {
+                        BaseHeight = 2;
+                        placePlayer = false;
+                        Position = new Vector3(-27, 2, -28);
+                    }
                 }
+                if (DésactiverDéplacement)
+                {
+                    BaseHeight = 15;
+                    Position = new Vector3(-57, 15, -52);
+                    placePlayer = true;
+                }
+                Position = new Vector3(Position.X, BaseHeight, Position.Z);
             }
-            if (DésactiverDéplacement)
+            else
             {
-                BaseHeight = 15;
-                Position = new Vector3(-57, 15, -52);
-                placePlayer = true;
+                base.PerformUpdate();
             }
-            Position = new Vector3(Position.X, BaseHeight, Position.Z);
         }
-
-
     }
 }
 

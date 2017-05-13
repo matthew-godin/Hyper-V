@@ -240,7 +240,6 @@ namespace HyperV
 
                 // constants  ----------------------------------
 
-
                 LevelIsCompleted = true;
                 i = 1000;
                 Game.Components.Remove(WallToRemove[0]);
@@ -277,8 +276,8 @@ namespace HyperV
         {
             if (j > MaximalThreshold_j / Difficulty || LevelIsCompleted)
             {
-                //cube.TextureNameCube = CubeBaseTexture;
-                //cube.InitializeBscEffectParameters();
+                cube.TextureNameCube = CubeBaseTexture;
+                cube.InitializeBscEffectParameters();
 
                 //j = 0;
             }
@@ -286,10 +285,10 @@ namespace HyperV
 
         void ManageFailure(TexturedCube cube)
         {
-            //if (AreEqualVectors(RedCubePosition, cube.Position))
+            if (AreEqualVectors(RedCubePosition, cube.Position))
             {
-                //cube.TextureNameCube = CubeFailureTexture;
-                //cube.InitializeBscEffectParameters();
+                cube.TextureNameCube = CubeFailureTexture;
+                cube.InitializeBscEffectParameters();
                 RedCubePosition = null;
                 j = 0;
             }
@@ -302,8 +301,8 @@ namespace HyperV
                                     AreEqualVectors(sp.Extremity1, Positions[4]) && ButtonThree)
             {
                 sp.ToDestroy = true;
-                //cube.TextureNameCube = CubeSuccessTexture;
-                //cube.InitializeBscEffectParameters();
+                cube.TextureNameCube = CubeSuccessTexture;
+                cube.InitializeBscEffectParameters();
                 ++numGotten;
                 j = 0;
             }

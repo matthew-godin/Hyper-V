@@ -67,16 +67,16 @@ namespace HyperV
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         public override void Update(GameTime gameTime)
         {
-            Input = InputManager.IsNewKey(/*Keys.Space*/Keys.R) || GamePadManager.IsNewButton(Buttons.A) ? true : Input;
+            Input = InputManager.IsNewKey(/*Keys.Space*/Keys.R) || GamePadManager.IsNewButton(Buttons.Y) ? true : Input;
             Timer += (float)gameTime.ElapsedGameTime.TotalSeconds;
             if (Timer >= Interval)
             {
-                if (Vector3.Distance(Camera.Position, Position) < 5)
+                if (Vector3.Distance(Camera.Position, Position) < 15)
                 {
                     PressSpaceLabel.Visible = true;
                     if (Input)
                     {
-                        LifeBars[0].Heal(100);
+                        LifeBars[0].Heal(Heal);
                         RemoveLabel();
                         Game.Components.Remove(this);
                     }

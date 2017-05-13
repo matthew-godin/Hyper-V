@@ -557,9 +557,7 @@ namespace HyperV
             FontManager = new RessourcesManager<SpriteFont>(this, "Fonts");
             SpaceBackground = new NightSkyBackground(this, "NightSky", FpsInterval);
             FPSLabel = new FPSDisplay(this, "Arial", Color.Tomato, FPS_COMPUTE_INTERVAL);
-            Loading = new CenteredText(this, DetermineTexts(0), "Arial", new Rectangle(Window.ClientBounds.Width / 2 - 200, Window.ClientBounds.Height / 2 - 40, 400, 80), Color.White, 0);
-            GameOver = new CenteredText(this, DetermineTexts(1), "Arial", new Rectangle(Window.ClientBounds.Width / 2 - 200, Window.ClientBounds.Height / 2 - 40, 400, 80), Color.White, 0);
-            Success = new CenteredText(this, DetermineTexts(2), "Arial", new Rectangle(Window.ClientBounds.Width / 2 - 200, Window.ClientBounds.Height / 2 - 40, 400, 80), Color.White, 0);
+            UpdateText();
             InputManager = new InputManager(this);
             Services.AddService(typeof(RessourcesManager<SpriteFont>), FontManager);
             Services.AddService(typeof(InputManager), InputManager);
@@ -582,6 +580,12 @@ namespace HyperV
             base.Initialize();
         }
 
+        public void UpdateText()
+        {
+            Loading = new CenteredText(this, DetermineTexts(0), "Arial", new Rectangle(Window.ClientBounds.Width / 2 - 200, Window.ClientBounds.Height / 2 - 40, 400, 80), Color.White, 0);
+            GameOver = new CenteredText(this, DetermineTexts(1), "Arial", new Rectangle(Window.ClientBounds.Width / 2 - 200, Window.ClientBounds.Height / 2 - 40, 400, 80), Color.White, 0);
+            Success = new CenteredText(this, DetermineTexts(2), "Arial", new Rectangle(Window.ClientBounds.Width / 2 - 200, Window.ClientBounds.Height / 2 - 40, 400, 80), Color.White, 0);
+        }
 
       string DetermineTexts(int i)
       {
@@ -713,7 +717,7 @@ namespace HyperV
             IsMouseVisible = false;
             LoadSettings();
             UpdateLanguages();
-
+            UpdateText();
         }
 
         void UpdateLanguages()

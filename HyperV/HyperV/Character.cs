@@ -2,8 +2,6 @@
 Character.cs
 ------------
 
-By Matthew Godin
-
 Role : Used to create a non-playable
        character rendered with a .fbx 
        3d model that can talk to the
@@ -11,25 +9,16 @@ Role : Used to create a non-playable
 
 Created : 2/28/17
 */
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XNAProject;
 
 
 namespace HyperV
 {
-    /// <summary>
-    /// This is a game component that implements IUpdateable.
-    /// </summary>
-    public class Character : BaseObject
+   /// <summary>
+   /// This is a game component that implements IUpdateable.
+   /// </summary>
+   public class Character : BaseObject
     {
         string TextFile { get; set; }
         string FaceImageName { get; set; }

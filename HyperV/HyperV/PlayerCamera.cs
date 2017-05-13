@@ -8,6 +8,8 @@ namespace HyperV
 {
     public class PlayerCamera : Camera
     {
+        const int JUMP_HEIGHT = 10;
+        const int JUMP = 25;
         const float STANDARD_UPDATE_INTERVAL = 1f / 60f;
         const float ACCELERATION = 0.001f;
         const float INITIAL_ROTATION_SPEED = 5f;
@@ -449,7 +451,7 @@ namespace HyperV
         {
             Position = new Vector3(Position.X, BaseHeight/*CHARACTER_HEIGHT*/, Position.Z);
             ControlPositionPts = new Vector3(Position.X, Position.Y, Position.Z);
-            ControlPositionPtsPlusUn = Position + Vector3.Normalize(new Vector3(Direction.X, 0, Direction.Z)) * 25;
+            ControlPositionPtsPlusUn = Position + Vector3.Normalize(new Vector3(Direction.X, 0, Direction.Z)) * JUMP;
             //Position = new Vector3(ControlPositionPts.X, ControlPositionPts.Y, ControlPositionPts.Z);//******
             //Direction = ControlPositionPtsPlusUn - ControlPositionPts;//******
             ControlPts = ComputeControlPoints();
@@ -460,8 +462,8 @@ namespace HyperV
             Vector3[] pts = new Vector3[4];
             pts[0] = ControlPositionPts;
             pts[3] = ControlPositionPtsPlusUn;
-            pts[1] = new Vector3(pts[0].X, pts[0].Y + 20, pts[0].Z);
-            pts[2] = new Vector3(pts[3].X, pts[3].Y + 20, pts[3].Z);
+            pts[1] = new Vector3(pts[0].X, pts[0].Y + JUMP_HEIGHT, pts[0].Z);
+            pts[2] = new Vector3(pts[3].X, pts[3].Y + JUMP_HEIGHT, pts[3].Z);
             return pts;
         }
 

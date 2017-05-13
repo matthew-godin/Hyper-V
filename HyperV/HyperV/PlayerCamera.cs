@@ -330,7 +330,7 @@ namespace HyperV
                       (InputMgr.IsPressed(Keys.LeftShift) && EstDisplacementEtAutresKeyboardActivated) ||
                       GamePadMgr.PositionsGâchettes.X > 0;
 
-            Jump = (InputMgr.IsPressed(Keys.R/*Keys.Space*/) && EstDisplacementEtAutresKeyboardActivated) ||
+            Jump = (InputMgr.IsPressed(/*Keys.R*/Keys.Space) && EstDisplacementEtAutresKeyboardActivated) ||
                      GamePadMgr.IsPressed(Buttons.A);
 
             //Grab = InputMgr.IsNewLeftClick() ||

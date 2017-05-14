@@ -60,9 +60,6 @@
     <XnaCompressContent>true</XnaCompressContent>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="BasicComponents">
-      <HintPath>..\..\..\..\..\Downloads\BasicComponents-master (1)\BasicComponents-master\BasicComponents\bin\x86\Debug\BasicComponents.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.Xna.Framework, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.Game, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
     <Reference Include="Microsoft.Xna.Framework.Graphics, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=x86" />
@@ -80,6 +77,43 @@
     <Compile Include="AmmunitionCatapult.cs" />
     <Compile Include="Arc.cs" />
     <Compile Include="BouncingBall.cs" />
+    <Compile Include="BasicComponents\Displayer3D.cs" />
+    <Compile Include="BasicComponents\FPSDisplay.cs" />
+    <Compile Include="BasicComponents\ArrièrePlan.cs" />
+    <Compile Include="BasicComponents\ArrièrePlanDéroulant.cs" />
+    <Compile Include="BasicComponents\ArrièrePlanSpatial.cs" />
+    <Compile Include="BasicComponents\Camera.cs" />
+    <Compile Include="BasicComponents\CameraFixe.cs" />
+    <Compile Include="BasicComponents\CameraSubjective.cs" />
+    <Compile Include="BasicComponents\CubeTexturé.cs" />
+    <Compile Include="BasicComponents\CubeTexturéFlottant.cs" />
+    <Compile Include="BasicComponents\DataPiste.cs" />
+    <Compile Include="BasicComponents\Drapeau.cs" />
+    <Compile Include="BasicComponents\ICollidable.cs" />
+    <Compile Include="BasicComponents\IDestructible.cs" />
+    <Compile Include="BasicComponents\InputManager.cs" />
+    <Compile Include="BasicComponents\BaseObject.cs" />
+    <Compile Include="BasicComponents\ObjetDeDémo.cs" />
+    <Compile Include="BasicComponents\Piste.cs" />
+    <Compile Include="BasicComponents\Plan.cs" />
+    <Compile Include="BasicComponents\PlanColoré.cs" />
+    <Compile Include="BasicComponents\PlanTexturé.cs" />
+    <Compile Include="BasicComponents\BasicPrimitive.cs" />
+    <Compile Include="BasicComponents\BasicPrimitiveAnimée.cs" />
+    <Compile Include="BasicComponents\RessourceDeBase.cs" />
+    <Compile Include="BasicComponents\RessourcesManager.cs" />
+    <Compile Include="BasicComponents\SphèreTexturée.cs" />
+    <Compile Include="BasicComponents\SphèreTexturéeAutomate.cs" />
+    <Compile Include="BasicComponents\Sprite.cs" />
+    <Compile Include="BasicComponents\SpriteMobile.cs" />
+    <Compile Include="BasicComponents\SpriteMobileAnimé.cs" />
+    <Compile Include="BasicComponents\Terrain.cs" />
+    <Compile Include="BasicComponents\TerrainAvecBase.cs" />
+    <Compile Include="BasicComponents\TextCentré.cs" />
+    <Compile Include="BasicComponents\TextTournoyant.cs" />
+    <Compile Include="BasicComponents\Tuile.cs" />
+    <Compile Include="BasicComponents\TuileColorée.cs" />
+    <Compile Include="BasicComponents\TuileTexturée.cs" />
     <Compile Include="Boss.cs" />
     <Compile Include="BossLabel.cs" />
     <Compile Include="Camera1.cs" />

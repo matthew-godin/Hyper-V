@@ -27,6 +27,7 @@ namespace HyperV
 
     public class GameProject : Microsoft.Xna.Framework.Game
     {
+        bool RunePuzzleCompletedFirstTime { get; set; }
         const float FPS_COMPUTE_INTERVAL = 1f;
         float FpsInterval { get; set; }
         GraphicsDeviceManager GraphicsMgr { get; set; }
@@ -131,12 +132,11 @@ namespace HyperV
             StreamReader reader = new StreamReader("../../../WPFINTERFACE/Launching Interface/Saves/save.txt");
             SaveNumber = int.Parse(reader.ReadLine());
             reader.Close();
-            reader = new StreamReader("../../../WPFINTERFACE/Launching Interface/Saves/save" + SaveNumber.ToString() + ".txt");
+
+            reader = new StreamReader("../../../WPFINTERFACE/Launching Interface/Saves/save" + SaveNumber + ".txt");
             string line = reader.ReadLine();
             string[] parts = line.Split(new char[] { ' ' });
             Level = int.Parse(parts[1]);
-
-       
 
             line = reader.ReadLine();
             parts = line.Split(new string[] { "n: " }, StringSplitOptions.None);
@@ -346,7 +346,7 @@ namespace HyperV
                         Components.Add(new Skybox(this, parts[1]));
                         break;
                     case "UnlockableWall":
-                        Unlockables.Add(new UnlockableWall(this, float.Parse(parts[1]), Vector3Parse(parts[2]), Vector3Parse(parts[3]), Vector2Parse(parts[4]), parts[5], FpsInterval, int.Parse(parts[6]), CountComplete(), RuneList));
+                        Unlockables.Add(new UnlockableWall(this, float.Parse(parts[1]), Vector3Parse(parts[2]), Vector3Parse(parts[3]), Vector2Parse(parts[4]), parts[5], FpsInterval, int.Parse(parts[6]), CountComplete(), RuneList, SaveNumber));
                         Components.Add(Unlockables.Last());
                         Services.RemoveService(typeof(List<UnlockableWall>));
                         Services.AddService(typeof(List<UnlockableWall>), Unlockables);
@@ -365,6 +365,7 @@ namespace HyperV
                         break;
                 }
             }
+            reader.Close();
             if (Level != 0)
             {
                 Components.Add(PressSpaceLabel);
@@ -432,6 +433,7 @@ namespace HyperV
                 Components.Add(new Displayer3D(this));
                 Components.Add(x);
             }
+            file.Close();
         }
 
         private void AddTrees()
@@ -473,6 +475,7 @@ namespace HyperV
                 RuneList.Add(x);
                 Components.Add(x);
             }
+            file.Close();
         }
 
         private void AddBooks()
@@ -487,6 +490,7 @@ namespace HyperV
                 Components.Add(new Displayer3D(this));
                 Components.Add(x);
             }
+            file.Close();
         }
 
         private void AddButtons()
@@ -497,7 +501,7 @@ namespace HyperV
             {
                 order[i] = generator.Next(0, 4);
             }
-            ButtonPuzzle ButtonPuzzle = new ButtonPuzzle(this, order, "../../../ButtonPositions.txt");
+            ButtonPuzzle ButtonPuzzle = new ButtonPuzzle(this, order, "../../../ButtonPositions.txt", SaveNumber);
             Services.RemoveService(typeof(ButtonPuzzle));
             Services.AddService(typeof(ButtonPuzzle),ButtonPuzzle);
             Components.Add(ButtonPuzzle);
@@ -554,6 +558,7 @@ namespace HyperV
         {
             Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("en-US");
 
+            RunePuzzleCompletedFirstTime = true;
             Sleep = false;
             Random = new Random();
             Services.AddService(typeof(Random), Random);
@@ -687,6 +692,18 @@ namespace HyperV
                     Timer = 0;
                 }
                 base.Update(gameTime);
+            }
+            if (RunePuzzleCompleted() && RunePuzzleCompletedFirstTime)
+            {
+                StreamReader reader = new StreamReader("../../../WPFINTERFACE/Launching Interface/Saves/PuzzlesSave" + SaveNumber + ".txt");
+                string autrePuzzle = reader.ReadLine();
+                reader.Close();
+
+                StreamWriter writer = new StreamWriter("../../../WPFINTERFACE/Launching Interface/Saves/PuzzlesSave" + SaveNumber + ".txt");
+                writer.WriteLine(autrePuzzle);
+                writer.WriteLine(true);
+                writer.Close();
+                RunePuzzleCompletedFirstTime = false;
             }
         }
 

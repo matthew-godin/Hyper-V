@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using AtelierXNA;
+using System.IO;
 
 namespace HyperV
 {
@@ -45,6 +46,7 @@ namespace HyperV
         float Magnitude { get; set; }
         int NumberRunesOpenWall { get; set; }
         int NumLevelsCompleted { get; set; }
+        int SaveIndex { get; set; }
 
         List<Rune> RunesList { get; set; }
         ButtonPuzzle ButtonsPuzzle { get; set; }
@@ -55,7 +57,7 @@ namespace HyperV
             return (valeur >= thresholdA && valeur <= thresholdB || valeur <= thresholdA && valeur >= thresholdB);
         }
 
-        public UnlockableWall(Game game, float saveVal, Vector3 initialRotation, Vector3 initialPosition, Vector2 scale, string nomTileTexture, float updateInterval, int numberRunesOpenWall, int numLevelsCompleted, List<Rune> runesList) : base(game, SaveIndex, initialRotation, initialPosition)
+        public UnlockableWall(Game game, float saveVal, Vector3 initialRotation, Vector3 initialPosition, Vector2 scale, string nomTileTexture, float updateInterval, int numberRunesOpenWall, int numLevelsCompleted, List<Rune> runesList, int saveIndex) : base(game, SaveIndex, initialRotation, initialPosition)
         {
             NomTileTexture = nomTileTexture;
             UpdateInterval = updateInterval;
@@ -64,6 +66,7 @@ namespace HyperV
             NumberRunesOpenWall = numberRunesOpenWall;
             NumLevelsCompleted = numLevelsCompleted;
             RunesList = runesList;
+            SaveIndex = saveIndex;
         }
 
         public override void Initialize()
@@ -103,8 +106,7 @@ namespace HyperV
             Magnitude = PlaneEquation.Length();
             base.Initialize();
         }
-
-
+        
         private void CreatePointArray()
         {
             PtsVertices[0, 0] = new Vector3(Origin.X, Origin.Y, Origin.Z);
@@ -212,7 +214,10 @@ namespace HyperV
 
         public bool RunePuzzleCompleted()
         {
-            return RunesList[0].IsActivated && !RunesList[1].IsActivated && RunesList[2].IsActivated && !RunesList[3].IsActivated && !RunesList[4].IsActivated && RunesList[5].IsActivated;
+            StreamReader save = new StreamReader("../../../WPFINTERFACE/Launching Interface/Saves/PuzzlesSave" + SaveIndex + ".txt");
+            save.ReadLine();
+            string saveLine = save.ReadLine();
+            return (RunesList[0].IsActivated && !RunesList[1].IsActivated && RunesList[2].IsActivated && !RunesList[3].IsActivated && !RunesList[4].IsActivated && RunesList[5].IsActivated) || (saveLine == "True");
         }
 
         public override void Update(GameTime gameTime)

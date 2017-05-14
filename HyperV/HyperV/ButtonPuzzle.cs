@@ -17,7 +17,7 @@ namespace HyperV
         bool ThirdButton { get; set; }
         bool FourthButton { get; set; }
         public bool IsCompleted { get; set; }
-
+        int SaveIndex { get; set; }
         float alpha { get; set; }
         float UpdateTimeElapsed { get; set; }
         int[] ButtonOrder { get; set; }
@@ -31,12 +31,14 @@ namespace HyperV
         SoundEffect BellMissed { get; set; }
         SoundEffect PuzzleComleted { get; set; }
 
-        public ButtonPuzzle(Game game, int[] buttonOrder, string buttonPositions)
+        public ButtonPuzzle(Game game, int[] buttonOrder, string buttonPositions, int saveIndex)
             : base(game)
         {
             ButtonOrder = buttonOrder;
             ButtonPositions = buttonPositions;
+            SaveIndex = saveIndex;
         }
+
         protected override void LoadContent()
         {
             InputMgrs = Game.Services.GetService(typeof(InputManager)) as InputManager;
@@ -49,7 +51,10 @@ namespace HyperV
         {
             base.Initialize();
             ButtonList = new List<ModelCreator>();
-            StreamReader file = new StreamReader(ButtonPositions);            
+            StreamReader file = new StreamReader(ButtonPositions);
+            StreamReader save = new StreamReader("../../../WPFINTERFACE/Launching Interface/Saves/PuzzlesSave" + SaveIndex + ".txt");
+
+            string saveLine = save.ReadLine();
             file.ReadLine();
             while (!file.EndOfStream)
             {
@@ -69,6 +74,12 @@ namespace HyperV
             ThirdButton = false;
             FourthButton = false;
             IsCompleted = false;
+            if (saveLine == "True")
+            {
+                IsCompleted = true;
+            }
+            file.Close();
+            save.Close();
         }
 
         float? FindDistance(Ray otherObject, BoundingSphere CollisionSphere)
@@ -106,6 +117,7 @@ namespace HyperV
             if (FourthButton)
             {
                 IsCompleted = true;
+                Save();
             }
         }
 
@@ -229,6 +241,13 @@ namespace HyperV
                 }
                 UpdateTimeElapsed = 0;
             }
+        }
+
+        void Save()
+        {
+            StreamWriter writer = new StreamWriter("../../../WPFINTERFACE/Launching Interface/Saves/PuzzlesSave" + SaveIndex.ToString() + ".txt");
+            writer.WriteLine(true);
+            writer.Close();
         }
     }
 }

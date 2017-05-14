@@ -22,11 +22,13 @@ namespace HyperV
         GamePadManager GamePadMgr { get; set; }
         float DiffAngleX { get; set; }
         float DiffAngleY { get; set; }
+        int Attack { get; set; }
 
         public Sword(Game game, string modelName, float initialScale,
-                    Vector3 initialRotation, Vector3 initialPosition)
+                    Vector3 initialRotation, Vector3 initialPosition, int attack)
             : base(game, modelName, initialScale, initialRotation, initialPosition)
         {
+            Attack = attack;
         }
 
         public override void Initialize()
@@ -81,13 +83,13 @@ namespace HyperV
                         t = 0;
                         if (Boss != null)
                         {
-                            Boss.CheckForAttack(10);
+                            Boss.CheckForAttack(Attack);
                         }
                         if (Enemy.Count > 0)
                         {
                             foreach (Enemy e in Enemy)
                             {
-                                e.CheckForAttack(10);
+                                e.CheckForAttack(Attack);
                             }
                         }
                     }

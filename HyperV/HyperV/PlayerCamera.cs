@@ -390,29 +390,29 @@ namespace HyperV
                 }
             }
 
-            //NEW
-            foreach (Arc grabbableSphere in Game.Components.Where(component => component is Arc))
-            {
-                grabbableSphere.Grab = grabbableSphere.IsColliding(Visor) <= MINIMAL_DISTANCE_POUR_RAMASSAGE &&
-                           grabbableSphere.IsColliding(Visor) != null && Grab;
-                
-                if (grabbableSphere.Grab && !grabbableSphere.Placed)
-                {
-                    if (/*!GrabbableModel.Taken*/true)
-                    {
-                        grabbableSphere.IsGrabbed = true;
-                        GrabbableModel.Taken = true;
-                        break;
-                    }
-                    else if (grabbableSphere.IsGrabbed)
-                    {
-                        grabbableSphere.IsGrabbed = false;
-                        GrabbableModel.Taken = false;
-                        break;
-                    }
-                }
-            }
-            //NEW
+            ////NEW
+            ////foreach (Arc grabbableSphere in Game.Components.Where(component => component is Arc))
+            ////{
+            ////    grabbableSphere.Grab = grabbableSphere.IsColliding(Visor) <= MINIMAL_DISTANCE_POUR_RAMASSAGE &&
+            ////               grabbableSphere.IsColliding(Visor) != null && Grab;
+
+            ////    if (grabbableSphere.Grab && !grabbableSphere.Placed)
+            ////    {
+            ////        if (/*!GrabbableModel.Taken*/true)
+            ////        {
+            ////            grabbableSphere.IsGrabbed = true;
+            ////            GrabbableModel.Taken = true;
+            ////            break;
+            ////        }
+            ////        else if (grabbableSphere.IsGrabbed)
+            ////        {
+            ////            grabbableSphere.IsGrabbed = false;
+            ////            GrabbableModel.Taken = false;
+            ////            break;
+            ////        }
+            ////    }
+            ////}
+            ////NEW
         }
 
 

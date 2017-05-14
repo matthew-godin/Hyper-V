@@ -54,10 +54,10 @@ namespace HyperV
             GraphicsMgr.SynchronizeWithGreenicalRetrace = false;
             IsFixedTimeStep = false;
             IsMouseVisible = false;
-            //GraphicsMgr.PreferredBackBufferHeight = 500;
-            //GraphicsMgr.PreferredBackBufferWidth = 900;
-            GraphicsMgr.PreferredBackBufferHeight = 800;
-            GraphicsMgr.PreferredBackBufferWidth = 1500;
+            GraphicsMgr.PreferredBackBufferHeight = 500;
+            GraphicsMgr.PreferredBackBufferWidth = 900;
+            //GraphicsMgr.PreferredBackBufferHeight = 800;
+            //GraphicsMgr.PreferredBackBufferWidth = 1500;
         }
 
         Grass Grass0 { get; set; }
@@ -260,9 +260,10 @@ namespace HyperV
                         Services.AddService(typeof(Mill), Mill);
                         break;
                     case "Food":
-                        Food = new Food(this, parts[1], float.Parse(parts[2]), Vector3Parse(parts[3]), Vector3Parse(parts[4]), int.Parse(parts[5]), FpsInterval);
-                        Components.Add(Food);
-                        Food.AddLabel();
+                        Food.Add(new Food(this, parts[1], float.Parse(parts[2]), Vector3Parse(parts[3]), Vector3Parse(parts[4]), int.Parse(parts[5]), FpsInterval));
+                        Components.Add(Food.Last());
+                        Services.RemoveService(typeof(List<Food>));
+                        Services.AddService(typeof(List<Food>), Food);
                         break;
                     case "Enemy":
                         Enemy.Add(new Enemy(this, parts[1], float.Parse(parts[2]), Vector3Parse(parts[3]), Vector3Parse(parts[4]), int.Parse(parts[5]), int.Parse(parts[6]), float.Parse(parts[7]), FpsInterval));
@@ -274,7 +275,7 @@ namespace HyperV
                         Components.Add(new Bow(this, parts[1], float.Parse(parts[2]), Vector3Parse(parts[3]), Vector3Parse(parts[4])));
                         break;
                     case "Sword":
-                        Sword = new Sword(this, parts[1], float.Parse(parts[2]), Vector3Parse(parts[3]), Vector3Parse(parts[4]));
+                        Sword = new Sword(this, parts[1], float.Parse(parts[2]), Vector3Parse(parts[3]), Vector3Parse(parts[4]), int.Parse(parts[5]));
                         Components.Add(Sword);
                         Services.RemoveService(typeof(Sword));
                         Services.AddService(typeof(Sword), Sword);
@@ -378,16 +379,28 @@ namespace HyperV
                 Services.RemoveService(typeof(LifeBar[]));
                 Services.AddService(typeof(LifeBar[]), LifeBars);
                 AddCharacterLabels();
+                AddFoodLabels();
                 Components.Add(Camera);
                 Components.Remove(Loading);
                 Components.Add(Crosshair);
-             //   Components.Add(FPSLabel);
+                //LifeBars[0].Visible = false;
+                //LifeBars[1].Visible = false;
+
+                //Components.Add(FPSLabel);
             }
         }
 
         void AddCharacterLabels()
         {
             foreach(Character e in Characters)
+            {
+                e.AddLabel();
+            }
+        }
+
+        void AddFoodLabels()
+        {
+            foreach (Food e in Food)
             {
                 e.AddLabel();
             }
@@ -404,7 +417,7 @@ namespace HyperV
         LifeBar[] LifeBars { get; set; }
         Displayer3D Display3D { get; set; }
         List<Water> Water { get; set; }
-        Food Food { get; set; }
+        List<Food> Food { get; set; }
         List<Enemy> Enemy { get; set; }
 
         private void AddModels(string chemin)
@@ -619,6 +632,7 @@ namespace HyperV
             Unlockables = new List<UnlockableWall>();
             Water = new List<Water>();
             RuneList = new List<Rune>();
+            Food = new List<Food>();
             Services.RemoveService(typeof(List<Rune>));
             Services.AddService(typeof(List<Rune>), RuneList);
             Services.RemoveService(typeof(List<Character>));
@@ -639,6 +653,8 @@ namespace HyperV
             Services.AddService(typeof(List<Water>), Water);
             Services.RemoveService(typeof(List<Walls>));
             Services.AddService(typeof(List<Walls>), Walls);
+            Services.RemoveService(typeof(List<Food>));
+            Services.AddService(typeof(List<Food>), Food);
         }
 
         float Timer { get; set; }
@@ -679,7 +695,7 @@ namespace HyperV
          const int NUM_BALLS_LIMIT = 5;
             if (BouncingBall.Count < NUM_BALLS_LIMIT)
             {
-                foreach (BouncingBall e in Components)
+                foreach (BouncingBall e in (Components.Where(a => a is BouncingBall)))
                 {
                     Components.Remove(e);
                 }
@@ -725,6 +741,10 @@ namespace HyperV
             foreach (Character c in Characters)
             {
                 c.UpdateLanguage();
+            }
+            foreach (PressSpaceLabel e in Components.Where(a => a is PressSpaceLabel))
+            {
+                e.DetermineMessage();
             }
         }
 

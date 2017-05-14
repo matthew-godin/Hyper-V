@@ -65,6 +65,7 @@ namespace HyperV
         GamePadManager GamePadMgr { get; set; }
         List<UnlockableWall> WallToRemove { get; set; }
         List<Portal> PortalList { get; set; }
+        LifeBar[] LifeBars { get; set; }
 
 
         public RythmLevel(Game game, string cylinderTexture, string cylinderPositionsFileName,
@@ -149,6 +150,8 @@ namespace HyperV
             RandomNumberGenerator = Game.Services.GetService(typeof(Random)) as Random;
             WallToRemove = Game.Services.GetService(typeof(List<UnlockableWall>)) as List<UnlockableWall>;
             PortalList = Game.Services.GetService(typeof(List<Portal>)) as List<Portal>;
+            LifeBars = Game.Services.GetService(typeof(LifeBar[])) as LifeBar[];
+
         }
 
         void InitializeComponents()
@@ -209,9 +212,32 @@ namespace HyperV
             i++;
             j++;
 
+            ManageScore();
+            foreach (TexturedCube cube in Game.Components.Where(component => component is TexturedCube))
+            {
+                if (ButtonOne)
+                {
+                    RedCubePosition = Positions[1];
+                    ManageFailure(cube);
+                    LifeBars[0].Attack(2);
+                }
+                if (ButtonTwo)
+                {
+                    RedCubePosition = Positions[3];
+                    ManageFailure(cube);
+                    LifeBars[0].Attack(2);
+                }
+                if (ButtonThree)
+                {
+                    RedCubePosition = Positions[5];
+                    ManageFailure(cube);
+                    LifeBars[0].Attack(2);
+                }
+            }
             foreach (TexturedCube cube in Game.Components.Where(component => component is TexturedCube))
             {
                 PutBackInitialCubeTextures(cube);
+
                 ManageFailure(cube);
 
                 foreach (RythmSphere sp in Game.Components.Where(component => component is RythmSphere))
@@ -220,15 +246,18 @@ namespace HyperV
                     {
                         ManageSuccess(sp, cube);
                     }
+                    
                 }
+
             }
 
-            ManageScore();
+
             AddSpheres();
 
             ButtonOne = false;
             ButtonTwo = false;
             ButtonThree = false;
+            
         }
 
         void ManageScore()
@@ -239,7 +268,6 @@ namespace HyperV
             {
 
                 // constants  ----------------------------------
-
 
                 LevelIsCompleted = true;
                 i = 1000;
@@ -277,8 +305,8 @@ namespace HyperV
         {
             if (j > MaximalThreshold_j / Difficulty || LevelIsCompleted)
             {
-                //cube.TextureNameCube = CubeBaseTexture;
-                //cube.InitializeBscEffectParameters();
+                cube.TextureNameCube = CubeBaseTexture;
+                cube.InitializeBscEffectParameters();
 
                 //j = 0;
             }
@@ -286,10 +314,10 @@ namespace HyperV
 
         void ManageFailure(TexturedCube cube)
         {
-            //if (AreEqualVectors(RedCubePosition, cube.Position))
+            if (AreEqualVectors(RedCubePosition, cube.Position))
             {
-                //cube.TextureNameCube = CubeFailureTexture;
-                //cube.InitializeBscEffectParameters();
+                cube.TextureNameCube = CubeFailureTexture;
+                cube.InitializeBscEffectParameters();
                 RedCubePosition = null;
                 j = 0;
             }
@@ -298,15 +326,18 @@ namespace HyperV
         void ManageSuccess(RythmSphere sp, TexturedCube cube)
         {
             if (AreEqualVectors(sp.Extremity1, Positions[0]) && ButtonOne ||
-                                    AreEqualVectors(sp.Extremity1, Positions[2]) && ButtonTwo ||
-                                    AreEqualVectors(sp.Extremity1, Positions[4]) && ButtonThree)
+                AreEqualVectors(sp.Extremity1, Positions[2]) && ButtonTwo ||
+                AreEqualVectors(sp.Extremity1, Positions[4]) && ButtonThree)
             {
                 sp.ToDestroy = true;
-                //cube.TextureNameCube = CubeSuccessTexture;
-                //cube.InitializeBscEffectParameters();
+                cube.TextureNameCube = CubeSuccessTexture;
+                cube.InitializeBscEffectParameters();
                 ++numGotten;
                 j = 0;
+                LifeBars[0].Heal(6);
+
             }
+              
         }
 
         bool AreEqualVectors(Vector3? a, Vector3 b)

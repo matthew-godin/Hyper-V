@@ -2,31 +2,22 @@
 Ceiling.cs
 ----------
 
-By Matthew Godin
 
 Role : Used to create a flat ceiling surface
 
 Created : 2/27/17
 */
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
-using Microsoft.Xna.Framework.Content;
-using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Media;
 using XNAProject;
 
 
 namespace HyperV
 {
-    /// <summary>
-    /// This is a game component that implements IUpdateable.
-    /// </summary>
-    public class Ceiling : BasicPrimitive
+   /// <summary>
+   /// This is a game component that implements IUpdateable.
+   /// </summary>
+   public class Ceiling : BasicPrimitive
     {
         const int NUM_TRIANGLES_PER_TILE = 2, NUM_VERTICES_PER_TRIANGLE = 3;
 
@@ -109,10 +100,6 @@ namespace HyperV
                     VerticesPositions[i + 1, j + 1] = Origin + new Vector3(Delta.X * i + Delta.X, Origin.Y, Delta.Y * j + Delta.Y);
                 }
             }
-            //VerticesPositions[0, 0] = new Vector3(Origin.X, Origin.Y, Origin.Z);
-            //VerticesPositions[1, 0] = new Vector3(Origin.X - Delta.X, Origin.Y, Origin.Z);
-            //VerticesPositions[0, 1] = new Vector3(Origin.X, Origin.Y, Origin.Z + Delta.Y);
-            //VerticesPositions[1, 1] = new Vector3(Origin.X - Delta.X, Origin.Y, Origin.Z + Delta.Y);
         }
 
         private void CreateTexturePositions()
@@ -153,27 +140,12 @@ namespace HyperV
                     Vertices[++cpt] = new VertexPositionTexture(VerticesPositions[i + 1 == maxI ? i : i + 1, j], TileTexturePositions[0, 1]);
                     Vertices[++cpt] = new VertexPositionTexture(VerticesPositions[i + 1 == maxI ? i : i + 1, j + 1 == maxJ ? j : j + 1], TileTexturePositions[1, 1]);
                     Vertices[++cpt] = new VertexPositionTexture(VerticesPositions[i, j + 1 == maxJ ? j : j + 1], TileTexturePositions[1, 0]);
-                    //Vertices[++VertexIndex] = new VertexPositionColor(VerticesPts[i, j], Color.LawnGreen);
-                    //Vertices[++VertexIndex] = new VertexPositionColor(VerticesPts[i, j + 1], Color.LawnGreen);
-                    //Vertices[++cpt] = new VertexPositionTexture(VerticesPositions[i, j], TileTexturePositions[i, j]);
-                    //Vertices[++cpt] = new VertexPositionTexture(VerticesPositions[i, j + 1], TileTexturePositions[i, j + 1]);
                 }
             }
         }
 
         public override void Draw(GameTime gameTime)
         {
-            //BlendState oldBlendState = GraphicsDevice.BlendState; // ... and this!
-            //GraphicsDevice.BlendState = AlphaMgr;
-            //BasicEffect.World = GetWorld();
-            //BasicEffect.View = GameCamera.View;
-            //BasicEffect.Projection = GameCamera.Projection;
-            //foreach (EffectPass passEffect in BasicEffect.CurrentTechnique.Passes)
-            //{
-            //    passEffect.Apply();
-            //    DrawTriangleStrip();
-            //}
-            //GraphicsDevice.BlendState = oldBlendState;
             BasicEffect.World = GetWorld();
             BasicEffect.View = GameCamera.View;
             BasicEffect.Projection = GameCamera.Projection;
@@ -182,14 +154,10 @@ namespace HyperV
                 passEffect.Apply();
                 GraphicsDevice.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleList, Vertices, 0, NumTriangles);
             }
-            //GraphicsDevice.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleList, Vertices, 0, NumTriangles);
+           
         }
 
-        //protected void DrawTriangleStrip()
-        //{
-        //    //GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleStrip, Vertices, 0, NUM_TRIANGLES);
-        //    GraphicsDevice.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleList, Vertices, 0, NUM_TRIANGLES);
-        //}
+
 
         public Vector3 GetPositionWithHeight(Vector3 position, int height)
         {

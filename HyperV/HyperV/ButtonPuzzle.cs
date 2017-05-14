@@ -24,6 +24,7 @@ namespace HyperV
         List<ModelCreator> ButtonList { get; set; }
         string ButtonPositions { get; set; }
         InputManager InputMgrs { get; set; }
+        GamePadManager GameControllerMgr { get; set; }
         Camera2 Camera { get; set; }
         RessourcesManager<SoundEffect> SoundManager { get; set; }
         SoundEffect BellSuccess { get; set; }
@@ -39,6 +40,7 @@ namespace HyperV
         protected override void LoadContent()
         {
             InputMgrs = Game.Services.GetService(typeof(InputManager)) as InputManager;
+            GameControllerMgr = Game.Services.GetService(typeof(GamePadManager)) as GamePadManager;
             Camera = Game.Services.GetService(typeof(Camera)) as Camera2;
             SoundManager = Game.Services.GetService(typeof(RessourcesManager<SoundEffect>)) as RessourcesManager<SoundEffect>;
         }
@@ -47,7 +49,7 @@ namespace HyperV
         {
             base.Initialize();
             ButtonList = new List<ModelCreator>();
-            StreamReader file = new StreamReader(ButtonPositions);
+            StreamReader file = new StreamReader(ButtonPositions);            
             file.ReadLine();
             while (!file.EndOfStream)
             {
@@ -83,7 +85,7 @@ namespace HyperV
             }
 
 
-            if (InputMgrs.IsNewLeftClick())
+            if (InputMgrs.IsNewLeftClick() || InputMgrs.IsNewKey(Microsoft.Xna.Framework.Input.Keys.R) || GameControllerMgr.IsNewButton(Microsoft.Xna.Framework.Input.Buttons.A))
             {
                 for (int i = 0; i < ButtonList.Capacity; ++i)
                 {

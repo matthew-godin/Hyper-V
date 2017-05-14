@@ -722,6 +722,12 @@ namespace HyperV
             }
         }
 
+        private bool RunePuzzleCompleted()
+        {
+            return RuneList[0].IsActivated && !RuneList[1].IsActivated && RuneList[2].IsActivated && !RuneList[3].IsActivated && !RuneList[4].IsActivated && RuneList[5].IsActivated;
+        }
+
+
         protected override void OnActivated(object sender, EventArgs args)
         {
             Sleep = false;

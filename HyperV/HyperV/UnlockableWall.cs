@@ -210,7 +210,7 @@ namespace HyperV
             return result;
         }
 
-        private bool RunePuzzleCompleted()
+        public bool RunePuzzleCompleted()
         {
             return RunesList[0].IsActivated && !RunesList[1].IsActivated && RunesList[2].IsActivated && !RunesList[3].IsActivated && !RunesList[4].IsActivated && RunesList[5].IsActivated;
         }

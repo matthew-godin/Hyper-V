@@ -346,7 +346,7 @@ namespace HyperV
             Grab = InputMgr.IsNewLeftClick() ||
                        InputMgr.IsOldLeftClick() ||
                        InputMgr.IsNewKey(Keys.E) && EstDisplacementEtAutresKeyboardActivated ||
-                       GamePadMgr.IsNewButton(Buttons.RightStick);
+                       GamePadMgr.IsNewButton(Buttons.RightStick) || Grab;
         }
 
 
@@ -389,6 +389,7 @@ namespace HyperV
                     }
                 }
             }
+            Grab = false;
         }
 
 

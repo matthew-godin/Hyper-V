@@ -108,7 +108,7 @@ namespace HyperV
          RenderDistance = int.Parse(parts[1]);
          if (Camera != null)
          {
-            (Camera as PlayerCamera).SetRenderDistance(RenderDistance);
+            (Camera as PlayerCamera).ÉtablirDistenceDeRendu(RenderDistance);
          }
          line = reader.ReadLine();
          parts = line.Split(new string[] { ": " }, StringSplitOptions.None);
@@ -196,9 +196,9 @@ namespace HyperV
       {
          MediaPlayer.Stop();
          Components.Clear();
-         //Song = SongManager.Find("castle");
-         //MediaPlayer.Play(Song);
-         StreamReader reader = new StreamReader("../../../Levels/Level" + level.ToString() + ".txt");
+            //Song = SongManager.Find("castle");
+            //MediaPlayer.Play(Song);
+            StreamReader reader = new StreamReader("../../../Levels/Level" + level.ToString() + ".txt");
          string line;
          string[] parts;
          bool boss = false;
@@ -383,7 +383,7 @@ namespace HyperV
             AddFoodLabels();
             Components.Add(Camera);
             Components.Remove(Loading);
-            Components.Add(Crosshair);
+         Components.Add(Crosshair);
             //LifeBars[0].Visible = false;
             //LifeBars[1].Visible = false;
 
@@ -636,11 +636,11 @@ namespace HyperV
          Walls = new List<Walls>();
          Unlockables = new List<UnlockableWall>();
          Water = new List<Water>();
-         RuneList = new List<Rune>();
-         Food = new List<Food>();
+            RuneList = new List<Rune>();
+            Food = new List<Food>();
          Services.RemoveService(typeof(List<Rune>));
-         Services.AddService(typeof(List<Rune>), RuneList);
-         Services.RemoveService(typeof(List<Character>));
+            Services.AddService(typeof(List<Rune>), RuneList);
+            Services.RemoveService(typeof(List<Character>));
          Services.AddService(typeof(List<Character>), Characters);
          Services.RemoveService(typeof(List<Enemy>));
          Services.AddService(typeof(List<Enemy>), Enemy);
@@ -693,18 +693,16 @@ namespace HyperV
             }
             base.Update(gameTime);
          }
-         if (RunePuzzleCompleted() && RunePuzzleCompletedFirstTime)
-         {
-            StreamReader reader = new StreamReader("../../../WPFINTERFACE/Launching Interface/Saves/PuzzlesSave" + SaveNumber + ".txt");
-            string autrePuzzle = reader.ReadLine();
-            reader.Close();
-
-            StreamWriter writer = new StreamWriter("../../../WPFINTERFACE/Launching Interface/Saves/PuzzlesSave" + SaveNumber + ".txt");
-            writer.WriteLine(autrePuzzle);
-            writer.WriteLine(true);
-            writer.Close();
-            RunePuzzleCompletedFirstTime = false;
-         }
+         if(Level == 1)
+            {
+                if (RunePuzzleCompleted() && RunePuzzleCompletedFirstTime)
+                {
+                    StreamWriter writer = new StreamWriter("../../../WPFINTERFACE/Launching Interface/Saves/SavePuzzleRunes" + SaveNumber + ".txt");
+                    writer.WriteLine(true);
+                    writer.Close();
+                    RunePuzzleCompletedFirstTime = false;
+                }
+            }
       }
 
 
@@ -729,7 +727,7 @@ namespace HyperV
 
       private bool RunePuzzleCompleted()
       {
-         return true;//RuneList[0].IsActivated && !RuneList[1].IsActivated && RuneList[2].IsActivated && !RuneList[3].IsActivated && !RuneList[4].IsActivated && RuneList[5].IsActivated;
+         return RuneList[0].IsActivated && !RuneList[1].IsActivated && RuneList[2].IsActivated && !RuneList[3].IsActivated && !RuneList[4].IsActivated && RuneList[5].IsActivated;
       }
 
 

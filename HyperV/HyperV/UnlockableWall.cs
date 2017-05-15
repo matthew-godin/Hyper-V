@@ -214,9 +214,9 @@ namespace HyperV
 
         public bool RunePuzzleCompleted()
         {
-            StreamReader save = new StreamReader("../../../WPFINTERFACE/Launching Interface/Saves/PuzzlesSave" + SaveIndex + ".txt");
-            save.ReadLine();
+            StreamReader save = new StreamReader("../../../WPFINTERFACE/Launching Interface/Saves/SavePuzzleRunes" + SaveIndex + ".txt");
             string saveLine = save.ReadLine();
+            save.Close();
             return (RunesList[0].IsActivated && !RunesList[1].IsActivated && RunesList[2].IsActivated && !RunesList[3].IsActivated && !RunesList[4].IsActivated && RunesList[5].IsActivated) || (saveLine == "True");
         }
 

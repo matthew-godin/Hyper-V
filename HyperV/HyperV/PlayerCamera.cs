@@ -13,6 +13,7 @@ namespace HyperV
         const int JUMP_HEIGHT = 10;
         const int JUMP = 25;
         const int GAMEPAD_VECTOR_DISPLACEMENT_VALUE = 35;
+        const float STANDARD_UPDATE_INTERVAL_JUMP = 1f / 60f;
         const float SPEED_WHEN_TIRED = 0.1f;
         const float INITIAL_ROTATION_SPEED = 5f;
         const float INITIAL_ROTATION_SPEED_SOURIS = 0.1f;
@@ -417,7 +418,7 @@ namespace HyperV
                     ContinueJump = false;
                     t = 0;
                 }
-                Height = ComputeBezier(t * UpdateInterval, ControlPts).Y;
+                Height = ComputeBezier(t * STANDARD_UPDATE_INTERVAL_JUMP, ControlPts).Y;
                 ++t;
             }
         }

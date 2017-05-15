@@ -383,9 +383,9 @@ namespace HyperV
             AddFoodLabels();
             Components.Add(Camera);
             Components.Remove(Loading);
-            Components.Add(Crosshair);
-            //LifeBars[0].Visible = false;
-            //LifeBars[1].Visible = false;
+      //      Components.Add(Crosshair);
+            LifeBars[0].Visible = false;
+            LifeBars[1].Visible = false;
 
             //Components.Add(FPSLabel);
          }
@@ -729,7 +729,7 @@ namespace HyperV
 
       private bool RunePuzzleCompleted()
       {
-         return true;//RuneList[0].IsActivated && !RuneList[1].IsActivated && RuneList[2].IsActivated && !RuneList[3].IsActivated && !RuneList[4].IsActivated && RuneList[5].IsActivated;
+         return RuneList[0].IsActivated && !RuneList[1].IsActivated && RuneList[2].IsActivated && !RuneList[3].IsActivated && !RuneList[4].IsActivated && RuneList[5].IsActivated;
       }
 
 

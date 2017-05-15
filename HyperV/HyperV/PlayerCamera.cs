@@ -1,7 +1,6 @@
 ﻿using XNAProject;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace HyperV
@@ -23,40 +22,41 @@ namespace HyperV
         const int MAXIMAL_RUN_FACTOR = 4;
         const int MINIMAL_DISTANCE_POUR_RAMASSAGE = 45;
 
-        //Constructeur
+
+        //CONSTRUCTOR
         readonly float UpdateInterval;
         protected float BaseHeight { get; set; }
         Vector2 Origin { get; set; }
+        //CreateLookAt
+        public Vector3 Direction { get; private set; }
+        public Vector3 Lateral { get; private set; }
 
-        //Initialize
-        protected float TranslationSpeed { get; set; }
-        //readonly float SpeedRotation;
-
-
-        public Vector3 Direction { get; private set; }//
-        public Vector3 Lateral { get; private set; }//
-
+        //INITIALIZE
+        //Mouse
         Point PreviousMousePosition { get; set; }
         Point CurrentMousePosition { get; set; }
-        public Vector2 DisplacementMouse { get; private set; }   //**************************
-
-        protected bool DésactiverDisplacement { get; set; }
-
+        public Vector2 DisplacementMouse { get; private set; }
+        //Displacement
+        protected float TranslationSpeed { get; set; }
+        //Player actions
         protected bool Jump { get; private set; }
         bool Run { get; set; }
         bool Grab { get; set; }
-
+        //Activated
+        protected bool DésactiverDisplacement { get; set; }
         public bool IsMouseCameraActivated { get; set; }
-        bool EstDisplacementEtAutresKeyboardActivated { get; set; }
         bool IsKeyboardCameraActivated { get; set; }
-
+        bool EstDisplacementEtAutresKeyboardActivated { get; set; }
+        public bool IsDead { get; private set; }
+        //Autres
         public Ray Visor { get; private set; }
-
         float TimeElapsedSinceUpdate { get; set; }
 
-        LifeBar[] LifeBars { get; set; }
+        //LoadContent
         InputManager InputMgr { get; set; }
         GamePadManager GamePadMgr { get; set; }
+        LifeBar[] LifeBars { get; set; }
+
 
         public PlayerCamera(Game game, Vector3 cameraPosition, Vector3 target,
                             Vector3 orientation, float updateInterval, float renderDistance)
@@ -71,6 +71,46 @@ namespace HyperV
             Origin = new Vector2(Game.Window.ClientBounds.Width, Game.Window.ClientBounds.Height) / 2;
         }
 
+        public override void Initialize()
+        {
+            //Mouse
+            CurrentMousePosition = new Point(Game.Window.ClientBounds.Width / 2, Game.Window.ClientBounds.Height / 2);
+            PreviousMousePosition = new Point(CurrentMousePosition.X, CurrentMousePosition.Y);
+            Mouse.SetPosition(CurrentMousePosition.X, CurrentMousePosition.Y);
+            DisplacementMouse = Vector2.Zero;
+
+            //Displacement
+            TranslationSpeed = TRANSLATION_INITIAL_SPEED;
+
+            //Player actions
+            Run = false;
+            Jump = false;
+            Grab = false;
+
+            //Activated*******************************************************************
+            EstDisplacementEtAutresKeyboardActivated = true;
+            IsKeyboardCameraActivated = true;
+            IsMouseCameraActivated = true;
+            IsDead = false;
+
+            ContinueJump = false;
+            
+            Visor = new Ray();
+            Height = BaseHeight;
+            TimeElapsedSinceUpdate = 0;
+
+            base.Initialize();
+            LoadContent();
+            InitializeComplexObjectsJump();
+        }
+
+        protected virtual void LoadContent()
+        {
+            InputMgr = Game.Services.GetService(typeof(InputManager)) as InputManager;
+            GamePadMgr = Game.Services.GetService(typeof(GamePadManager)) as GamePadManager;
+            LifeBars = Game.Services.GetService(typeof(LifeBar[])) as LifeBar[];
+        }
+
         public void SetRenderDistance(float renderDistance)
         {
             FarPlaneDistance = renderDistance;
@@ -81,44 +121,6 @@ namespace HyperV
         {
             Direction = direction;
         }
-
-        public override void Initialize()
-        {
-            //SpeedRotation = INITIAL_ROTATION_SPEED;
-            TranslationSpeed = TRANSLATION_INITIAL_SPEED;
-            TimeElapsedSinceUpdate = 0;
-
-            EstDisplacementEtAutresKeyboardActivated = true;
-            IsKeyboardCameraActivated = true;
-
-            Run = false;
-            Jump = false;
-            Grab = false;
-            ContinueJump= false;
-            IsMouseCameraActivated = true;
-
-
-            Visor = new Ray();
-
-            CurrentMousePosition = new Point(Game.Window.ClientBounds.Width / 2, Game.Window.ClientBounds.Height / 2);
-            PreviousMousePosition = new Point(CurrentMousePosition.X, CurrentMousePosition.Y);
-            Mouse.SetPosition(CurrentMousePosition.X, CurrentMousePosition.Y);
-
-            base.Initialize();
-            LoadContent();
-
-            InitializeComplexObjectsJump();
-            Height = BaseHeight;//CHARACTER_HEIGHT;
-        }
-
-        protected virtual void LoadContent()
-        {
-            InputMgr = Game.Services.GetService(typeof(InputManager)) as InputManager;
-            GamePadMgr = Game.Services.GetService(typeof(GamePadManager)) as GamePadManager;
-            LifeBars = Game.Services.GetService(typeof(LifeBar[])) as LifeBar[];
-        }
-
-        public bool Dead { get; private set; }
 
         public void Attack(int val)
         {
@@ -251,14 +253,13 @@ namespace HyperV
             if (EstDisplacementEtAutresKeyboardActivated)
             {
                 ManageDisplacement((ManageKey(Keys.W) - ManageKey(Keys.S)),
-                             (ManageKey(Keys.A) - ManageKey(Keys.D)));
+                                (ManageKey(Keys.A) - ManageKey(Keys.D)));
             }
             if (IsKeyboardCameraActivated)
             {
                 ManageKeyboardRotation();
             }
         }
-
  
         protected virtual void ManageDisplacement(float direction, float latéral)
         {

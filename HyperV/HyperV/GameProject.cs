@@ -636,11 +636,11 @@ namespace HyperV
          Walls = new List<Walls>();
          Unlockables = new List<UnlockableWall>();
          Water = new List<Water>();
-         RuneList = new List<Rune>();
-         Food = new List<Food>();
+            RuneList = new List<Rune>();
+            Food = new List<Food>();
          Services.RemoveService(typeof(List<Rune>));
-         Services.AddService(typeof(List<Rune>), RuneList);
-         Services.RemoveService(typeof(List<Character>));
+            Services.AddService(typeof(List<Rune>), RuneList);
+            Services.RemoveService(typeof(List<Character>));
          Services.AddService(typeof(List<Character>), Characters);
          Services.RemoveService(typeof(List<Enemy>));
          Services.AddService(typeof(List<Enemy>), Enemy);
@@ -693,18 +693,16 @@ namespace HyperV
             }
             base.Update(gameTime);
          }
-         if (RunePuzzleCompleted() && RunePuzzleCompletedFirstTime)
-         {
-            StreamReader reader = new StreamReader("../../../WPFINTERFACE/Launching Interface/Saves/PuzzlesSave" + SaveNumber + ".txt");
-            string autrePuzzle = reader.ReadLine();
-            reader.Close();
-
-            StreamWriter writer = new StreamWriter("../../../WPFINTERFACE/Launching Interface/Saves/PuzzlesSave" + SaveNumber + ".txt");
-            writer.WriteLine(autrePuzzle);
-            writer.WriteLine(true);
-            writer.Close();
-            RunePuzzleCompletedFirstTime = false;
-         }
+         if(Level == 1)
+            {
+                if (RunePuzzleCompleted() && RunePuzzleCompletedFirstTime)
+                {
+                    StreamWriter writer = new StreamWriter("../../../WPFINTERFACE/Launching Interface/Saves/SavePuzzleRunes" + SaveNumber + ".txt");
+                    writer.WriteLine(true);
+                    writer.Close();
+                    RunePuzzleCompletedFirstTime = false;
+                }
+            }
       }
 
 
@@ -729,7 +727,7 @@ namespace HyperV
 
       private bool RunePuzzleCompleted()
       {
-         return true;//RuneList[0].IsActivated && !RuneList[1].IsActivated && RuneList[2].IsActivated && !RuneList[3].IsActivated && !RuneList[4].IsActivated && RuneList[5].IsActivated;
+         return RuneList[0].IsActivated && !RuneList[1].IsActivated && RuneList[2].IsActivated && !RuneList[3].IsActivated && !RuneList[4].IsActivated && RuneList[5].IsActivated;
       }
 
 

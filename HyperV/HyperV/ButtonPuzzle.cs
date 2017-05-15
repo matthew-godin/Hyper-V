@@ -245,6 +245,7 @@ namespace HyperV
 
         void Save()
         {
+            Game.Window.Title = "k"; 
             StreamWriter writer = new StreamWriter("../../../WPFINTERFACE/Launching Interface/Saves/SaveButtonPuzzle" + SaveIndex.ToString() + ".txt");
             writer.WriteLine(true);
             writer.Close();

@@ -107,7 +107,7 @@ namespace HyperV
             Vector2 currentVector = new Vector2(Camera.Direction.X, Camera.Direction.Z);
             if (currentVector != PreviousVector)
             {
-                Rotation -= Camera.DéplacementMouse.X * MathHelper.Pi / 180 * 0.1f;
+                Rotation -= Camera.MouseGamePadStickDisplacement.X * MathHelper.Pi / 180 * 0.1f;
                 PreviousVector = currentVector;
             }
         }

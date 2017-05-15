@@ -7,21 +7,17 @@ namespace HyperV
 {
     public class PlayerCamera : Camera
     {
-        const float SPEED_WHEN_TIRED = 0.1f;
+        const int MAXIMAL_RUN_FACTOR = 4;
+        const int MINIMAL_DISTANCE_POUR_RAMASSAGE = 45;
         const int JUMP_HEIGHT = 10;
         const int JUMP = 25;
-        const float STANDARD_UPDATE_INTERVAL = 1f / 60f;
-        const float ACCELERATION = 0.001f;
+        const int GAMEPAD_VECTOR_DISPLACEMENT_VALUE = 35;
+        const float SPEED_WHEN_TIRED = 0.1f;
         const float INITIAL_ROTATION_SPEED = 5f;
         const float INITIAL_ROTATION_SPEED_SOURIS = 0.1f;
         protected const float TRANSLATION_INITIAL_SPEED = 0.5f;
-        const float DELTA_YAW = MathHelper.Pi / 180; // 1 degré à la fois
-        const float DELTA_ROLL = MathHelper.Pi / 180; // 1 degré à la fois
-        const float DELTA_PITCH = MathHelper.Pi / 180; // 1 degré à la fois
-        const float COLLISION_RADIUS = 1f;
-        const int CHARACTER_HEIGHT = 10;
-        const int MAXIMAL_RUN_FACTOR = 4;
-        const int MINIMAL_DISTANCE_POUR_RAMASSAGE = 45;
+        const float DELTA_YAW = MathHelper.Pi / 180; 
+        const float DELTA_ROLL = MathHelper.Pi / 180; 
 
 
         //CONSTRUCTOR
@@ -32,11 +28,12 @@ namespace HyperV
         public Vector3 Direction { get; private set; }
         public Vector3 Lateral { get; private set; }
 
+
         //INITIALIZE
         //Mouse
         Point PreviousMousePosition { get; set; }
         Point CurrentMousePosition { get; set; }
-        public Vector2 DisplacementMouse { get; private set; }
+        public Vector2 MouseDisplacementStickGamePad { get; private set; }//This protection if for the catapult
         //Displacement
         protected float TranslationSpeed { get; set; }
         //Player actions
@@ -44,10 +41,10 @@ namespace HyperV
         bool Run { get; set; }
         bool Grab { get; set; }
         //Activated
-        protected bool DésactiverDisplacement { get; set; }
+        protected bool DeactivateCertainCommands { get; set; } //Needed for catapult level
         public bool IsMouseCameraActivated { get; set; }
-        bool IsKeyboardCameraActivated { get; set; }
-        bool EstDisplacementEtAutresKeyboardActivated { get; set; }
+        public bool IsKeyboardCameraActivated { get; set; }
+        public bool AreDisplacementKeyboardCommandsActivated { get; set; }
         public bool IsDead { get; private set; }
         //Autres
         public Ray Visor { get; private set; }
@@ -86,7 +83,7 @@ namespace HyperV
             CurrentMousePosition = new Point(Game.Window.ClientBounds.Width / 2, Game.Window.ClientBounds.Height / 2);
             PreviousMousePosition = new Point(CurrentMousePosition.X, CurrentMousePosition.Y);
             Mouse.SetPosition(CurrentMousePosition.X, CurrentMousePosition.Y);
-            DisplacementMouse = Vector2.Zero;
+            MouseDisplacementStickGamePad = Vector2.Zero;
 
             //Displacement
             TranslationSpeed = TRANSLATION_INITIAL_SPEED;
@@ -96,22 +93,26 @@ namespace HyperV
             Jump = false;
             Grab = false;
 
-            //Activated*******************************************************************
-            EstDisplacementEtAutresKeyboardActivated = true;
+            //Activated
+            DeactivateCertainCommands = false;
+            AreDisplacementKeyboardCommandsActivated = true;
             IsKeyboardCameraActivated = true;
             IsMouseCameraActivated = true;
             IsDead = false;
 
             //Autres
             Visor = new Ray();
-            Height = BaseHeight;
+            
             TimeElapsedSinceUpdate = 0;
 
+            //*Jump*
             ContinueJump = false;
+            t = 0;
+            Height = BaseHeight;
+            InitializeComplexObjectsJump();
 
             base.Initialize();
             LoadContent();
-            InitializeComplexObjectsJump();
         }
 
         protected virtual void LoadContent()
@@ -121,25 +122,9 @@ namespace HyperV
             LifeBars = Game.Services.GetService(typeof(LifeBar[])) as LifeBar[];
         }
 
-        public void EstablishRenderDistance(float renderDistance)
-        {
-            FarPlaneDistance = renderDistance;
-            CreateViewingFrustum(OBJECTIVE_OPENNESS, NEAR_PLANE_DISTANCE, FarPlaneDistance);
-        }
-
-        public void EstablishDirection(Vector3 direction)
-        {
-            Direction = direction;
-        }
-
-        public void Attack(int val)
-        {
-            LifeBars[0].Attack(val);
-        }
-
         protected override void CreateLookAt()
         {
-            Direction = Vector3.Normalize(Direction); 
+            Direction = Vector3.Normalize(Direction);
             Vector3.Normalize(VerticalOrientation);
             Vector3.Normalize(Lateral);
 
@@ -159,6 +144,40 @@ namespace HyperV
             CreateLookAt();
         }
 
+        public void EstablishRenderDistance(float renderDistance)
+        {
+            FarPlaneDistance = renderDistance;
+            CreateViewingFrustum(OBJECTIVE_OPENNESS, NEAR_PLANE_DISTANCE, FarPlaneDistance);
+        }
+
+        public void EstablishDirection(Vector3 direction)
+        {
+            Direction = direction;
+        }
+
+        public void Attack(int val)
+        {
+            LifeBars[0].Attack(val);
+        }
+
+        protected virtual void ManageLifeBars()
+        {
+            if (!LifeBars[1].Water)
+            {
+                if (Run && !LifeBars[1].Tired && (InputMgr.IsPressed(Keys.W) ||
+                    InputMgr.IsPressed(Keys.A) || InputMgr.IsPressed(Keys.S) ||
+                    InputMgr.IsPressed(Keys.D) || GamePadMgr.PositionThumbStickLeft.X != 0 ||
+                    GamePadMgr.PositionThumbStickLeft.Y != 0))
+                {
+                    LifeBars[1].Attack();
+                }
+                else
+                {
+                    LifeBars[1].AttackNegative();
+                }
+            }
+        }
+
         public override void Update(GameTime gameTime)
         {
             PopulateCommands();
@@ -175,7 +194,7 @@ namespace HyperV
         protected virtual void PerformUpdate()
         {
             MouseFunctions();
-            if (!DésactiverDisplacement)
+            if (!DeactivateCertainCommands)
             {
                 KeyboardFunctions();
             }
@@ -192,21 +211,6 @@ namespace HyperV
             ManageLifeBars();
         }
 
-        protected virtual void ManageLifeBars()
-        {
-            if (!LifeBars[1].Water)
-            {
-                if (Run && !LifeBars[1].Tired && (InputMgr.IsPressed(Keys.W) || InputMgr.IsPressed(Keys.A) || InputMgr.IsPressed(Keys.S) || InputMgr.IsPressed(Keys.D) || GamePadMgr.PositionThumbStickLeft.X!=0 || GamePadMgr.PositionThumbStickLeft.Y != 0))
-                {
-                    LifeBars[1].Attack();
-                }
-                else
-                {
-                    LifeBars[1].AttackNegative();
-                }
-            }
-        }
-
 
         //Mouse
         #region
@@ -216,7 +220,7 @@ namespace HyperV
             {
                 PreviousMousePosition = CurrentMousePosition;
                 CurrentMousePosition = InputMgr.GetPositionMouse();
-                DisplacementMouse = new Vector2(CurrentMousePosition.X - PreviousMousePosition.X, CurrentMousePosition.Y - PreviousMousePosition.Y);
+                MouseDisplacementStickGamePad = new Vector2(CurrentMousePosition.X - PreviousMousePosition.X, CurrentMousePosition.Y - PreviousMousePosition.Y);
 
                 ManageMouseRotation();
 
@@ -232,7 +236,7 @@ namespace HyperV
         private void ManageMouseRotation()
         {
             ManageMouseYaw();
-            if (!DésactiverDisplacement)
+            if (!DeactivateCertainCommands)
             {
                 ManageMouseRoll();
             }
@@ -240,14 +244,14 @@ namespace HyperV
 
         private void ManageMouseYaw()
         {
-            Matrix yawMatrix = Matrix.CreateFromAxisAngle(VerticalOrientation, DELTA_YAW * INITIAL_ROTATION_SPEED_SOURIS * -DisplacementMouse.X);
+            Matrix yawMatrix = Matrix.CreateFromAxisAngle(VerticalOrientation, DELTA_YAW * INITIAL_ROTATION_SPEED_SOURIS * -MouseDisplacementStickGamePad.X);
 
             Direction = Vector3.Transform(Direction, yawMatrix);
         }
 
         private void ManageMouseRoll()
         {
-            Matrix rollMatrix = Matrix.CreateFromAxisAngle(Lateral, DELTA_ROLL * INITIAL_ROTATION_SPEED_SOURIS * -DisplacementMouse.Y);
+            Matrix rollMatrix = Matrix.CreateFromAxisAngle(Lateral, DELTA_ROLL * INITIAL_ROTATION_SPEED_SOURIS * -MouseDisplacementStickGamePad.Y);
 
             Direction = Vector3.Transform(Direction, rollMatrix);
         }
@@ -257,7 +261,7 @@ namespace HyperV
         #region
         private void KeyboardFunctions()
         {
-            if (EstDisplacementEtAutresKeyboardActivated)
+            if (AreDisplacementKeyboardCommandsActivated)
             {
                 ManageDisplacement((ManageKey(Keys.W) - ManageKey(Keys.S)),
                                 (ManageKey(Keys.A) - ManageKey(Keys.D)));
@@ -328,24 +332,25 @@ namespace HyperV
                 ManageDisplacement(GamePadMgr.PositionThumbStickLeft.Y,
                                  -GamePadMgr.PositionThumbStickLeft.X);
 
-                DisplacementMouse = new Vector2(35, -35) * GamePadMgr.PositionThumbStickRight;
-                ManageMouseRotation();
+                MouseDisplacementStickGamePad = new Vector2(GAMEPAD_VECTOR_DISPLACEMENT_VALUE,
+                                                            -GAMEPAD_VECTOR_DISPLACEMENT_VALUE) * GamePadMgr.PositionThumbStickRight;
+                ManageMouseRotation();//Works with previous variable, so Gamepad rotation as well 
             }
         }
         #endregion
 
         private void PopulateCommands()
         {
-            Run = (InputMgr.IsPressed(Keys.RightShift) && EstDisplacementEtAutresKeyboardActivated) ||
-                      (InputMgr.IsPressed(Keys.LeftShift) && EstDisplacementEtAutresKeyboardActivated) ||
+            Run = (InputMgr.IsPressed(Keys.RightShift) && AreDisplacementKeyboardCommandsActivated) ||
+                      (InputMgr.IsPressed(Keys.LeftShift) && AreDisplacementKeyboardCommandsActivated) ||
                       GamePadMgr.PositionsGâchettes.X > 0;
 
-            Jump = (InputMgr.IsPressed(Keys.Space) && EstDisplacementEtAutresKeyboardActivated) ||
+            Jump = (InputMgr.IsPressed(Keys.Space) && AreDisplacementKeyboardCommandsActivated) ||
                      GamePadMgr.IsPressed(Buttons.A);
 
             Grab = InputMgr.IsNewLeftClick() ||
                        InputMgr.IsOldLeftClick() ||
-                       InputMgr.IsNewKey(Keys.E) && EstDisplacementEtAutresKeyboardActivated ||
+                       InputMgr.IsNewKey(Keys.E) && AreDisplacementKeyboardCommandsActivated ||
                        GamePadMgr.IsNewButton(Buttons.RightStick) || Grab;
         }
 

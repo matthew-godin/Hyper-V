@@ -7,22 +7,17 @@ namespace HyperV
 {
     public class PlayerCamera : Camera
     {
-        const float SPEED_WHEN_TIRED = 0.1f;
+        const int MAXIMAL_RUN_FACTOR = 4;
+        const int MINIMAL_DISTANCE_POUR_RAMASSAGE = 45;
         const int JUMP_HEIGHT = 10;
         const int JUMP = 25;
         const int GAMEPAD_VECTOR_DISPLACEMENT_VALUE = 35;
-        const float STANDARD_UPDATE_INTERVAL = 1f / 60f;
-        const float ACCELERATION = 0.001f;
+        const float SPEED_WHEN_TIRED = 0.1f;
         const float INITIAL_ROTATION_SPEED = 5f;
         const float INITIAL_ROTATION_SPEED_SOURIS = 0.1f;
         protected const float TRANSLATION_INITIAL_SPEED = 0.5f;
-        const float DELTA_YAW = MathHelper.Pi / 180; // 1 degré à la fois
-        const float DELTA_ROLL = MathHelper.Pi / 180; // 1 degré à la fois
-        const float DELTA_PITCH = MathHelper.Pi / 180; // 1 degré à la fois
-        const float COLLISION_RADIUS = 1f;
-        const int CHARACTER_HEIGHT = 10;
-        const int MAXIMAL_RUN_FACTOR = 4;
-        const int MINIMAL_DISTANCE_POUR_RAMASSAGE = 45;
+        const float DELTA_YAW = MathHelper.Pi / 180; 
+        const float DELTA_ROLL = MathHelper.Pi / 180; 
 
 
         //CONSTRUCTOR
@@ -32,6 +27,7 @@ namespace HyperV
         //CreateLookAt
         public Vector3 Direction { get; private set; }
         public Vector3 Lateral { get; private set; }
+
 
         //INITIALIZE
         //Mouse
@@ -113,9 +109,10 @@ namespace HyperV
             ContinueJump = false;
             t = 0;
             Height = BaseHeight;
+            InitializeComplexObjectsJump();
+
             base.Initialize();
             LoadContent();
-            InitializeComplexObjectsJump();
         }
 
         protected virtual void LoadContent()

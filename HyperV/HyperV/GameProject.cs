@@ -119,7 +119,7 @@ namespace HyperV
          FullScreen = int.Parse(parts[1]) == 1;
          if (FullScreen != GraphicsMgr.IsFullScreen)
          {
-            //GraphicsMgr.ToggleFullScreen();
+            GraphicsMgr.ToggleFullScreen();
          }
          line = reader.ReadLine();
          parts = line.Split(new string[] { ": " }, StringSplitOptions.None);

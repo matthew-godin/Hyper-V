@@ -1,16 +1,10 @@
-using XNAProject;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Input;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace HyperV
 {
-    public class Camera2 : PlayerCamera
+   public class Camera2 : PlayerCamera
     {
-        //Added from first Camera1
-        //float Height { get; set; }
-
         List<Maze> Maze { get; set; }
         List<Character> Characters { get; set; }
         Boss Boss { get; set; }
@@ -118,7 +112,7 @@ namespace HyperV
                 Position += direction * TRANSLATION_INITIAL_SPEED * Direction;
                 Position -= lateral * TRANSLATION_INITIAL_SPEED * Lateral;
             }
-            for (int i = 0; i < Water.Count /*&& height == 5*/; ++i)
+            for (int i = 0; i < Water.Count; ++i)
             {
                 if (!LifeBars[1].Water && Position.Y <= Water[i].AdjustedHeight)
                 {
@@ -266,8 +260,8 @@ namespace HyperV
 
         public void DeactivateCamera()
         {
-            DésactiverDéplacement = !DésactiverDéplacement;
-            InitializeDirection(new Vector3(1, 0, 0));
+            DeactivateCertainCommands = !DeactivateCertainCommands;
+            EstablishDirection(new Vector3(1, 0, 0));
         }
 
         bool placePlayer { get; set; }
@@ -275,26 +269,31 @@ namespace HyperV
 
         protected override void PerformUpdate()
         {
-            base.PerformUpdate();
-            if (!DésactiverDéplacement)
+            if (!SubjectiveCamera)
             {
-                if (placePlayer)
+                base.PerformUpdate();
+                if (!DeactivateCertainCommands)
                 {
-                    BaseHeight = 2;
-                    placePlayer = false;
-                    Position = new Vector3(-27, 2, -28);
+                    if (placePlayer)
+                    {
+                        BaseHeight = 2;
+                        placePlayer = false;
+                        Position = new Vector3(-27, 2, -28);
+                    }
                 }
+                if (DeactivateCertainCommands)
+                {
+                    BaseHeight = 15;
+                    Position = new Vector3(-57, 15, -52);
+                    placePlayer = true;
+                }
+                Position = new Vector3(Position.X, BaseHeight, Position.Z);
             }
-            if (DésactiverDéplacement)
+            else
             {
-                BaseHeight = 15;
-                Position = new Vector3(-57, 15, -52);
-                placePlayer = true;
+                base.PerformUpdate();
             }
-            Position = new Vector3(Position.X, BaseHeight, Position.Z);
         }
-
-
     }
 }
 

@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
 using AtelierXNA;
+using System.IO;
 
 namespace HyperV
 {
@@ -45,6 +46,7 @@ namespace HyperV
         float Magnitude { get; set; }
         int NumberRunesOpenWall { get; set; }
         int NumLevelsCompleted { get; set; }
+        int SaveIndex { get; set; }
 
         List<Rune> RunesList { get; set; }
         ButtonPuzzle ButtonsPuzzle { get; set; }
@@ -55,7 +57,7 @@ namespace HyperV
             return (valeur >= thresholdA && valeur <= thresholdB || valeur <= thresholdA && valeur >= thresholdB);
         }
 
-        public UnlockableWall(Game game, float saveVal, Vector3 initialRotation, Vector3 initialPosition, Vector2 scale, string nomTileTexture, float updateInterval, int numberRunesOpenWall, int numLevelsCompleted, List<Rune> runesList) : base(game, SaveIndex, initialRotation, initialPosition)
+        public UnlockableWall(Game game, float saveVal, Vector3 initialRotation, Vector3 initialPosition, Vector2 scale, string nomTileTexture, float updateInterval, int numberRunesOpenWall, int numLevelsCompleted, List<Rune> runesList, int saveIndex) : base(game, SaveIndex, initialRotation, initialPosition)
         {
             NomTileTexture = nomTileTexture;
             UpdateInterval = updateInterval;
@@ -64,6 +66,7 @@ namespace HyperV
             NumberRunesOpenWall = numberRunesOpenWall;
             NumLevelsCompleted = numLevelsCompleted;
             RunesList = runesList;
+            SaveIndex = saveIndex;
         }
 
         public override void Initialize()
@@ -103,8 +106,7 @@ namespace HyperV
             Magnitude = PlaneEquation.Length();
             base.Initialize();
         }
-
-
+        
         private void CreatePointArray()
         {
             PtsVertices[0, 0] = new Vector3(Origin.X, Origin.Y, Origin.Z);
@@ -153,8 +155,6 @@ namespace HyperV
             {
                 for (int i = 0; i < 2; ++i)
                 {
-                    //Vertices[++VertexIndex] = new VertexPositionColor(PtsVertices[i, j], Color.LawnGreen);
-                    //Vertices[++VertexIndex] = new VertexPositionColor(PtsVertices[i, j + 1], Color.LawnGreen);
                     Vertices[++VertexIndex] = new VertexPositionTexture(PtsVertices[i, j], PtsTexture[i, j]);
                     Vertices[++VertexIndex] = new VertexPositionTexture(PtsVertices[i, j + 1], PtsTexture[i, j + 1]);
                 }
@@ -178,7 +178,6 @@ namespace HyperV
 
         protected void DrawtriangleStrip()
         {
-            //GraphicsDevice.DrawUserPrimitives<VertexPositionColor>(PrimitiveType.TriangleStrip, Vertices, 0, NUM_TRIANGLES);
             GraphicsDevice.DrawUserPrimitives<VertexPositionTexture>(PrimitiveType.TriangleStrip, Vertices, 0, NUM_TRIANGLES);
         }
 
@@ -209,14 +208,16 @@ namespace HyperV
                 AP = Position - PlanePoint;
                 wallDistance = Vector2.Distance(FirstVertex, SecondVertex);
                 result = Math.Abs(Vector3.Dot(AP, PlaneEquation)) / Magnitude < MAX_DISTANCE && (Position - new Vector3(FirstVertex.X, Position.Y, FirstVertex.Y)).Length() < wallDistance && (Position - new Vector3(SecondVertex.X, Position.Y, SecondVertex.Y)).Length() < wallDistance;
-                //CreateNewDirection(result, i, Direction, ref newDirection);
             }
             return result;
         }
 
-        private bool RunePuzzleCompleted()
+        public bool RunePuzzleCompleted()
         {
-            return RunesList[0].IsActivated && !RunesList[1].IsActivated && RunesList[2].IsActivated && !RunesList[3].IsActivated && !RunesList[4].IsActivated && RunesList[5].IsActivated;
+            StreamReader save = new StreamReader("../../../WPFINTERFACE/Launching Interface/Saves/SavePuzzleRunes" + SaveIndex + ".txt");
+            string saveLine = save.ReadLine();
+            save.Close();
+            return (RunesList[0].IsActivated && !RunesList[1].IsActivated && RunesList[2].IsActivated && !RunesList[3].IsActivated && !RunesList[4].IsActivated && RunesList[5].IsActivated) || (saveLine == "True");
         }
 
         public override void Update(GameTime gameTime)

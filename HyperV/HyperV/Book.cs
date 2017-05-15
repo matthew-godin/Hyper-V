@@ -18,19 +18,26 @@ namespace HyperV
         string BookImage { get; set; }
 
         InputManager InputMgrs { get; set; }
+        GamePadManager GamePadMgr { get; set; }
         Camera2 Camera { get; set; }
         Sprite Text { get; set; }
-
+        public PressSpaceLabel PressSpaceLabel { get; private set; }
 
         public Book(Game game, string model3D, Vector3 position, float scale, float rotation, string nameModel2D, string bookImage)
             : base(game, model3D, position, scale, rotation, nameModel2D)
         {
             BookImage = bookImage;
+            Shown = false;
         }
 
         public override void Initialize()
         {           
             base.Initialize();
+            PressSpaceLabel = new PressSpaceLabel(Game);
+            PressSpaceLabel.Visible = false;
+            PressSpaceLabel.DrawOrder = 1000;
+            Game.Components.Add(PressSpaceLabel);
+            Shown = !Shown;
         }
 
         float? FindDistance(Ray otherObject, BoundingSphere CollisionSphere)
@@ -42,27 +49,55 @@ namespace HyperV
         {
             base.LoadContent();
             InputMgrs = Game.Services.GetService(typeof(InputManager)) as InputManager;
+            GamePadMgr = Game.Services.GetService(typeof(GamePadManager)) as GamePadManager;
             Camera = Game.Services.GetService(typeof(Camera)) as Camera2;
         }
 
+        bool Shown { get; set; }
+
         public override void Update(GameTime gameTime)        
         {
-            if (InputMgrs.IsNewLeftClick())
-            {                
-                if (IsWithinRightDistance(this))
-                {
-                    if (Game.Components.Contains(Text))
-                    {
-                        Game.Components.Remove(Text);
-                    }
-                    Text = new Sprite(Game, BookImage, new Vector2(GraphicsDevice.DisplayMode.Width / 2 - 450, GraphicsDevice.DisplayMode.Height / 2 - 350));
-                    Game.Components.Add(Text);
-                }
-            }
-            if (InputMgrs.IsOldRightClick())
+            if (IsWithinRightDistance(this) && !Shown)
             {
-                Game.Components.Remove(Text);
+                PressSpaceLabel.Visible = true;
             }
+            else
+            {
+                PressSpaceLabel.Visible = false;
+            }
+            if (InputMgrs.IsNewKey(Keys.R)/*IsNewLeftClick()*/|| GamePadMgr.IsNewButton(Buttons.Y))
+            {
+                if (Shown)
+                {
+                    Game.Components.Remove(Text);
+                }
+                else
+                {
+                    if (IsWithinRightDistance(this))
+                    {
+                        if (Game.Components.Contains(Text))
+                        {
+                            Game.Components.Remove(Text);
+                        }
+                        Text = new Sprite(Game, BookImage, new Vector2(GraphicsDevice.DisplayMode.Width / 2 - 450, GraphicsDevice.DisplayMode.Height / 2 - 350));
+                        Game.Components.Add(Text);
+                    }
+                }
+                Shown = !Shown;              
+                //if (IsWithinRightDistance(this))
+                //{
+                //    if (Game.Components.Contains(Text))
+                //    {
+                //        Game.Components.Remove(Text);
+                //    }
+                //    Text = new Sprite(Game, BookImage, new Vector2(GraphicsDevice.DisplayMode.Width / 2 - 450, GraphicsDevice.DisplayMode.Height / 2 - 350));
+                //    Game.Components.Add(Text);
+                //}
+            }
+            //if (InputMgrs./*IsOldRightClick()*/)
+            //{
+            //    Game.Components.Remove(Text);
+            //}
         }
 
         bool IsWithinRightDistance(ModelCreator model)

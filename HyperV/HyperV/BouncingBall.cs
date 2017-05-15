@@ -1,6 +1,7 @@
 ﻿using System;
 using GameProjectXNA;
 using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 
 namespace HyperV
 {
@@ -15,15 +16,17 @@ namespace HyperV
                   UNIT_X = 1,
                   UNIT_Y = 1;
 
-        const int COLLISION_DISTANCE = 9,                     //Other constants
-                  NO_TIME_ELAPSED = 0,
-                  VISOR_LENGTH = 25,
-                  ATTACK_VALUE = 10,
-                  SPEED_MIN_X_TEN = 6,
-                  SPEED_MAX_X_TEN = 10;
+      const int COLLISION_DISTANCE = 9,                     //Other constants
+                NO_TIME_ELAPSED = 0,
+                VISOR_LENGTH = 33,
+                ATTACK_VALUE = 10,
+                SPEED_MIN_X_TEN = 6,
+                SPEED_MAX_X_TEN = 10;
 
-        const float RADIUS_SCALE = 1.4f,
-                    SPEED_FACTOR_INTERVAL = 0.6f;
+
+      const float RADIUS_SCALE = 1.4f,
+                  SPEED_FACTOR_INTERVAL = 0.6f,
+                  SLOW_DOWN_FACTOR = 10f;
 
         float TimeElapsedSinceUpdateDisplacement { get; set; }
         float UpdateIntervalDéplacement { get; set; }
@@ -38,7 +41,10 @@ namespace HyperV
         PlayerCamera CameraPrison { get; set; }
         float Speed { get; set; }
 
-        int[] Margins { get; set; }
+
+       List<BouncingBall> BallList { get; set; }
+
+      int[] Margins { get; set; }
 
         public BoundingSphere BallCollisonSphere
         {
@@ -49,6 +55,7 @@ namespace HyperV
                                  float rayon, Vector2 charpente, string nomTexture, float updateInterval)
            : base(game, initialScale, initialRotation, initialPosition, rayon, charpente, nomTexture, updateInterval)
         {
+         
             UpdateIntervalDéplacement = updateInterval * SPEED_FACTOR_INTERVAL;
             Position = initialPosition;
             Radius = rayon;
@@ -58,7 +65,8 @@ namespace HyperV
         public override void Initialize()
         {
             base.Initialize();
-            Margins = new int[] { -200, 80, -40, 0, -50, 230 };    // MarginsX(2),MarginsY(2),MarginsZ(2)
+            BallList = Game.Services.GetService(typeof(List<BouncingBall>)) as List<BouncingBall>;
+            Margins = new int[6] { -200, 80, -40, 0, -50, 230 };    // MarginsX(2),MarginsY(2),MarginsZ(2)
             ComputeDisplacementVectort();
             TimeElapsedSinceUpdateDisplacement = NO_TIME_ELAPSED;
 
@@ -72,7 +80,7 @@ namespace HyperV
 
             ThetaDisplacementAngle = ComputeRandomDisplacementAngle();
             PhiDisplacementAngle = ComputeRandomDisplacementAngle();
-            Speed = (RandomNumberGenerator.Next(SPEED_MIN_X_TEN, SPEED_MAX_X_TEN)) / 10f;
+            Speed = (RandomNumberGenerator.Next(SPEED_MIN_X_TEN, SPEED_MAX_X_TEN)) / SLOW_DOWN_FACTOR;
         }
 
         public override void Update(GameTime gameTime)
@@ -104,21 +112,20 @@ namespace HyperV
 
             if (currentPosition <= minThreshold || currentPosition >= maxThreshold)
             {
-                if (indicator == "x")
-                {
-                    ThetaDisplacementAngle = FLAT_ANGLE + ThetaDisplacementAngle;
-                    PhiDisplacementAngle = FLAT_ANGLE + PhiDisplacementAngle;
-                }
-                else if (indicator == "z")
-                {
-                    PhiDisplacementAngle = FLAT_ANGLE + PhiDisplacementAngle;
 
-                }
-                else if (indicator == "y")
-                {
-                    ThetaDisplacementAngle = -ThetaDisplacementAngle;
-
-                }
+            switch(indicator)
+            {
+               case "x":
+                  ThetaDisplacementAngle = FLAT_ANGLE + ThetaDisplacementAngle;
+                  PhiDisplacementAngle = FLAT_ANGLE + PhiDisplacementAngle;
+                  break;
+               case "y":
+                  ThetaDisplacementAngle = -ThetaDisplacementAngle;
+                  break;
+               case "z":
+                  PhiDisplacementAngle = FLAT_ANGLE + PhiDisplacementAngle;
+                  break;
+            }
                 ComputeDisplacementVectort();
             }
         }
@@ -129,12 +136,13 @@ namespace HyperV
         {
             Count = 0;
         }
-      // rien
+      
         void ManageBallCollisions()
         {
             if (IsCollidingBall(CameraPrison.Viseur) < VISOR_LENGTH && Sword.ContinuerCoupDSword)
             {
                 Game.Components.Remove(this);
+                 BallList.Remove(this);
                 isEliminated = true;
                 --Count;
             }

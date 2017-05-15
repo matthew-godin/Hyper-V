@@ -111,13 +111,13 @@ namespace HyperV
             LifeBars = Game.Services.GetService(typeof(LifeBar[])) as LifeBar[];
         }
 
-        public void SetRenderDistance(float renderDistance)
+        public void EstablishRenderDistance(float renderDistance)
         {
             FarPlaneDistance = renderDistance;
             CreateViewingFrustum(OBJECTIVE_OPENNESS, NEAR_PLANE_DISTANCE, FarPlaneDistance);
         }
 
-        public void InitializeDirection(Vector3 direction)
+        public void EstablishDirection(Vector3 direction)
         {
             Direction = direction;
         }

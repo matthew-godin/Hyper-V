@@ -41,6 +41,7 @@ namespace HyperV
         PlayerCamera CameraPrison { get; set; }
         float Speed { get; set; }
 
+
        List<BouncingBall> BallList { get; set; }
 
       int[] Margins { get; set; }

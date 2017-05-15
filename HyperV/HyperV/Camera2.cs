@@ -261,7 +261,7 @@ namespace HyperV
         public void DeactivateCamera()
         {
             DésactiverDéplacement = !DésactiverDéplacement;
-            InitializeDirection(new Vector3(1, 0, 0));
+            EstablishDirection(new Vector3(1, 0, 0));
         }
 
         bool placePlayer { get; set; }

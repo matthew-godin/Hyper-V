@@ -117,7 +117,7 @@ namespace HyperV
             CreateViewingFrustum(OBJECTIVE_OPENNESS, NEAR_PLANE_DISTANCE, FarPlaneDistance);
         }
 
-        public void InitializeDirection(Vector3 direction)
+        public void EstablishDirection(Vector3 direction)
         {
             Direction = direction;
         }

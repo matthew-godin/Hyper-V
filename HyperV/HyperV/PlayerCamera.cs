@@ -7,6 +7,7 @@ namespace HyperV
 {
     public class PlayerCamera : Camera
     {
+        const float SPEED_WHEN_TIRED = 0.1f;
         const int JUMP_HEIGHT = 10;
         const int JUMP = 25;
         const float STANDARD_UPDATE_INTERVAL = 1f / 60f;
@@ -51,6 +52,14 @@ namespace HyperV
         //Autres
         public Ray Visor { get; private set; }
         float TimeElapsedSinceUpdate { get; set; }
+        //*Jump*
+        bool ContinueJump { get; set; }
+        float t { get; set; }
+        protected float Height { get; set; }
+        Vector3 ControlPositionPts { get; set; }
+        Vector3 ControlPositionPtsPlusUn { get; set; }
+        Vector3[] ControlPts { get; set; }
+
 
         //LoadContent
         InputManager InputMgr { get; set; }
@@ -93,11 +102,12 @@ namespace HyperV
             IsMouseCameraActivated = true;
             IsDead = false;
 
-            ContinueJump = false;
-            
+            //Autres
             Visor = new Ray();
             Height = BaseHeight;
             TimeElapsedSinceUpdate = 0;
+
+            ContinueJump = false;
 
             base.Initialize();
             LoadContent();
@@ -129,10 +139,9 @@ namespace HyperV
 
         protected override void CreateLookAt()
         {
-            Direction = Vector3.Normalize(Direction); // NEW FROM 4/7/2017 2:30 AM was only Vector3.Normalize(Direction); before ******************************************************************************************************************************************************************
+            Direction = Vector3.Normalize(Direction); 
             Vector3.Normalize(VerticalOrientation);
             Vector3.Normalize(Lateral);
-            //Position -= new Vector3(Origin.X, 0, Origin.Y);
 
             View = Matrix.CreateLookAt(Position, Position + Direction, VerticalOrientation);
         }
@@ -152,8 +161,7 @@ namespace HyperV
 
         public override void Update(GameTime gameTime)
         {
-            AffectCommandsForGrab();
-            ManageGrabbing();
+            PopulateCommands();
             float timeElapsed = (float)gameTime.ElapsedGameTime.TotalSeconds;
             TimeElapsedSinceUpdate += timeElapsed;
             if (TimeElapsedSinceUpdate >= UpdateInterval)
@@ -176,9 +184,8 @@ namespace HyperV
             ManageHeight();
             CreateLookAt();
 
-            PopulateCommands(); // Grab moved to AffectCommandsForGrab()
 
-            //ManageGrabbing();
+            ManageGrabbing();
             ManageRun();
             ManageJump();
 
@@ -333,26 +340,18 @@ namespace HyperV
                       (InputMgr.IsPressed(Keys.LeftShift) && EstDisplacementEtAutresKeyboardActivated) ||
                       GamePadMgr.PositionsGâchettes.X > 0;
 
-            Jump = (InputMgr.IsPressed(/*Keys.R*/Keys.Space) && EstDisplacementEtAutresKeyboardActivated) ||
+            Jump = (InputMgr.IsPressed(Keys.Space) && EstDisplacementEtAutresKeyboardActivated) ||
                      GamePadMgr.IsPressed(Buttons.A);
 
-            //Grab = InputMgr.IsNewLeftClick() ||
-            //           InputMgr.IsOldLeftClick() ||
-            //           InputMgr.IsNewKey(Keys.E) && EstDisplacementEtAutresKeyboardActivated ||
-            //           GamePadMgr.IsNewButton(Buttons.RightStick);
-        }
-
-        private void AffectCommandsForGrab()
-        {
             Grab = InputMgr.IsNewLeftClick() ||
                        InputMgr.IsOldLeftClick() ||
                        InputMgr.IsNewKey(Keys.E) && EstDisplacementEtAutresKeyboardActivated ||
-                       GamePadMgr.IsNewButton(Buttons.X);
+                       GamePadMgr.IsNewButton(Buttons.RightStick);
         }
+
 
         protected virtual void ManageHeight()
         {
-            //Position = Grass.GetPositionWithHeight(Position, (int)Height);
             if (!ContinueJump)
             {
                 Height = BaseHeight;
@@ -390,30 +389,6 @@ namespace HyperV
                     }
                 }
             }
-
-            ////NEW
-            ////foreach (Arc grabbableSphere in Game.Components.Where(component => component is Arc))
-            ////{
-            ////    grabbableSphere.Grab = grabbableSphere.IsColliding(Visor) <= MINIMAL_DISTANCE_POUR_RAMASSAGE &&
-            ////               grabbableSphere.IsColliding(Visor) != null && Grab;
-
-            ////    if (grabbableSphere.Grab && !grabbableSphere.Placed)
-            ////    {
-            ////        if (/*!GrabbableModel.Taken*/true)
-            ////        {
-            ////            grabbableSphere.IsGrabbed = true;
-            ////            GrabbableModel.Taken = true;
-            ////            break;
-            ////        }
-            ////        else if (grabbableSphere.IsGrabbed)
-            ////        {
-            ////            grabbableSphere.IsGrabbed = false;
-            ////            GrabbableModel.Taken = false;
-            ////            break;
-            ////        }
-            ////    }
-            ////}
-            ////NEW
         }
 
 
@@ -440,21 +415,11 @@ namespace HyperV
             }
         }
 
-        bool ContinueJump { get; set; }
-        float t { get; set; }
-        protected float Height { get; set; }
-
-        Vector3 ControlPositionPts { get; set; }
-        Vector3 ControlPositionPtsPlusUn { get; set; }
-        Vector3[] ControlPts { get; set; }
-
         void InitializeComplexObjectsJump()
         {
-            Position = new Vector3(Position.X, BaseHeight/*CHARACTER_HEIGHT*/, Position.Z);
+            Position = new Vector3(Position.X, BaseHeight, Position.Z);
             ControlPositionPts = new Vector3(Position.X, Position.Y, Position.Z);
             ControlPositionPtsPlusUn = Position + Vector3.Normalize(new Vector3(Direction.X, 0, Direction.Z)) * JUMP;
-            //Position = new Vector3(ControlPositionPts.X, ControlPositionPts.Y, ControlPositionPts.Z);//******
-            //Direction = ControlPositionPtsPlusUn - ControlPositionPts;//******
             ControlPts = ComputeControlPoints();
         }
 
@@ -479,11 +444,11 @@ namespace HyperV
         }
         #endregion
 
-        const float TIRED_SPEED = 0.1f;
+        
 
         private void ManageRun()
         {
-            TranslationSpeed = LifeBars[1].Tired ? TIRED_SPEED : Run ? (GamePadMgr.PositionsGâchettes.X > 0 ? GamePadMgr.PositionsGâchettes.X : 1) * MAXIMAL_RUN_FACTOR * TRANSLATION_INITIAL_SPEED : TRANSLATION_INITIAL_SPEED;
+            TranslationSpeed = LifeBars[1].Tired ? SPEED_WHEN_TIRED : Run ? (GamePadMgr.PositionsGâchettes.X > 0 ? GamePadMgr.PositionsGâchettes.X : 1) * MAXIMAL_RUN_FACTOR * TRANSLATION_INITIAL_SPEED : TRANSLATION_INITIAL_SPEED;
         }
     }
 }

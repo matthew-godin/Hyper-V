@@ -85,7 +85,7 @@ namespace HyperV
         {
             base.LoadContent();
             Camera = Game.Services.GetService(typeof(Camera)) as Camera2;
-            InputMgr = Game.Services.GetService(typeof(InputManager)) as InputManager;
+            InputMgr = Game.Services.GetService(typeof(InputManager)) as InputManager; //nothing for push
             SoundManager = Game.Services.GetService(typeof(RessourcesManager<SoundEffect>)) as RessourcesManager<SoundEffect>;
         }
 

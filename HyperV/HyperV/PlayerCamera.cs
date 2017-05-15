@@ -381,7 +381,7 @@ namespace HyperV
                         GrabbableModel.Taken = true;
                         break;
                     }
-                    else if (grabbableSphere.IsGrabbed)
+                    else 
                     {
                         grabbableSphere.IsGrabbed = false;
                         GrabbableModel.Taken = false;

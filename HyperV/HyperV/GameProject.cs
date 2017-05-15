@@ -194,6 +194,7 @@ namespace HyperV
 
       void SelectLevel(bool usePosition, int level)
       {
+            GrabbableModel.Taken = false;
          MediaPlayer.Stop();
          Components.Clear();
 

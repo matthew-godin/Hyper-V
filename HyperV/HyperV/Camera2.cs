@@ -25,7 +25,7 @@ namespace HyperV
         protected override void LoadContent()
         {
             base.LoadContent();
-            SubjectiveCamera = false;
+            SubjectiveCamera = true;
             Maze = Game.Services.GetService(typeof(List<Maze>)) as List<Maze>;
             Characters = Game.Services.GetService(typeof(List<Character>)) as List<Character>;
             Boss = Game.Services.GetService(typeof(Boss)) as Boss;
@@ -260,7 +260,7 @@ namespace HyperV
 
         public void DeactivateCamera()
         {
-            DésactiverDéplacement = !DésactiverDéplacement;
+            DeactivateCertainCommands = !DeactivateCertainCommands;
             EstablishDirection(new Vector3(1, 0, 0));
         }
 
@@ -272,7 +272,7 @@ namespace HyperV
             if (!SubjectiveCamera)
             {
                 base.PerformUpdate();
-                if (!DésactiverDéplacement)
+                if (!DeactivateCertainCommands)
                 {
                     if (placePlayer)
                     {
@@ -281,7 +281,7 @@ namespace HyperV
                         Position = new Vector3(-27, 2, -28);
                     }
                 }
-                if (DésactiverDéplacement)
+                if (DeactivateCertainCommands)
                 {
                     BaseHeight = 15;
                     Position = new Vector3(-57, 15, -52);

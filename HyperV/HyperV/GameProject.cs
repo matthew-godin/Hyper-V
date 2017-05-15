@@ -224,7 +224,7 @@ namespace HyperV
                         Song = SongManager.Find("exid");
                         break;
                     case 8:
-                        Song = SongManager.Find("Elf");
+                        Song = SongManager.Find("lil");
                         break;
                     case 9:
                         Song = SongManager.Find("lil");
@@ -484,18 +484,19 @@ namespace HyperV
          }
       }
 
-      private void AddTowers()
+        public int NUM_TOWERS = 2;
+
+        private void AddTowers()
       {
          Random generator = new Random();
-         const int NUM_TOWERS = 10;
+         
          for (int i = 0; i < NUM_TOWERS; ++i)
          {
             Components.Add(new Displayer3D(this));
-            ModelCreator x = new ModelCreator(this, "Models_Tower", new Vector3(generator.Next(50, 300), -70, generator.Next(-300, 300)), 0.05f, generator.Next(0, 360));
+            ModelCreator x = new ModelCreator(this, "Models_Tower", new Vector3(generator.Next(50, 300), -70, generator.Next(-70, 70)), 0.05f, generator.Next(0, 360));
             Components.Add(x);
             x.IsTower = true;
          }
-
       }
 
       List<Rune> RuneList { get; set; }
@@ -864,6 +865,15 @@ namespace HyperV
                PressSpaceLabel.Visible = false;
             }
          }
+         if (Level == 8 && NUM_TOWERS == 0)
+         {
+                Complete[Level - 2] = true;
+                Save();
+                Components.Add(Loading);
+                Level = 1;
+                ResetLists();
+                SelectWorld(false);
+            }
       }
 
       void CheckForCutscene()

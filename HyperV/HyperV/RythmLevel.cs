@@ -8,21 +8,12 @@ using XNAProject;
 
 namespace HyperV
 {
-    //void RythmLevel()
-    //{
-    //    RythmLevel circuit = new RythmLevel(this, "Electric Cable", "../../../Data3.txt",
-    //                                            3, "White", "Red",
-    //                                            "Green", "BlueWhiteRed", "Arial50",
-    //                                            Color.Black, 15, 1,
-    //                                            FpsInterval);
-    //    Components.Add(circuit);
-    //    Services.AddService(typeof(RythmLevel), circuit);
-    //}
-
 
     //Take lives if presses key and no collision
     public class RythmLevel : Microsoft.Xna.Framework.GameComponent
     {
+        const float EQUALITY_UNCERTAINTY_FLOAT = 0.01f;
+
         //CONSTRUCTOR
         //Cylinder
         readonly string CylinderTexture,
@@ -213,27 +204,9 @@ namespace HyperV
             j++;
 
             ManageScore();
-            foreach (TexturedCube cube in Game.Components.Where(component => component is TexturedCube))
-            {
-                if (ButtonOne)
-                {
-                    RedCubePosition = Positions[1];
-                    ManageFailure(cube);
-                    LifeBars[0].Attack(2);
-                }
-                if (ButtonTwo)
-                {
-                    RedCubePosition = Positions[3];
-                    ManageFailure(cube);
-                    LifeBars[0].Attack(2);
-                }
-                if (ButtonThree)
-                {
-                    RedCubePosition = Positions[5];
-                    ManageFailure(cube);
-                    LifeBars[0].Attack(2);
-                }
-            }
+
+            ManageExcessiveClicks();
+
             foreach (TexturedCube cube in Game.Components.Where(component => component is TexturedCube))
             {
                 PutBackInitialCubeTextures(cube);
@@ -248,7 +221,6 @@ namespace HyperV
                     }
                     
                 }
-
             }
 
 
@@ -270,12 +242,37 @@ namespace HyperV
                 // constants  ----------------------------------
 
                 LevelIsCompleted = true;
-                i = 1000;
+                i = MaximalThreshold_i + 1;
                 Game.Components.Remove(WallToRemove[0]);
                 PortalList.Add(new Portal(Game, 1, new Vector3(0, MathHelper.PiOver2, 0),
                                   new Vector3(170, -60, -10), new Vector2(40, 40), "Transparent",
                                   1, UpdateInterval));
                 Game.Components.Add(PortalList.Last());
+            }
+        }
+
+        void ManageExcessiveClicks()
+        {
+            foreach (TexturedCube cube in Game.Components.Where(component => component is TexturedCube))
+            {
+                if (ButtonOne)
+                {
+                    RedCubePosition = Positions[1];
+                    ManageFailure(cube);
+                    LifeBars[0].Attack(2);
+                }
+                if (ButtonTwo)
+                {
+                    RedCubePosition = Positions[3];
+                    ManageFailure(cube);
+                    LifeBars[0].Attack(2);
+                }
+                if (ButtonThree)
+                {
+                    RedCubePosition = Positions[5];
+                    ManageFailure(cube);
+                    LifeBars[0].Attack(2);
+                }
             }
         }
 
@@ -351,7 +348,9 @@ namespace HyperV
             else
             {
                 Vector3 c = (Vector3)a - b;
-                areEqual = (c.X < 1 && c.X > -1) && (c.Y < 1 && c.Y > -1) && (c.Z < 1 && c.Z > -1);
+                areEqual = (c.X < EQUALITY_UNCERTAINTY_FLOAT && c.X > -EQUALITY_UNCERTAINTY_FLOAT) &&
+                        (c.Y < EQUALITY_UNCERTAINTY_FLOAT && c.Y > -EQUALITY_UNCERTAINTY_FLOAT) && 
+                        (c.Z < EQUALITY_UNCERTAINTY_FLOAT && c.Z > -EQUALITY_UNCERTAINTY_FLOAT);
             }
 
             return areEqual;

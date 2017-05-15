@@ -7,6 +7,7 @@ namespace HyperV
 {
     public class PlayerCamera : Camera
     {
+        const int NUM_SECONDS_IN_ONE_MINUTE = 60;
         const int MAXIMAL_RUN_FACTOR = 4;
         const int MINIMAL_DISTANCE_POUR_RAMASSAGE = 45;
         const int JUMP_HEIGHT = 10;
@@ -410,13 +411,13 @@ namespace HyperV
 
             if (ContinueJump)
             {
-                if (t > 60)
+                if (t > NUM_SECONDS_IN_ONE_MINUTE)
                 {
                     InitializeComplexObjectsJump();
                     ContinueJump = false;
                     t = 0;
                 }
-                Height = ComputeBezier(t * (1f / 60f), ControlPts).Y;
+                Height = ComputeBezier(t * UpdateInterval, ControlPts).Y;
                 ++t;
             }
         }

@@ -93,7 +93,7 @@ namespace HyperV
             Jump = false;
             Grab = false;
 
-            //Activated*******************************************************************
+            //Activated
             DeactivateCertainCommands = false;
             AreDisplacementKeyboardCommandsActivated = true;
             IsKeyboardCameraActivated = true;

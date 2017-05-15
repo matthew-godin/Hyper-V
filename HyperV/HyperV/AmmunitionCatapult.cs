@@ -122,6 +122,7 @@ namespace HyperV
                                 modelToDestroy.Add(model);
                                 toDestroy = true;
                                 TowerDestroyed.Play();
+                                (Game as GameProject).NUM_TOWERS--;
                             }
                         }
                     }
